@@ -3,8 +3,19 @@ const db = require('./db');
 const FamilyPlaybook = require('./family_playbook');
 const PingCommand = require('./commands/ping');
 const NewFamilyCommand = require('./commands/new_family');
+const config = require('config');
 
-const Message = require('discord.js');
+describe('can config', () => {
+   it('should be able to get a config value', () => {
+       let ownerID = config.get('LegacyBotOwnerID');
+       let prefix = config.get('LegacyBotCommandPrefix');
+       let token = config.get('LegacyBotToken');
+       assert.ok( token != null && token.length > 0);
+       assert.ok( prefix != null && prefix.length > 0);
+       assert.ok( ownerID != null && ownerID.length > 0);
+
+   })
+});
 
 describe('make db', () => {
     it('should be able to make a db', () => {
@@ -31,11 +42,10 @@ describe('create family playbook ', () => {
     it('can create a family playbook', () => {
         let family = new FamilyPlaybook('Cultivator');
         family.name = 'Duhnah';
-        assert.ok(family != null);
         assert.ok(family.playbook === 'Cultivator');
         assert.ok(family.name === 'Duhnah');
         family.reach = 1;
-        assert.equal(1, family.reach);
+        assert.ok(1 === family.reach);
     });
 });
 
@@ -96,9 +106,9 @@ describe('process new-family bot command', () => {
         let commandArgs = {
             "playbook": "The Cultivator",
             "name": "Duhnah"
-        }
+        };
 
-        let reply = NewFamilyCommand.reply( commandArgs )
+        let reply = NewFamilyCommand.reply( commandArgs );
         assert.ok( reply === `I created a new family named "${commandArgs.name}" with unsupported playbook "${commandArgs.playbook}"`);
     });
 });
