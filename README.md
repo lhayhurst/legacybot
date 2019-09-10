@@ -23,6 +23,7 @@ All commands to Legacybot begin with a forward slash "/".  Legacybot supports th
  /drop-character      |  character name     |   /dump-character "Max" | Disassociates a user with the named character. This won't delete the character. |
 | /delete-character | character name | /delete-character "Max" | Deletes the named character. Legacybot will ask you if you are sure about this? Only the Discord user associated with a character can run this command.
 | /stat| stat-name stat-value      |    /stat reach 1 | Sets the named stat. If the stat is "reach", "grasp", or "sleight", the stat will be set for the family associated with the user. If the stat is "force", "lore", "steel", or "sway", it will be  set for the character associated with the user.|
+| /roll|  --a --d  --b=<int>  |  /roll --a --b=1 |  Rolls the dice for your assumed Family or Character, taking into account all their bonuses. `/r --a --b=1` will roll with advantage and +1 modifier. `/r --d` will roll with disadvantage. |
 
 ## Development
 First clone this Github repo locally.
