@@ -59,6 +59,9 @@ class NewFamilyCommand extends Command {
 
     exec(message, args) {
         let newFamilyCommandReply = new NewFamilyCommandReply(args);
+        if ( args.name == null ) {
+            return message.reply( `Please provide a --name="your family's name" paramaeter!`);
+        }
         db.find({ family_name : args.name }).then((docs) => {
             if (docs.length === 0) { //its a new family!
                 db.insert(newFamilyCommandReply.newFamily)

@@ -47,7 +47,7 @@ class SetFamilyCommand extends Command {
                 else if ( vivifiedFamily.user && vivifiedFamily.user === user_id) {
                     return message.reply(`You are already set to the family with name '${vivifiedFamily.name}'`);
                 }
-                db.update({family_name: vivifiedFamily.name}, {$set: {user_id: user_id}}, {}, (err, numReplaced) => {
+                db.update({family_name: vivifiedFamily.name}, {$set: {playbook_user_id: user_id}}, {}, (err, numReplaced) => {
                 });
                 //message.member.setNickname(vivifiedFamily.playbook);
                 return message.reply(`you have set your family to ${vivifiedFamily.playbook} with name '${vivifiedFamily.name}'`);

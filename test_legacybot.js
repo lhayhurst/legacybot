@@ -3,6 +3,8 @@ const db = require('./db');
 const FamilyPlaybook = require('./family_playbook');
 const PingCommand = require('./commands/ping');
 const NewFamilyCommand = require('./commands/new_family');
+const set_family_stats = require('./commands/set_family_stats');
+
 const config = require('config');
 
 describe('can config', () => {
@@ -109,7 +111,10 @@ describe('process new-family bot command', () => {
         };
 
         let reply = NewFamilyCommand.reply( commandArgs );
-        assert.ok( reply === `I created a new family named "${commandArgs.name}" with unsupported playbook "${commandArgs.playbook}"`);
+        assert.equal( reply , `I created a new family named "${commandArgs.name}" with unsupported playbook "${commandArgs.playbook}"`);
     });
 });
+
+
+
 
