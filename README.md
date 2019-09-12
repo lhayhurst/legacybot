@@ -7,12 +7,14 @@ Past [this link](https://discordapp.com/api/oauth2/authorize?client_id=619678791
 ## Commands
 All commands to Legacybot begin with a forward slash "/".  Legacybot supports the following commands:
 
-### Completed Commands 
-| Command        | Args           | Example  | Notes |
+### Legacy Bot Commands 
+| Command/Alias        | Args           | Example  | Notes |
 | ------------- |:-------------:| -----:|:----------:|
-| /new-family or /nf   | family name | /new-family "Cultivator of the New Flesh" name="Duhnah"  | This will create a new family. If a family already exists with this name, nothing will happen (all family names must be unique).  By creating a new family, that family is not assigned to the Discord user unless the user adds the family. The playbook must be one of the core Legacy family classes; see ["Supported Family Playbooks"](#supported-family-playbooks) section below. | 
- /set-family or /sf    | family name      |   /set-family "Duhnah" | Associates a user with the named family. This won't delete the family. |
-| /set-family-stats or /sfs | s=<INT> r=<INT> g=<INT>      |    /sfs g=-1 | Sets the named stat, with the short-hand "r" for reach, "g" for grasp, and s for sleight. The stat will be set for the family associated with the user. If the stat is "force", "lore", "steel", or "sway", it will be  set for the character associated with the user.|
+| `/help` or `/h` or @Legacybot   | none | `/h`  | Ask the bot for help. |  
+| `/family` or `/f`   | name='<STRING>' | `/f`, `/f name="Duhnah"`, `/f all`| A `/f` command will get the family associated with the player (if any; see the `set-family` command). A `/f all` command  will list all the families currently in play. `/f name="Duhnah"` command will list the family sheet for the family with the name "Duhnah".  |  
+| `/new-family` or `/nf`   | family name | `/new-family "Cultivator of the New Flesh" name="Duhnah"`  | This will create a new family. If a family already exists with this name, nothing will happen (all family names must be unique).  By creating a new family, that family is not assigned to the Discord user unless the user adds the family. The playbook must be one of the core Legacy family classes; see ["Supported Family Playbooks"](#supported-family-playbooks) section below. | 
+ /`set-family` or `/sf`    | family name      |   `/set-family "Duhnah"` | Associates a user with the named family. This won't delete the family. |
+| `/set-family-stats` or `/sfs` | `s=<INT> r=<INT> g=<INT>`      |    `/sfs g=-1` | Sets the named stat, with the short-hand "r" for reach, "g" for grasp, and s for sleight. The stat will be set for the family associated with the user. If the stat is "force", "lore", "steel", or "sway", it will be  set for the character associated with the user.|
 
 ### Commands To Develop
 | Command        | Args           | Example  | Notes |
@@ -36,7 +38,7 @@ Second, create your bot on the [Discord Developer Portal](https://discordapp.com
 Third, make a note of the your `token` and `owner id`. These can be configured into the app in two ways:
 
 1) Via `config/default.json`. Put the token and owner_id into these fields. Note, this is not secure, so please be careful!
-2) By setting the environment variables `LEGACY_BOT_TOKEN` and `LEGACY_BOT_OWNER_ID`. These will override the values 
+2) By setting the environment variables `LEGACY_BOT_TOKEN` and `LEGACY_BOT_OWNER_ID`. These will override the config/default.json file keys. 
 
 ### Installing Locally
 Run `make install`

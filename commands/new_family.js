@@ -3,9 +3,9 @@ const FamilyPlaybook = require('../family_playbook');
 const {db} = require('../bot')
 
 class NewFamilyCommandReply {
-    constructor(args) {
+    constructor(args, guildId) {
         this.args = args;
-        let newFam = new FamilyPlaybook(this.args.playbook);
+        let newFam = new FamilyPlaybook(this.args.playbook, guildId  );
         newFam.name = this.args.name;
         this.newFamily = newFam;
     }
@@ -18,7 +18,7 @@ class NewFamilyCommandReply {
         } else {
             supportString = 'supported';
         }
-        let ret = `I created a new family named "${this.newFam.name}" with ${supportString} playbook "${this.newFam.playbook}"`;
+        let ret = `I created a new family named "${this.newFam.name}" with ${supportString} playbook "${this.newFam.playbook}". If you run /set_family "${this.newFam.name}" you can take on the role of this new family! `;
         return ret;
     }
 
@@ -58,9 +58,9 @@ class NewFamilyCommand extends Command {
     }
 
     exec(message, args) {
-        let newFamilyCommandReply = new NewFamilyCommandReply(args);
+        let newFamilyCommandReply = new NewFamilyCommandReply(args, message.guild.id );
         if ( args.name == null ) {
-            return message.reply( `Please provide a --name="your family's name" paramaeter!`);
+            return message.reply( `Please provide a --name="your family's name" parameter!`);
         }
         db.find({ family_name : args.name }).then((docs) => {
             if (docs.length === 0) { //its a new family!

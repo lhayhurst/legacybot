@@ -42,7 +42,7 @@ class SetFamilyStatsCommand extends Command {
 
     exec(message, args) {
         let user_id = message.member.user.id;
-        db.find({playbook_user_id: user_id}).then((docs) => {
+        db.find({user_id: user_id}).then((docs) => {
 
             //there is some feature envy here -- TODO this function should live in db.js and have tests
             function updateStat(id, update_object) {
@@ -62,7 +62,7 @@ class SetFamilyStatsCommand extends Command {
                 updateStat(id, {reach: args.reach});
             }
             if (args.sleight) {
-                updateStat(id, {sleight: args.reach});
+                updateStat(id, {sleight: args.sleight});
             }
             if (args.grasp) {
                 updateStat(id, {grasp: args.grasp})
