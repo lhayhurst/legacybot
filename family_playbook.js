@@ -7,8 +7,8 @@ class FamilyPlaybook {
         return {
             'The Synthetic Hive': {
                 playbookName: 'The Synthetic Hive',
-                familySheetPageTwoImage: 'assets/family-sheet-2.png',
-                treaty_rules: `When you spend time and effort showing another group how to use their technology better, gain 1-Treaty on them`,
+                familySheetImage: 'assets/synthetic-hive.png',
+                treatyRules: `When you spend time and effort showing another group how to use their technology better, gain 1-Treaty on them`,
                 statsChoices: [
                     {
                         id: 1,
@@ -65,7 +65,8 @@ class FamilyPlaybook {
             'tech': [553, 880],
             'family_data': [361, 880],
             'mood': [172, 880],
-            'treaty': [231, 97]
+            'treaty': [231, 97],
+            'family_name': [849, 153]
         };
         return print_coordinates[stat];
     }
@@ -76,7 +77,7 @@ class FamilyPlaybook {
             return null;
         }
         let coordinates = FamilyPlaybook.get_print_coordinates('treaty');
-        let text = playbooks[playbook_name].treaty_rules;
+        let text = playbooks[playbook_name].treatyRules;
         return { coordinates: coordinates, treaty_text: text };
 
     }
@@ -139,8 +140,21 @@ class FamilyPlaybook {
                 .addBlankField()
                 .addBlankField()
         } else {
+            let imagesToPublish = [];
+            let playbooks = FamilyPlaybook.playbooks();
             let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
-            let image = await Jimp.read('assets/family-sheet-2.png');
+
+            //check to see if a name page should be inserted (if playing one of the stock families)
+            if( playbooks[this.playbook]) {
+                let pb = playbooks[this.playbook];
+                let playbookSheetPath = pb.familySheetImage;
+                let playbookSheetImage = await Jimp.read(playbookSheetPath);
+                let name_coordinates = FamilyPlaybook.get_print_coordinates('family_name');
+                await playbookSheetImage.print(font, name_coordinates[0], name_coordinates[1], this.name);
+                imagesToPublish.push( playbookSheetImage );
+            }
+
+            let statsSheetImage = await Jimp.read('assets/family-sheet-2.png');
 
 
             let stats = [
@@ -156,19 +170,26 @@ class FamilyPlaybook {
                 let stat_item = stats[i];
                 if (stat_item.val) {
                     let coordinates = FamilyPlaybook.get_print_coordinates(stat_item.key);
-                    await image.print(font, coordinates[0], coordinates[1], stat_item.val);
+                    await statsSheetImage.print(font, coordinates[0], coordinates[1], stat_item.val);
                 }
             }
 
             let treaty_coordinates = FamilyPlaybook.get_treaty_coordinates_and_text(this.playbook);
             if ( treaty_coordinates ) {
                 let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK);
-                await image.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 450 );
+                await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 450 );
+            }
+            imagesToPublish.push(statsSheetImage);
+
+
+            for( var j = 0; j < imagesToPublish.length; j++ ) {
+                let image = imagesToPublish[j];
+                let imgBuf = await image.getBufferAsync(Jimp.AUTO);
+                let imageName = `image-${j}.png`
+                richEmbed.attachFiles([{name: imageName, attachment: imgBuf}]).setImage(`attachment://${imageName}`);
+
             }
 
-
-            let imgBuf = await image.getBufferAsync(Jimp.AUTO);
-            richEmbed.attachFiles([{name: "image.png", attachment: imgBuf}]).setImage('attachment://image.png')
         }
     }
 
