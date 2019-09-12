@@ -8,7 +8,7 @@ class FamilyPlaybook {
             'The Synthetic Hive': {
                 playbookName: 'The Synthetic Hive',
                 familySheetPageTwoImage: 'assets/family-sheet-2.png',
-                familySheetTreatyText: 'assets/family-treaty.png',
+                treaty_rules: `When you spend time and effort showing another group how to use their technology better, gain 1-Treaty on them`,
                 statsChoices: [
                     {
                         id: 1,
@@ -64,10 +64,21 @@ class FamilyPlaybook {
             'sleight': [573, 38],
             'tech': [553, 880],
             'family_data': [361, 880],
-            'mood': [172, 880]
+            'mood': [172, 880],
+            'treaty': [231, 97]
         };
-
         return print_coordinates[stat];
+    }
+
+    static get_treaty_coordinates_and_text(playbook_name) {
+        let playbooks = FamilyPlaybook.playbooks();
+        if (! playbooks[playbook_name]) {
+            return null;
+        }
+        let coordinates = FamilyPlaybook.get_print_coordinates('treaty');
+        let text = playbooks[playbook_name].treaty_rules;
+        return { coordinates: coordinates, treaty_text: text };
+
     }
 
     constructor(playbook, guild_id) {
@@ -148,6 +159,14 @@ class FamilyPlaybook {
                     await image.print(font, coordinates[0], coordinates[1], stat_item.val);
                 }
             }
+
+            let treaty_coordinates = FamilyPlaybook.get_treaty_coordinates_and_text(this.playbook);
+            if ( treaty_coordinates ) {
+                let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK);
+                await image.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 450 );
+            }
+
+
             let imgBuf = await image.getBufferAsync(Jimp.AUTO);
             richEmbed.attachFiles([{name: "image.png", attachment: imgBuf}]).setImage('attachment://image.png')
         }

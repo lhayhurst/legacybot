@@ -69,7 +69,6 @@ class SetFamilyStatsCommand extends Command {
         let user_id = message.member.user.id;
 
         let statsToUpdate = {};
-        let id_to_update = {};
 
         db.find({user_id: user_id}).then((docs) => {
             if (docs.length === 0) {

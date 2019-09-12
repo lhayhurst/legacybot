@@ -36,17 +36,18 @@ class NewFamilyCommand extends Command {
     constructor() {
         super('newfam', {
             aliases: ['new-family', 'nf'],
-            split: 'quoted',
+            split: 'sticky',
             args: [
                 {
                     id: 'playbook',
-                    split: 'quoted',
-                    type: 'string',
+                    match: 'prefix',
+                    prefix: 'p=',
+                    default: null
                 },
                 {
                     id: 'name',
                     match: 'prefix',
-                    prefix: '--name=',
+                    prefix: 'n=',
                     default: null
                 }
             ]
@@ -58,11 +59,12 @@ class NewFamilyCommand extends Command {
     }
 
     exec(message, args) {
-        let newFamilyCommandReply = new NewFamilyCommandReply(args, message.guild.id );
+        let guild_id = message.guild.id;
+        let newFamilyCommandReply = new NewFamilyCommandReply(args, guild_id );
         if ( args.name == null ) {
             return message.reply( `Please provide a --name="your family's name" parameter!`);
         }
-        db.find({ family_name : args.name }).then((docs) => {
+        db.find({ family_name : args.name, guild_id: guild_id }).then((docs) => {
             if (docs.length === 0) { //its a new family!
                 db.insert(newFamilyCommandReply.newFamily)
                     .then( () => {

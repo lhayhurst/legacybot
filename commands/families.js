@@ -32,7 +32,9 @@ class FamiliesCommand extends Command {
             richEmbed.setTitle('Families Created So Far');
         }
         db.find({guild_id: message.guild.id }).then((docs) => {
-            console.log(`got ${docs}`);
+            if( docs.length == 0 ) {
+                return message.reply( `It seems your guild hasn't created any new families yet! Please run /help and try out the /new-family command first.`);
+            }
             docs.forEach((item, index) => {
                 let family = FamilyPlaybook.fromNedbDocument(item);
                 console.log(family);
