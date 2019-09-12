@@ -8,6 +8,7 @@ class FamiliesCommand extends Command {
     constructor() {
         super('families', {
             aliases: ['family', 'f'],
+            split: 'quoted',
             args: [
                 {
                     id: 'name',
@@ -30,11 +31,15 @@ class FamiliesCommand extends Command {
         if (args.all) {
             richEmbed.setTitle('Families Created So Far');
         }
-        db.find({}).then((docs) => {
+        db.find({guild_id: message.guild.id }).then((docs) => {
+            console.log(`got ${docs}`);
             docs.forEach((item, index) => {
                 let family = FamilyPlaybook.fromNedbDocument(item);
+                console.log(family);
                 async function visitFamily() {
-                    await family.visit(richEmbed, args.all );
+                    if (args.name == null || args.name === family.name ) {
+                        await family.visit(richEmbed, args.all);
+                    }
                 }
                 visitFamily().then( function() {
                     return message.reply(richEmbed);

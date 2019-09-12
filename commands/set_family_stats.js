@@ -1,5 +1,6 @@
 const {Command} = require('discord-akairo');
-const {db} = require('../bot')
+const {db} = require('../bot');
+
 
 class SetFamilyStatsCommandReply {
     constructor(args, user_id) {
@@ -35,45 +36,75 @@ class SetFamilyStatsCommand extends Command {
                     match: 'prefix',
                     prefix: 'g=',
                     type: 'int',
+                },
+                {
+                    id: 'family_data',
+                    match: 'prefix',
+                    prefix: 'd=',
+                    type: 'int',
+                },
+                {
+                    id: 'tech',
+                    match: 'prefix',
+                    prefix: 't=',
+                    type: 'int',
+                },
+                {
+                    id: 'mood',
+                    match: 'prefix',
+                    prefix: 'm=',
+                    type: 'int',
                 }
+
+
             ]
         });
     }
 
+    static updateStat(id, update_object) {
+    }
+
+
     exec(message, args) {
         let user_id = message.member.user.id;
+
+        let statsToUpdate = {};
+        let id_to_update = {};
+
         db.find({user_id: user_id}).then((docs) => {
-
-            //there is some feature envy here -- TODO this function should live in db.js and have tests
-            function updateStat(id, update_object) {
-                db.update({_id: id},
-                    {$set: update_object}, (err, numReplaced) => {
-                        if (err) {
-                            throw new Error(err);
-                        }
-                    });
-            }
-
             if (docs.length === 0) {
                 return message.reply(`You have not set your family set -- please run "/set-family 'family name'" first!`);
             }
             let id = docs[0]._id;
             if (args.reach) {
-                updateStat(id, {reach: args.reach});
+                statsToUpdate.reach = args.reach;
             }
             if (args.sleight) {
-                updateStat(id, {sleight: args.sleight});
+                statsToUpdate.sleight = args.sleight;
             }
             if (args.grasp) {
-                updateStat(id, {grasp: args.grasp})
+                statsToUpdate.grasp = args.grasp;
             }
-            return message.reply('updated your family stats');
-        }).catch((err) => {
+            if (args.family_data) {
+                statsToUpdate.family_data = args.family_data;
+            }
+            if (args.tech) {
+                statsToUpdate.tech = args.tech;
+            }
+            if (args.mood) {
+                statsToUpdate.mood = args.mood;
+            }
+
+            db.update( {_id: id}, {$set: statsToUpdate}, [ ]).then((updatedDocs) => {
+                return message.reply(`Updated your family "${docs[0].family_name}" with new stats ${JSON.stringify(statsToUpdate)}`)
+            }).catch((err) => {
                 return message.reply(`Something bad happened: ${err}`);
             });
-        }
+        }).
+        catch((err) => {
+            return message.reply(`Something bad happened: ${err}`);
+        });
     }
+}
 
-    module
-.
-    exports = SetFamilyStatsCommand;
+module.exports = SetFamilyStatsCommand;

@@ -61,7 +61,10 @@ class FamilyPlaybook {
         let print_coordinates = {
             'reach': [148, 38],
             'grasp': [365, 38],
-            'sleight': [573, 38]
+            'sleight': [573, 38],
+            'tech': [553, 880],
+            'family_data': [361, 880],
+            'mood': [172, 880]
         };
 
         return print_coordinates[stat];
@@ -86,6 +89,7 @@ class FamilyPlaybook {
         ret.sleight = document.sleight;
         ret.family_data = document.family_data; //data is reserved
         ret.family_tech = document.tech;
+        ret.mood = document.mood;
         ret.advantages_rolls = document.advantages_rolls;
         ret.guild_id = document.guild_id;
         ret.user = document.user;
@@ -127,19 +131,23 @@ class FamilyPlaybook {
             let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
             let image = await Jimp.read('assets/family-sheet-2.png');
 
-            if ( this.reach ) {
-                let coordinates = FamilyPlaybook.get_print_coordinates('reach');
-                await image.print(font, coordinates[0], coordinates[1], this.reach);
-            }
-            if ( this.grasp ) {
-                let coordinates = FamilyPlaybook.get_print_coordinates('grasp');
-                await image.print(font, coordinates[0], coordinates[1], this.grasp);
-            }
-            if ( this.sleight ) {
-                let coordinates = FamilyPlaybook.get_print_coordinates('sleight');
-                await image.print(font, coordinates[0], coordinates[1], this.sleight);
-            }
 
+            let stats = [
+                { key: 'reach', 'val': this.reach },
+                { key: 'grasp', 'val': this.grasp },
+                { key: 'sleight', 'val': this.sleight },
+                { key: 'mood', 'val': this.mood },
+                { key: 'family_data', 'val': this.data_stat },
+                { key: 'tech', 'val': this.tech },
+
+            ];
+            for( var i = 0; i < stats.length; i++ ) {
+                let stat_item = stats[i];
+                if (stat_item.val) {
+                    let coordinates = FamilyPlaybook.get_print_coordinates(stat_item.key);
+                    await image.print(font, coordinates[0], coordinates[1], stat_item.val);
+                }
+            }
             let imgBuf = await image.getBufferAsync(Jimp.AUTO);
             richEmbed.attachFiles([{name: "image.png", attachment: imgBuf}]).setImage('attachment://image.png')
         }
@@ -167,6 +175,14 @@ class FamilyPlaybook {
 
     set data_stat(stat_value) {
         this.family_data = stat_value;
+    }
+
+    get mood() {
+       return this.family_mood;
+    }
+
+    set mood(mood) {
+        this.family_mood = mood;
     }
 
     get tech() {
