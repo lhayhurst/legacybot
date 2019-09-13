@@ -8,7 +8,7 @@ class FamilyPlaybook {
             'The Synthetic Hive': {
                 playbookName: 'The Synthetic Hive',
                 familySheetImage: 'assets/families/synthetic-hive.png',
-                treatyRules: `When you spend time and effort showing another group how to use their technology better, gain 1-Treaty on them`,
+                treatyRules: `When a Family or Faction comes freely to you to ask for support or trade, gain 1-Treaty on them on top of any deals you make.`,
                 statsChoices: [
                     {
                         id: 1,
@@ -27,6 +27,15 @@ class FamilyPlaybook {
                     },
 
                 ],
+                doctrineChoices: [
+                ]
+
+            },
+            'The Enclave of Bygone Lore': {
+                playbookName: 'The Enclave of Bygone Lore',
+                familySheetImage: 'assets/families/enclave-of-bygone-lore.png',
+                treatyRules: `When you spend time and effort showing another group how to use their technology better, gain 1-Treaty on them`,
+                statsChoices: [],
                 doctrineChoices: [
                     {
                         id: 1,
@@ -52,7 +61,69 @@ class FamilyPlaybook {
                     }
 
                 ]
-
+            },
+            'The Servants of One Truth Faith': {
+                playbookName: 'The Servants of One Truth Faith',
+                familySheetImage: 'assets/families/servants-of-the-one-truth-faith.png',
+                treatyRules: `When you publicly condemn another group for their sins, hold 1. Publicly absolve them of those same sins and spend that hold to gain 1-Treaty on them. You can only have 1 hold at a time.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Cultivators of the New Flesh': {
+                playbookName: 'The Cultivators of the New Flesh',
+                familySheetImage: 'assets/families/cultivators-of-the-new-flesh.png',
+                treatyRules: `When you freely give someone the perfect resource to solve a problem, gain 1-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Gilded Company of Merchants': {
+                playbookName: 'The Gilded Company of Merchants',
+                familySheetImage: 'assets/families/the-gilded-company-of-merchants.png',
+                treatyRules: `When you make another group part of your trading operations (suppliers, distributors or vendors) gain 1-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Law Givers of the Wasteland': {
+                playbookName: 'The Law Givers of the Wasteland',
+                familySheetImage: 'assets/families/lawgivers-of-the-wasteland.png',
+                treatyRules: `When you bring another Family's or Faction's hated foe to justice, your Family gains 2-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Order of the Titan': {
+                playbookName: 'The Order of the Titan',
+                familySheetImage: 'assets/families/order-of-the-titan.png',
+                treatyRules: `When you Lend Aid to a group under a Kaiju Threat Alert, gain 1-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Pioneers of the Depths': {
+                playbookName: 'The Pioneers of the Depths',
+                familySheetImage: 'assets/families/pioneers-of-the-depths.png',
+                treatyRules: `When you trade a Family a Surplus harvested from the sea for one harvested from the Land, gain 1-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Stranded Starfarers': {
+                playbookName: 'The Stranded Starfarers',
+                familySheetImage: 'assets/families/stranded-starfarers.png',
+                treatyRules: `Your origin gives you a different perspective on the world. When you Uncover Secrets to reveal something that helps a Family, gain 1-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Tyrant Kings': {
+                playbookName: 'The Tyrant Kings',
+                familySheetImage: 'assets/families/tyrant-kings.png',
+                treatyRules: `When you give another Family a position of power in your empire's hierarchy, gain 1-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
+            },
+            'The Uplifted Children of Mankind': {
+                playbookName: 'The Uplifted Children of Mankind',
+                familySheetImage: 'assets/families/uplifted-children-of-mankind.png',
+                treatyRules: `When someone adopts your customs --wther on the primal or sapient side -- gain 1-Treaty on them.`,
+                statsChoices: [],
+                doctrineChoices: [],
             }
         };
     }
@@ -67,7 +138,7 @@ class FamilyPlaybook {
             'mood': [172, 880],
             'treaty': [231, 97],
             'family_name': [849, 153],
-            'treaties': { start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203] },
+            'treaties': {start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203]},
             'surpluses': [50, 559],
             'needs': [348, 559]
         };
@@ -140,17 +211,17 @@ class FamilyPlaybook {
     }
 
     addSurplus(resource) {
-        if( ! this.surpluses ) {
+        if (!this.surpluses) {
             this.surpluses = [];
         }
 
-        if( this.surpluses.indexOf(resource) === -1 ) {
-            this.surpluses.push( resource );
+        if (this.surpluses.indexOf(resource) === -1) {
+            this.surpluses.push(resource);
         }
     }
 
     removeSurplus(resource) {
-        if( ! this.surpluses ) {
+        if (!this.surpluses) {
             this.surpluses = [];
         }
 
@@ -161,17 +232,17 @@ class FamilyPlaybook {
     }
 
     addNeed(resource) {
-        if( ! this.needs ) {
+        if (!this.needs) {
             this.needs = [];
         }
 
-        if( this.needs.indexOf(resource) === -1) {
-            this.needs.push( resource );
+        if (this.needs.indexOf(resource) === -1) {
+            this.needs.push(resource);
         }
     }
 
     removeNeed(resource) {
-        if( ! this.needs ) {
+        if (!this.needs) {
             this.needs = [];
         }
 
@@ -194,31 +265,31 @@ class FamilyPlaybook {
     giveTreatyTo(targetFamily) {
         this.initTreatyFor(targetFamily);
         targetFamily.initTreatyFor(this);
-        this.treaties[targetFamily.name].on_me +=1;
-        targetFamily.treaties[this.name].me_on +=1;
+        this.treaties[targetFamily.name].on_me += 1;
+        targetFamily.treaties[this.name].me_on += 1;
     }
 
     receiveTreatyFrom(targetFamily) {
         this.initTreatyFor(targetFamily);
         targetFamily.initTreatyFor(this);
         this.treaties[targetFamily.name].me_on += 1;
-        targetFamily.treaties[this.name].on_me +=1;
+        targetFamily.treaties[this.name].on_me += 1;
 
     }
 
     hasTreatyWith(targetFamily) {
         let treaties = this.treaties[targetFamily.name];
-        if (! treaties) {
+        if (!treaties) {
             return false;
         }
-        if( !( treaties.on_me > 0 || treaties.me_on > 0 ) ) {
+        if (!(treaties.on_me > 0 || treaties.me_on > 0)) {
             return false;
         }
         return true;
     }
 
     spendsTreatyWith(targetFamily) {
-        if ( this.hasTreatyWith(targetFamily)) {
+        if (this.hasTreatyWith(targetFamily)) {
             this.treaties[targetFamily.name].me_on--;
             targetFamily.treaties[this.name].on_me--;
         }
@@ -226,7 +297,7 @@ class FamilyPlaybook {
 
     visitTreaties(richEmbed) {
         richEmbed.setTitle('Your Treaties');
-        if ( this.treaties ) {
+        if (this.treaties) {
             let families = Object.keys(this.treaties);
             for (var i = 0; i < families.length; i++) {
                 let family = families[i];
@@ -296,14 +367,14 @@ class FamilyPlaybook {
 
             let startYCoordinate = treatyStartCoord[1];
             let treatyFamilies = Object.keys(this.treaties);
-            for( var k = 0; k < treatyFamilies.length; k++ ) {
+            for (var k = 0; k < treatyFamilies.length; k++) {
                 let familyName = treatyFamilies[k];
-                let treaties = this.treaties[ familyName ];
+                let treaties = this.treaties[familyName];
                 let yoursOnThem = treaties.me_on;
                 let themOnMe = treaties.on_me;
-                await statsSheetImage.print(font, treatyStartCoord[0], startYCoordinate, familyName );
-                await statsSheetImage.print(font, yoursOnThemCoord[0], startYCoordinate, yoursOnThem );
-                await statsSheetImage.print(font, theirsOnYouCoord[0], startYCoordinate, themOnMe );
+                await statsSheetImage.print(font, treatyStartCoord[0], startYCoordinate, familyName);
+                await statsSheetImage.print(font, yoursOnThemCoord[0], startYCoordinate, yoursOnThem);
+                await statsSheetImage.print(font, theirsOnYouCoord[0], startYCoordinate, themOnMe);
                 startYCoordinate += 40;
 
             }
@@ -311,22 +382,19 @@ class FamilyPlaybook {
             //and finally the surpluses and needs
             let surplusesCoordinates = FamilyPlaybook.get_print_coordinates('surpluses');
             let surplusStartYCoord = surplusesCoordinates[1];
-            for( var l = 0; l < this.surpluses.length; l++ ) {
-                await statsSheetImage.print( font, surplusesCoordinates[0], surplusStartYCoord, this.surpluses[l]);
+            for (var l = 0; l < this.surpluses.length; l++) {
+                await statsSheetImage.print(font, surplusesCoordinates[0], surplusStartYCoord, this.surpluses[l]);
                 surplusStartYCoord += 40;
             }
 
             let needsCoordinates = FamilyPlaybook.get_print_coordinates('needs');
             let needsStartYCoord = needsCoordinates[1];
-            for( var m = 0; m < this.needs.length; m++ ) {
-                await statsSheetImage.print( font, needsCoordinates[0], needsStartYCoord, this.needs[m]);
+            for (var m = 0; m < this.needs.length; m++) {
+                await statsSheetImage.print(font, needsCoordinates[0], needsStartYCoord, this.needs[m]);
                 needsStartYCoord += 40;
             }
 
             imagesToPublish.push(statsSheetImage);
-
-
-
 
             for (var j = 0; j < imagesToPublish.length; j++) {
                 let image = imagesToPublish[j];

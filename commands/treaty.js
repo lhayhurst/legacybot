@@ -4,7 +4,7 @@ const DbUtil = require('./dbutil');
 
 class TreatyCommand extends Command {
     constructor() {
-        super('treaty', {
+        super('treaty command', {
             aliases: ['treaty', 't'],
             split: 'quoted',
             args: [

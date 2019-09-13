@@ -3,7 +3,7 @@ const DbUtil = require('./dbutil');
 
 class NeedCommand extends Command {
     constructor() {
-        super('need_command', {
+        super('need command', {
             aliases: ['need', 'n'],
             split: 'quoted',
             args: [

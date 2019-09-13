@@ -4,7 +4,7 @@ const DbUtil = require('./dbutil');
 
 class SurplusCommand extends Command {
     constructor() {
-        super('surplus_command', {
+        super('surplus command', {
             aliases: ['surplus', 's'],
             split: 'quoted',
             args: [

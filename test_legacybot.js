@@ -79,18 +79,6 @@ describe('process ping bot command', () => {
     });
 });
 
-describe('process new-family bot command', () => {
-    it('can process a new family bot command', () => {
-        let commandArgs = {
-            "playbook": "The Cultivator",
-            "name": "Duhnah"
-        };
-
-        let reply = NewFamilyCommand.reply( commandArgs );
-        assert.equal( reply , `I created a new family named "${commandArgs.name}" with unsupported playbook "${commandArgs.playbook}". If you run /set_family "${commandArgs.name}" you can take on the role of this new family!`);
-    });
-});
-
 describe('do treaty stuff', () => {
     it('can give and receive treaties for two families', () => {
         let fam1 = new FamilyPlaybook("The Cultivators", 1);

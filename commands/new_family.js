@@ -1,40 +1,9 @@
 const {Command} = require('discord-akairo');
-const FamilyPlaybook = require('../family_playbook');
-const {db} = require('../bot')
-
-class NewFamilyCommandReply {
-    constructor(args, guildId) {
-        this.args = args;
-        let newFam = new FamilyPlaybook(this.args.playbook, guildId  );
-        newFam.name = this.args.name;
-        this.newFamily = newFam;
-    }
-
-    get reply() {
-
-        let supportString = null;
-        if (this.args.playbook in FamilyPlaybook.playbooks() === false) {
-            supportString = 'unsupported';
-        } else {
-            supportString = 'supported';
-        }
-        let ret = `I created a new family named "${this.newFam.name}" with ${supportString} playbook "${this.newFam.playbook}". If you run /set_family "${this.newFam.name}" you can take on the role of this new family!`;
-        return ret;
-    }
-
-    get newFamily() {
-        return this.newFam;
-    }
-
-    set newFamily(family) {
-        this.newFam = family;
-    }
-
-}
+const DbUtil = require('./dbutil');
 
 class NewFamilyCommand extends Command {
     constructor() {
-        super('newfam', {
+        super('new family command', {
             aliases: ['new-family', 'nf'],
             split: 'sticky',
             args: [
@@ -58,31 +27,37 @@ class NewFamilyCommand extends Command {
         return new NewFamilyCommandReply(args).reply;
     }
 
-    exec(message, args) {
+    async doexec(message, args) {
         let guild_id = message.guild.id;
-        let newFamilyCommandReply = new NewFamilyCommandReply(args, guild_id );
-        if ( args.name == null ) {
-            return message.reply( `Please provide a --name="your family's name" parameter!`);
+        if (args.name == null || args.playbook == null ) {
+            return message.reply(`Usage: /nf -p="playbook name" -n="family name"`);
         }
-        db.find({ family_name : args.name, guild_id: guild_id }).then((docs) => {
-            if (docs.length === 0) { //its a new family!
-                db.insert(newFamilyCommandReply.newFamily)
-                    .then( () => {
-                        console.log("inserted ok");
-                    })
-                    .catch( (err) => {
-                        console.log(`insert failed! ${err}`);
-                    });
-                return message.reply(newFamilyCommandReply.reply);
-            }
-            else { //it already exists, just let the user know
-                let insertedRec = docs[0];
-                let vivifiedFamily = FamilyPlaybook.fromNedbDocument(insertedRec);
-                return message.reply(`That family already exists, here is its info: ${JSON.stringify(vivifiedFamily)}`);
-            }
-        }).catch((err) => {
-            return message.reply(`Something terrible happened: ${err}`);
-        });
+
+        //check to see if this family name is already in use
+        let existingFamily = await DbUtil.get_family(args.name, guild_id);
+        if ( existingFamily ) {
+            return message.reply(`A family with the name "${existingFamily.name}" is already in play for this guild, please pick another name!"`);
+        }
+
+        //check to see if this playbook name is already in use
+        let existingPlaybook = await DbUtil.get_family_by_playbook(args.playbook, guild_id);
+        if ( existingPlaybook ) {
+            return message.reply(`A family with the playbook "${args.playbook}" is already in play for this guild, please pick another playbook!"`);
+        }
+
+        //check to see if this user already has a family
+        let user_id = message.member.user.id;
+        let ownerFamily = await DbUtil.get_users_family(user_id, guild_id);
+        if (ownerFamily !== null) {
+            return message.reply(`You have already set your family to the family with the name "${ownerFamily.name}". Please drop that family before taking on a new one!`);
+        }
+
+        //we're good to go. insert the new family
+        let retMessage = await DbUtil.insert_family( user_id, guild_id, args.playbook, args.name );
+        return message.reply(retMessage);
+    }
+    exec(message, args) {
+        return this.doexec(message, args);
     }
 }
 

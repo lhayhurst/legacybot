@@ -13,7 +13,7 @@ class PingCommandReply {
 
 class PingCommand extends Command {
     constructor() {
-        super('ping', {
+        super('ping command', {
             aliases: ['ping']
         });
     }

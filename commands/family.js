@@ -6,7 +6,7 @@ const Discord = require('discord.js');
 
 class FamiliesCommand extends Command {
     constructor() {
-        super('families', {
+        super('family command', {
             aliases: ['family', 'f'],
             split: 'quoted',
             args: [

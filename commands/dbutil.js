@@ -24,6 +24,18 @@ class DbUtil {
 
     }
 
+    static async get_family_by_playbook(playbook_name, guild_id) {
+        return await db.find({family_playbook: playbook_name, guild_id: guild_id}).then((docs) => {
+            if (docs.length === 0) { //not found
+                return null;
+            }
+            return FamilyPlaybook.fromNedbDocument(docs[0]);
+        }).catch((err) => {
+            return null;
+        });
+
+    }
+
     static async get_users_family(user_id, guild_id) {
         return await db.find({user_id: user_id, guild_id: guild_id}).then((docs) => {
             if (docs.length === 0) { //not found
@@ -33,6 +45,20 @@ class DbUtil {
         }).catch((err) => {
             return null;
         });
+    }
+
+    static async insert_family( user_id, guild_id, playbook_name, family_name ) {
+        let newFamily = new FamilyPlaybook( playbook_name, guild_id );
+        newFamily.user = user_id;
+        newFamily.name = family_name;
+
+        return await db.insert(newFamily)
+            .then(() => {
+                console.log(`created new family: ${JSON.stringify(newFamily)}`);
+            })
+            .catch((err) => {
+                console.log(`insert failed! ${err}`);
+            });
     }
 
 }

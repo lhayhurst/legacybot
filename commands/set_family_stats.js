@@ -15,7 +15,7 @@ class SetFamilyStatsCommandReply {
 
 class SetFamilyStatsCommand extends Command {
     constructor() {
-        super('setfamstats', {
+        super('set family stands command', {
             aliases: ['set-family-stats', 'sfs'],
             match: 'none',
             args: [

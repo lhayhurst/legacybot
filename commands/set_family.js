@@ -15,7 +15,7 @@ class SetFamilyCommandReply {
 
 class SetFamilyCommand extends Command {
     constructor() {
-        super('setfam', {
+        super('set family command', {
             aliases: ['set-family', 'sf'],
             split: 'quoted',
             args: [
