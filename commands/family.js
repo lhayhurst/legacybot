@@ -37,15 +37,14 @@ class FamiliesCommand extends Command {
             }
             docs.forEach((item, index) => {
                 let family = FamilyPlaybook.fromNedbDocument(item);
-                console.log(family);
                 async function visitFamily() {
-                    if (args.name == null || args.name === family.name ) {
-                        await family.visit(richEmbed, args.all);
-                    }
+                    await family.visit(richEmbed, args.all);
                 }
-                visitFamily().then( function() {
-                    return message.reply(richEmbed);
-                });
+                if ( args.all || family.user_id == message.member.user.id ) {
+                    visitFamily().then(function () {
+                        return message.reply(richEmbed);
+                    });
+                }
             });
         }).catch((err) => {
             return message.reply(`Something terrible happened: ${err}`);

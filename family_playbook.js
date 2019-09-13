@@ -66,7 +66,8 @@ class FamilyPlaybook {
             'family_data': [361, 880],
             'mood': [172, 880],
             'treaty': [231, 97],
-            'family_name': [849, 153]
+            'family_name': [849, 153],
+            'treaties': { start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203] }
         };
         return print_coordinates[stat];
     }
@@ -238,7 +239,30 @@ class FamilyPlaybook {
                 let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK);
                 await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 450);
             }
+
+            // start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203] }
+            let family_treaty_coordinates = FamilyPlaybook.get_print_coordinates('treaties');
+            let treatyStartCoord = family_treaty_coordinates.start;
+            let yoursOnThemCoord = family_treaty_coordinates.yoursOnThem;
+            let theirsOnYouCoord = family_treaty_coordinates.theirsOnYou;
+
+            let startYCoordinate = treatyStartCoord[1];
+            let treatyFamilies = Object.keys(this.treaties);
+            for( var k = 0; k < treatyFamilies.length; k++ ) {
+                let familyName = treatyFamilies[k];
+                let treaties = this.treaties[ familyName ];
+                let yoursOnThem = treaties.me_on;
+                let themOnMe = treaties.on_me;
+                await statsSheetImage.print(font, treatyStartCoord[0], startYCoordinate, familyName );
+                await statsSheetImage.print(font, yoursOnThemCoord[0], startYCoordinate, yoursOnThem );
+                await statsSheetImage.print(font, theirsOnYouCoord[0], startYCoordinate, themOnMe );
+                startYCoordinate += 40;
+
+            }
+
             imagesToPublish.push(statsSheetImage);
+
+
 
 
             for (var j = 0; j < imagesToPublish.length; j++) {
