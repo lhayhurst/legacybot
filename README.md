@@ -16,6 +16,9 @@ All commands to Legacybot begin with a forward slash "/".  Legacybot supports th
  /`set-family` or `/sf`    | family name      |   `/set-family "Duhnah"` | Associates a user with the named family. This won't delete the family. |
 | `/set-family-stats` or `/sfs` | `s=<INT> r=<INT> g=<INT> m=<INT> d=<INT> t=<INT>`      |    `/sfs g=-1` | Sets the named stat, with the short-hand `r` for `reach`, `g` for `grasp`, `s` for `sleight`, `d` for data, and `t` for `tech`. The stat will be set for the family associated with the user.|
 | `/treaty` or `/t` | `give` or `get` or `spend` `"Family Name"`  |  `/t give "The Faith"`, `/t get "The Faith"` , `/t spend "The Faith" ` | For every other family in the game, you can have Treaty on them, and they can have Treaty on you. To get Treaty on them, use the `get` command. To give them treaty on you, use the `give` command. To spend treaty with them, use `spend`. To see your current treaties, just type in  `/t`. |
+| `/surplus` or `/s` | `add` or `remove `"Resource Name"`  |  `/s add "Barter Goods"` ` | Adds or removes a Surplus |
+| `/need` or `/n` | `add` or `remove` `"Resource Name"`  |  `/ add "Barter Goods"` | Adds or removes a Need |
+
 
 
 ### Commands To Develop
@@ -28,7 +31,6 @@ All commands to Legacybot begin with a forward slash "/".  Legacybot supports th
 | /set-character-stats or /scs | steel=<INT> force=<INT> lore=<INT> sway=<INT> |    /scs force=1 lore=0 sway=-1 | Sets the named stat. The stat will be set for the character associated with the user.|
 |/drop-character      |  character name     |   /dump-character "Max" | Disassociates a user with the named character. This won't delete the character. |
 | /delete-character | character name | /delete-character "Max" | Deletes the named character. Legacybot will ask you if you are sure about this? Only the Discord user associated with a character can run this command.
-| /stat| stat-name stat-value      |    /stat reach 1 | Sets the named stat. If the stat is "reach", "grasp", or "sleight", the stat will be set for the family associated with the user. If the stat is "force", "lore", "steel", or "sway", it will be  set for the character associated with the user.|
 | /roll|  --a --d  --b=<int>  |  /roll --a --b=1 |  Rolls the dice for your assumed Family or Character, taking into account all their bonuses. `/r --a --b=1` will roll with advantage and +1 modifier. `/r --d` will roll with disadvantage. |
 
 ## Development

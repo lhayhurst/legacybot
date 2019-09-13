@@ -67,7 +67,9 @@ class FamilyPlaybook {
             'mood': [172, 880],
             'treaty': [231, 97],
             'family_name': [849, 153],
-            'treaties': { start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203] }
+            'treaties': { start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203] },
+            'surpluses': [50, 559],
+            'needs': [348, 559]
         };
         return print_coordinates[stat];
     }
@@ -88,6 +90,8 @@ class FamilyPlaybook {
         this.guild_id = guild_id;
         this.advantagesRolls = {};
         this.treaties = {};
+        this.surpluses = [];
+        this.needs = [];
     }
 
     get playbook() {
@@ -108,6 +112,8 @@ class FamilyPlaybook {
         ret.guild_id = document.guild_id;
         ret.user = document.user;
         ret.treaties = document.treaties;
+        ret.needs = document.needs;
+        ret.surpluses = document.surpluses;
 
         if (document.user_id) {
             ret.user_id = document.user_id;
@@ -132,6 +138,49 @@ class FamilyPlaybook {
     get username() {
         return this.playbook_username;
     }
+
+    addSurplus(resource) {
+        if( ! this.surpluses ) {
+            this.surpluses = [];
+        }
+
+        if( this.surpluses.indexOf(resource) === -1 ) {
+            this.surpluses.push( resource );
+        }
+    }
+
+    removeSurplus(resource) {
+        if( ! this.surpluses ) {
+            this.surpluses = [];
+        }
+
+        let index = this.surpluses.indexOf(resource);
+        if (index > -1) {
+            this.surpluses.splice(index, 1);
+        }
+    }
+
+    addNeed(resource) {
+        if( ! this.needs ) {
+            this.needs = [];
+        }
+
+        if( this.needs.indexOf(resource) === -1) {
+            this.needs.push( resource );
+        }
+    }
+
+    removeNeed(resource) {
+        if( ! this.needs ) {
+            this.needs = [];
+        }
+
+        let index = this.needs.indexOf(resource);
+        if (index > -1) {
+            this.needs.splice(index, 1);
+        }
+    }
+
 
     initTreatyFor(targetFamily) {
         if (!this.treaties[targetFamily.name]) {
@@ -236,11 +285,10 @@ class FamilyPlaybook {
 
             let treaty_coordinates = FamilyPlaybook.get_treaty_coordinates_and_text(this.playbook);
             if (treaty_coordinates) {
-                let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK);
-                await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 450);
+                let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+                await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 425);
             }
 
-            // start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203] }
             let family_treaty_coordinates = FamilyPlaybook.get_print_coordinates('treaties');
             let treatyStartCoord = family_treaty_coordinates.start;
             let yoursOnThemCoord = family_treaty_coordinates.yoursOnThem;
@@ -258,6 +306,21 @@ class FamilyPlaybook {
                 await statsSheetImage.print(font, theirsOnYouCoord[0], startYCoordinate, themOnMe );
                 startYCoordinate += 40;
 
+            }
+
+            //and finally the surpluses and needs
+            let surplusesCoordinates = FamilyPlaybook.get_print_coordinates('surpluses');
+            let surplusStartYCoord = surplusesCoordinates[1];
+            for( var l = 0; l < this.surpluses.length; l++ ) {
+                await statsSheetImage.print( font, surplusesCoordinates[0], surplusStartYCoord, this.surpluses[l]);
+                surplusStartYCoord += 40;
+            }
+
+            let needsCoordinates = FamilyPlaybook.get_print_coordinates('needs');
+            let needsStartYCoord = needsCoordinates[1];
+            for( var m = 0; m < this.needs.length; m++ ) {
+                await statsSheetImage.print( font, needsCoordinates[0], needsStartYCoord, this.needs[m]);
+                needsStartYCoord += 40;
             }
 
             imagesToPublish.push(statsSheetImage);
