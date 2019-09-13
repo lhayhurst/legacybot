@@ -7,6 +7,18 @@ class DbUtil {
             guild_id: family.guild_id,
             family_name: family.name,
         }, {$set: {[updateKey]: updateValue}}, []).then((updatedDocs) => {
+            return updatedDocs;
+        }).catch((err) => {
+            return err;
+        });
+    }
+
+    static async update_family_multiple_values(family, updateValues) {
+        return await db.update({
+            guild_id: family.guild_id,
+            family_name: family.name,
+        }, {$set: updateValues }, []).then((updatedDocs) => {
+            return updatedDocs;
         }).catch((err) => {
             return err;
         });
@@ -49,7 +61,7 @@ class DbUtil {
 
     static async insert_family( user_id, guild_id, playbook_name, family_name ) {
         let newFamily = new FamilyPlaybook( playbook_name, guild_id );
-        newFamily.user = user_id;
+        newFamily.user_id = user_id;
         newFamily.name = family_name;
 
         return await db.insert(newFamily)
