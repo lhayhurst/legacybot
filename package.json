@@ -1,6 +1,6 @@
 {
   "name": "legacybot",
-  "version": "1.0.0",
+  "version": "0.0.13",
   "description": "A bot to help play the Legacy: Life Among the Ruins role playing game",
   "dependencies": {
     "config": "^3.2.2",
@@ -10,8 +10,7 @@
     "nedb": "^1.8.0",
     "nedb-promises": "^4.0.0",
     "mocha": "^6.2.0",
-    "jimp": "^0.8.0",
-    "uuid": "^3.3.3"
+    "jimp": "^0.8.0"
   },
   "eslintConfig": {
     "env": {
@@ -23,7 +22,7 @@
     "test": "mocha test_legacybot.js",
     "start": "node index.js"
   },
-  "keywords": [],
+  "keywords": ["Legacy", "Discord", "Bot", "Role-Playing Game"],
   "author": "",
   "license": "ISC"
 }

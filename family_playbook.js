@@ -1,5 +1,5 @@
 const Jimp = require('jimp');
-const uuidv1 = require('uuid/v1');
+
 
 class FamilyPlaybook {
 
@@ -7,7 +7,7 @@ class FamilyPlaybook {
         return {
             'The Synthetic Hive': {
                 playbookName: 'The Synthetic Hive',
-                familySheetImage: 'assets/synthetic-hive.png',
+                familySheetImage: 'assets/families/synthetic-hive.png',
                 treatyRules: `When you spend time and effort showing another group how to use their technology better, gain 1-Treaty on them`,
                 statsChoices: [
                     {
@@ -57,7 +57,7 @@ class FamilyPlaybook {
         };
     }
 
-    static get_print_coordinates ( stat ) {
+    static get_print_coordinates(stat) {
         let print_coordinates = {
             'reach': [148, 38],
             'grasp': [365, 38],
@@ -73,12 +73,12 @@ class FamilyPlaybook {
 
     static get_treaty_coordinates_and_text(playbook_name) {
         let playbooks = FamilyPlaybook.playbooks();
-        if (! playbooks[playbook_name]) {
+        if (!playbooks[playbook_name]) {
             return null;
         }
         let coordinates = FamilyPlaybook.get_print_coordinates('treaty');
         let text = playbooks[playbook_name].treatyRules;
-        return { coordinates: coordinates, treaty_text: text };
+        return {coordinates: coordinates, treaty_text: text};
 
     }
 
@@ -86,6 +86,7 @@ class FamilyPlaybook {
         this.family_playbook = playbook;
         this.guild_id = guild_id;
         this.advantagesRolls = {};
+        this.treaties = {};
     }
 
     get playbook() {
@@ -105,11 +106,11 @@ class FamilyPlaybook {
         ret.advantages_rolls = document.advantages_rolls;
         ret.guild_id = document.guild_id;
         ret.user = document.user;
+        ret.treaties = document.treaties;
 
         if (document.user_id) {
             ret.user_id = document.user_id;
             ret.username = document.username;
-
         }
 
         return ret;
@@ -131,7 +132,65 @@ class FamilyPlaybook {
         return this.playbook_username;
     }
 
-    async visit(richEmbed, summary_only=true) {
+    initTreatyFor(targetFamily) {
+        if (!this.treaties[targetFamily.name]) {
+            this.treaties[targetFamily.name] = {}
+            this.treaties[targetFamily.name].on_me = 0;
+            this.treaties[targetFamily.name].me_on = 0;
+        }
+    }
+
+
+    giveTreatyTo(targetFamily) {
+        this.initTreatyFor(targetFamily);
+        targetFamily.initTreatyFor(this);
+        this.treaties[targetFamily.name].on_me +=1;
+        targetFamily.treaties[this.name].me_on +=1;
+    }
+
+    receiveTreatyFrom(targetFamily) {
+        this.initTreatyFor(targetFamily);
+        targetFamily.initTreatyFor(this);
+        this.treaties[targetFamily.name].me_on += 1;
+        targetFamily.treaties[this.name].on_me +=1;
+
+    }
+
+    hasTreatyWith(targetFamily) {
+        let treaties = this.treaties[targetFamily.name];
+        if (! treaties) {
+            return false;
+        }
+        if( !( treaties.on_me > 0 || treaties.me_on > 0 ) ) {
+            return false;
+        }
+        return true;
+    }
+
+    spendsTreatyWith(targetFamily) {
+        if ( this.hasTreatyWith(targetFamily)) {
+            this.treaties[targetFamily.name].me_on--;
+            targetFamily.treaties[this.name].on_me--;
+        }
+    }
+
+    visitTreaties(richEmbed) {
+        richEmbed.setTitle('Your Treaties');
+        if ( this.treaties ) {
+            let families = Object.keys(this.treaties);
+            for (var i = 0; i < families.length; i++) {
+                let family = families[i];
+                let treaties = this.treaties[family];
+                richEmbed
+                    .addField("Family Name", family, true)
+                    .addField("Me on Them", treaties.me_on, true)
+                    .addField("Them on Me", treaties.on_me, true)
+                    .addBlankField();
+            }
+        }
+    }
+
+    async visit(richEmbed, summary_only = true) {
         if (summary_only) {
             richEmbed
                 .addField('Family Name', this.name, true)
@@ -145,28 +204,28 @@ class FamilyPlaybook {
             let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
 
             //check to see if a name page should be inserted (if playing one of the stock families)
-            if( playbooks[this.playbook]) {
+            if (playbooks[this.playbook]) {
                 let pb = playbooks[this.playbook];
                 let playbookSheetPath = pb.familySheetImage;
                 let playbookSheetImage = await Jimp.read(playbookSheetPath);
                 let name_coordinates = FamilyPlaybook.get_print_coordinates('family_name');
                 await playbookSheetImage.print(font, name_coordinates[0], name_coordinates[1], this.name);
-                imagesToPublish.push( playbookSheetImage );
+                imagesToPublish.push(playbookSheetImage);
             }
 
-            let statsSheetImage = await Jimp.read('assets/family-sheet-2.png');
+            let statsSheetImage = await Jimp.read('assets/families/family-sheet-2.png');
 
 
             let stats = [
-                { key: 'reach', 'val': this.reach },
-                { key: 'grasp', 'val': this.grasp },
-                { key: 'sleight', 'val': this.sleight },
-                { key: 'mood', 'val': this.mood },
-                { key: 'family_data', 'val': this.data_stat },
-                { key: 'tech', 'val': this.tech },
+                {key: 'reach', 'val': this.reach},
+                {key: 'grasp', 'val': this.grasp},
+                {key: 'sleight', 'val': this.sleight},
+                {key: 'mood', 'val': this.mood},
+                {key: 'family_data', 'val': this.data_stat},
+                {key: 'tech', 'val': this.tech},
 
             ];
-            for( var i = 0; i < stats.length; i++ ) {
+            for (var i = 0; i < stats.length; i++) {
                 let stat_item = stats[i];
                 if (stat_item.val) {
                     let coordinates = FamilyPlaybook.get_print_coordinates(stat_item.key);
@@ -175,14 +234,14 @@ class FamilyPlaybook {
             }
 
             let treaty_coordinates = FamilyPlaybook.get_treaty_coordinates_and_text(this.playbook);
-            if ( treaty_coordinates ) {
+            if (treaty_coordinates) {
                 let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK);
-                await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 450 );
+                await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 450);
             }
             imagesToPublish.push(statsSheetImage);
 
 
-            for( var j = 0; j < imagesToPublish.length; j++ ) {
+            for (var j = 0; j < imagesToPublish.length; j++) {
                 let image = imagesToPublish[j];
                 let imgBuf = await image.getBufferAsync(Jimp.AUTO);
                 let imageName = `image-${j}.png`
@@ -218,7 +277,7 @@ class FamilyPlaybook {
     }
 
     get mood() {
-       return this.family_mood;
+        return this.family_mood;
     }
 
     set mood(mood) {

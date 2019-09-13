@@ -18,7 +18,7 @@ class NewFamilyCommandReply {
         } else {
             supportString = 'supported';
         }
-        let ret = `I created a new family named "${this.newFam.name}" with ${supportString} playbook "${this.newFam.playbook}". If you run /set_family "${this.newFam.name}" you can take on the role of this new family! `;
+        let ret = `I created a new family named "${this.newFam.name}" with ${supportString} playbook "${this.newFam.playbook}". If you run /set_family "${this.newFam.name}" you can take on the role of this new family!`;
         return ret;
     }
 

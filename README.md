@@ -11,10 +11,12 @@ All commands to Legacybot begin with a forward slash "/".  Legacybot supports th
 | Command/Alias        | Args           | Example  | Notes |
 | ------------- |:-------------:| -----:|:----------:|
 | `/help` or `/h` or @Legacybot   | none | `/h`  | Ask the bot for help. |  
-| `/family` or `/f`   | `name='<STRING>'` | `/f`, `/f name="Duhnah"`, `/f all`| A `/f` command will get the family associated with the player (if any; see the `set-family` command). A `/f all` command  will list all the families currently in play. `/f name="Duhnah"` command will list the family sheet for the family with the name "Duhnah".  |  
+| `/family` or `/f`   | `name='<STRING>'` | `/f`, `/f name="Duhnah"`, `/f --all`| A `/f` command will get the family associated with the player (if any; see the `set-family` command). A `/f --all` command  will list all the families currently in play for your guild. `/f name="Duhnah"` command will list the family sheet for the family with the name "Duhnah".  |  
 | `/new-family` or `/nf`   | `-p="Playbook Name"` `-n="Family Name"`| `/new-family -p="Cultivator of the New Flesh" -n="Duhnah"`  | This will create a new family. If a family already exists with this name, nothing will happen (all family names must be unique).  By creating a new family, that family is not assigned to the Discord user unless the user adds the family. The playbook must be one of the core Legacy family classes; see ["Supported Family Playbooks"](#supported-family-playbooks) section below. | 
  /`set-family` or `/sf`    | family name      |   `/set-family "Duhnah"` | Associates a user with the named family. This won't delete the family. |
 | `/set-family-stats` or `/sfs` | `s=<INT> r=<INT> g=<INT> m=<INT> d=<INT> t=<INT>`      |    `/sfs g=-1` | Sets the named stat, with the short-hand `r` for `reach`, `g` for `grasp`, `s` for `sleight`, `d` for data, and `t` for `tech`. The stat will be set for the family associated with the user.|
+| `/treaty` or `/t` | `give` or `get` or `spend` `"Family Name"`  |  `/t give "The Faith"`, `/t get "The Faith"` , `/t spend "The Faith" ` | For every other family in the game, you can have Treaty on them, and they can have Treaty on you. To get Treaty on them, use the `get` command. To give them treaty on you, use the `give` command. To spend treaty with them, use `spend`. To see your current treaties, just type in  `/t`. |
+
 
 ### Commands To Develop
 | Command        | Args           | Example  | Notes |

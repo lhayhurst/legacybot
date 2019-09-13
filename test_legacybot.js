@@ -72,30 +72,6 @@ describe('persist family playbook ', () => {
     });
 });
 
-describe('vivify family playbook ', () => {
-    it('can persist a family playbook', () => {
-        let familyName = 'Cultivator';
-        let playbookName = 'duhnah';
-        let family = new FamilyPlaybook(playbookName);
-        family.name = familyName;
-        family.reach = 1;
-        let mydb = db.create();
-        mydb.insert(family);
-        mydb.find({ family_name : familyName }).then((docs) => {
-            assert.ok(docs.length === 1);
-            let insertedRec = docs[0];
-            // rebuild it
-            let vivifiedFamily = FamilyPlaybook.fromNedbDocument(insertedRec);
-            assert.ok(vivifiedFamily instanceof FamilyPlaybook);
-            assert.ok(vivifiedFamily.playbook === insertedRec.family_playbook);
-            assert.ok(vivifiedFamily.name === insertedRec.family_name);
-            assert.ok(vivifiedFamily.reach === insertedRec.family_reach);
-        }).catch(() => {
-            assert.fail();
-        });
-    });
-});
-
 describe('process ping bot command', () => {
     it('can process a ping bot command', () => {
         let commandText = '/ping';
@@ -111,10 +87,42 @@ describe('process new-family bot command', () => {
         };
 
         let reply = NewFamilyCommand.reply( commandArgs );
-        assert.equal( reply , `I created a new family named "${commandArgs.name}" with unsupported playbook "${commandArgs.playbook}"`);
+        assert.equal( reply , `I created a new family named "${commandArgs.name}" with unsupported playbook "${commandArgs.playbook}". If you run /set_family "${commandArgs.name}" you can take on the role of this new family!`);
     });
 });
 
+describe('do treaty stuff', () => {
+    it('can give and receive treaties for two families', () => {
+        let fam1 = new FamilyPlaybook("The Cultivators", 1);
+        let fam2 = new FamilyPlaybook("The Hive", 1);
+
+        fam1.giveTreatyTo(fam2);
+        assert.ok(fam1.treaties[fam2.name]);
+        assert.equal(1, fam1.treaties[fam2.name].on_me );
+        assert.ok(fam2.treaties[fam1.name]);
+        assert.equal(1, fam2.treaties[fam1.name].me_on );
+
+        assert.equal(true, fam1.hasTreatyWith(fam2));
+        assert.equal(true, fam2.hasTreatyWith(fam1));
+
+        fam2.spendsTreatyWith(fam1);
+        assert.equal(0, fam2.treaties[fam1.name].me_on );
+        assert.ok(fam2.treaties[fam1.name]);
+        assert.equal(0, fam1.treaties[fam2.name].on_me );
+
+        assert.equal(false, fam1.hasTreatyWith(fam2));
+        assert.equal(false, fam2.hasTreatyWith(fam1));
+
+        fam1.receiveTreatyFrom(fam2);
+        assert.equal(true, fam1.hasTreatyWith(fam2));
+        assert.equal(true, fam2.hasTreatyWith(fam1));
+        assert.equal(1, fam1.treaties[fam2.name].me_on );
+        assert.equal(1, fam2.treaties[fam1.name].on_me );
+
+
+
+    });
+});
 
 
 
