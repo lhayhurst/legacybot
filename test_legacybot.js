@@ -101,11 +101,11 @@ describe('do treaty stuff', () => {
         assert.equal(false, fam1.hasTreatyWith(fam2));
         assert.equal(false, fam2.hasTreatyWith(fam1));
 
-        fam1.receiveTreatyFrom(fam2);
+        fam1.receiveTreatyFrom(fam2, 2);
         assert.equal(true, fam1.hasTreatyWith(fam2));
         assert.equal(true, fam2.hasTreatyWith(fam1));
-        assert.equal(1, fam1.treaties[fam2.name].me_on );
-        assert.equal(1, fam2.treaties[fam1.name].on_me );
+        assert.equal(2, fam1.treaties[fam2.name].me_on );
+        assert.equal(2, fam2.treaties[fam1.name].on_me );
 
 
 

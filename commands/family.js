@@ -11,6 +11,12 @@ class FamiliesCommand extends Command {
             split: 'quoted',
             args: [
                 {
+                    id: 'help',
+                    match: 'flag',
+                    prefix: '--h',
+                    default: null
+                },
+                {
                     id: 'name',
                     match: 'prefix',
                     prefix: '--name=',
@@ -27,7 +33,13 @@ class FamiliesCommand extends Command {
 
 
     exec(message, args) {
+        //| `/family` or `/f`   | `name='<STRING>'` | `/f`, `/f name="Duhnah"`, `/f --all`| A `/f` command will get the family associated with the player (if any; see the `set-family` command). A `/f --all` command  will list all the families currently in play for your guild. `/f name="Duhnah"` command will list the family sheet for the family with the name "Duhnah".  |
         let richEmbed = new Discord.RichEmbed();
+        if ( args.help ) {
+            richEmbed.addField("Usage: /family or /f [OPTIONS] [ARGS].");
+            richEmbed.addBlankField();
+            richEmbed.a
+        }
         if (args.all) {
             richEmbed.setTitle('Families Created So Far');
         }

@@ -262,18 +262,18 @@ class FamilyPlaybook {
     }
 
 
-    giveTreatyTo(targetFamily) {
+    giveTreatyTo(targetFamily, bonus=1) {
         this.initTreatyFor(targetFamily);
         targetFamily.initTreatyFor(this);
-        this.treaties[targetFamily.name].on_me += 1;
-        targetFamily.treaties[this.name].me_on += 1;
+        this.treaties[targetFamily.name].on_me += bonus;
+        targetFamily.treaties[this.name].me_on += bonus;
     }
 
-    receiveTreatyFrom(targetFamily) {
+    receiveTreatyFrom(targetFamily, bonus=1) {
         this.initTreatyFor(targetFamily);
         targetFamily.initTreatyFor(this);
-        this.treaties[targetFamily.name].me_on += 1;
-        targetFamily.treaties[this.name].on_me += 1;
+        this.treaties[targetFamily.name].me_on += bonus;
+        targetFamily.treaties[this.name].on_me += bonus;
 
     }
 

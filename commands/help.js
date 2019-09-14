@@ -12,7 +12,7 @@ class HelpCommand extends Command {
                     id: 'playbooks',
                     match: 'flag',
                     prefix: '-p',
-                    default: null
+                    default: null,
                 },
             ],
         });
@@ -23,7 +23,7 @@ class HelpCommand extends Command {
             return message.reply(`Here are some playbooks you can use. You can also make up your own! ${JSON.stringify(Object.keys(FamilyPlaybook.playbooks()))}.`)
         }
         else {
-            return message.reply( `Welcome to LegacyBot! You can learn more about this bot, and the commands it supports, by heading over to https://github.com/lhayhurst/legacybot/`)
+            return message.reply( `Welcome to LegacyBot! You can learn more about this bot, and the commands it supports, by heading over to https://github.com/lhayhurst/legacybot/blob/master/README.md`)
         }
     }
 }

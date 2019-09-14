@@ -17,7 +17,15 @@ class TreatyCommand extends Command {
                     id: 'family',
                     type: "string",
                     default: null
-                }
+                },
+                {
+                    id: 'bonus',
+                    match: 'prefix',
+                    prefix: '+',
+                    type: "int",
+                    default: null
+                },
+
             ]
         });
     }
@@ -54,14 +62,19 @@ class TreatyCommand extends Command {
         }
         let reply = "";
         let do_update = false;
+
+        let bonus = 1;
+        if (args.bonus ) { //user provided a custom bonus
+            bonus = parseInt(args.bonus, 10 );
+        }
+
         if (action === "give") {
-            ownerFamily.giveTreatyTo(targetFamily);
-            reply = `${ownerFamily.name} gave 1 Treaty to ${targetFamily.name}`;
+            ownerFamily.giveTreatyTo(targetFamily, bonus);
+            reply = `${ownerFamily.name} gave ${bonus}-Treaty to ${targetFamily.name}`;
             do_update = true;
         } else if (action === "get") {
-            ownerFamily.receiveTreatyFrom(targetFamily);
-            this.update_family(ownerFamily);
-            reply = `${ownerFamily.name} received 1 Treaty from ${targetFamily.name}`;
+            ownerFamily.receiveTreatyFrom(targetFamily, bonus);
+            reply = `${ownerFamily.name} received ${bonus}-Treaty from ${targetFamily.name}`;
             do_update = true;
         } else { //spend
             if (!ownerFamily.hasTreatyWith(targetFamily)) {

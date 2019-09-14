@@ -66,10 +66,10 @@ class DbUtil {
 
         return await db.insert(newFamily)
             .then(() => {
-                console.log(`created new family: ${JSON.stringify(newFamily)}`);
+                return(`created new family: ${JSON.stringify(newFamily)}`);
             })
             .catch((err) => {
-                console.log(`insert failed! ${err}`);
+                return(`insert failed! ${err}`);
             });
     }
 
