@@ -19,19 +19,16 @@ All commands to Legacybot begin with a forward slash "/".  Legacybot supports th
 | `/treaty` or `/t` | `give` or `get` or `spend` `"Family Name"`  |  `/t give "The Faith"`, `/t get "The Faith"` , `/t spend "The Faith" ` | For every other family in the game, you can have Treaty on them, and they can have Treaty on you. To get Treaty on them, use the `get` command. To give them treaty on you, use the `give` command. To spend treaty with them, use `spend`. To see your current treaties, just type in  `/t`. |
 | `/surplus` or `/s` | `add` or `remove `"Resource Name"`  |  `/s add "Barter Goods"` ` | Adds or removes a Surplus |
 | `/need` or `/n` | `add` or `remove` `"Resource Name"`  |  `/ add "Barter Goods"` | Adds or removes a Need |
-
-
+| `/roll`  | `-a` `-d`  `-b=<INT>` `+STAT` |  `/roll -a -b=1`, /roll -d +Sleight |  Rolls the dice for your assumed Family or Character. The roll command takes an optional `-a` or `-d` argument or advantage or disadvantage, respectively. If you provide a +STAT argument, it'll add that stat bonus to your roll; for example, `/roll +s` or `/roll +sleight` or `/roll +Sleight` will role with Sleight modifier. Finally, you can provide a `b=<INT>` to set an optional bonus, for example `b=1`. Note that your bonuses will net out; for example, if you have a -1 sleight and a +1 bonus, it will net out to zero. |
 
 ### Commands To Develop
 | Command        | Args           | Example  | Notes |
 | ------------- |:-------------:| -----:|:----------:|
-| /delete-family | family name | /delete-family "Duhnah" | Deletes the named family. Legacybot will ask you if you are sure about this. Only the Discord user associated with a family can run this command.
 | /new-character     | character class=class name, name=character name | /new-character class="The Reaver" name="Max"  | This will create a new character. If a family already exists with this name, nothing will happen (all family names must be unique).  By creating a new family, that family is assigned to the Discord user unless the user dumps the family. The class must be one of the core Legacy family classes; see the ["Supported Classes"](#supported-classes) section below. | |
 |/add-character      | character name      |   /add-character "Max" | Associates a user with the named character.  |
 | /set-character-stats or /scs | steel=<INT> force=<INT> lore=<INT> sway=<INT> |    /scs force=1 lore=0 sway=-1 | Sets the named stat. The stat will be set for the character associated with the user.|
 |/drop-character      |  character name     |   /dump-character "Max" | Disassociates a user with the named character. This won't delete the character. |
 | /delete-character | character name | /delete-character "Max" | Deletes the named character. Legacybot will ask you if you are sure about this? Only the Discord user associated with a character can run this command.
-| /roll|  --a --d  --b=<int>  |  /roll --a --b=1 |  Rolls the dice for your assumed Family or Character, taking into account all their bonuses. `/r --a --b=1` will roll with advantage and +1 modifier. `/r --d` will roll with disadvantage. |
 
 ## Development
 First clone this Github repo locally.
