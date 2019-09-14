@@ -10,7 +10,7 @@ All commands to Legacybot begin with a forward slash "/".  Legacybot supports th
 ### Legacy Bot Commands 
 | Command/Alias        | Args           | Example  | Notes |
 | ------------- |:-------------:| -----:|:----------:|
-| `/help` or `/h` or @Legacybot   | none | `/h`  | Ask the bot for help. |  
+| `/help` or `/h` or @Legacybot   | -p | `/h` , `/h -p` | Ask the bot for help. If you give it a `-p` flag it will print out the supported playbooks that come with the bot. |  
 | `/family` or `/f`   | `name='<STRING>'` | `/f`, `/f name="Duhnah"`, `/f --all`| A `/f` command will get the family associated with the player (if any; see the `set-family` command). A `/f --all` command  will list all the families currently in play for your guild. `/f name="Duhnah"` command will list the family sheet for the family with the name "Duhnah".  |  
 | `/new-family` or `/nf`   | `p="Playbook Name"` `n="Family Name"`| `/new-family p="Cultivator of the New Flesh" n="Duhnah"`  | This will create a new family. If a family already exists with this name, nothing will happen (all family names must be unique).  By creating a new family, that family is not assigned to the Discord user unless the user adds the family. The playbook must be one of the core Legacy family classes; see ["Supported Family Playbooks"](#supported-family-playbooks) section below. | 
  /`set-family` or `/sf`    | family name      |   `/set-family "Duhnah"` | Associates a user with the named family. This won't delete the family. |
