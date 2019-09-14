@@ -80,9 +80,14 @@ class TreatyCommand extends Command {
             if (!ownerFamily.hasTreatyWith(targetFamily)) {
                 reply = `No treaty spent: ${ownerFamily.name} does not have treaty with ${targetFamily.name}`;
             }
-            ownerFamily.spendsTreatyWith(targetFamily);
-            do_update = true;
-            reply = `${ownerFamily.name} spent 1 Treaty with ${targetFamily.name}`;
+            else if( !ownerFamily.hasEnoughTreaty( targetFamily, bonus ) ) {
+                reply = `You do not have enough treaty with "${targetFamily.name}" to spend ${bonus} treaty`;
+            }
+            else {
+                ownerFamily.spendsTreatyWith(targetFamily, bonus);
+                do_update = true;
+                reply = `${ownerFamily.name} spent ${bonus}-Treaty with ${targetFamily.name}`;
+            }
         }
         if (do_update) {
             await DbUtil.update_family(targetFamily, 'treaties', targetFamily.treaties);

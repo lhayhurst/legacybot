@@ -299,10 +299,21 @@ class FamilyPlaybook {
         return true;
     }
 
-    spendsTreatyWith(targetFamily) {
+    hasEnoughTreaty( targetFamily, bonus ) {
+        let treaties = this.treaties[targetFamily.name];
+        if (!treaties) {
+            return false;
+        }
+        if ( treaties.me_on < bonus)  {
+            return false;
+        }
+        return true;
+    }
+
+    spendsTreatyWith(targetFamily, bonus=1) {
         if (this.hasTreatyWith(targetFamily)) {
-            this.treaties[targetFamily.name].me_on--;
-            targetFamily.treaties[this.name].on_me--;
+            this.treaties[targetFamily.name].me_on -= bonus;
+            targetFamily.treaties[this.name].on_me -= bonus;
         }
     }
 
