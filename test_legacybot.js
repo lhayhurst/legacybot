@@ -107,7 +107,17 @@ describe('do treaty stuff', () => {
         assert.equal(2, fam1.treaties[fam2.name].me_on );
         assert.equal(2, fam2.treaties[fam1.name].on_me );
 
+    });
+});
 
+describe( 'find stock playbook', () => {
+    it( 'can find a stock playbook', () => {
+       let pbName = "Starfarers";
+       let stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
+       assert.equal('The Stranded Starfarers', stockPlaybook );
+       pbName = "Stairfarers";
+       stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
+       assert.equal( null, stockPlaybook );
 
     });
 });

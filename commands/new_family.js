@@ -1,5 +1,6 @@
 const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
+const FamilyPlaybook = require('../family_playbook');
 
 class NewFamilyCommand extends Command {
     constructor() {
@@ -37,6 +38,12 @@ class NewFamilyCommand extends Command {
         let existingFamily = await DbUtil.get_family(args.name, guild_id);
         if ( existingFamily ) {
             return message.reply(`A family with the name "${existingFamily.name}" is already in play for this guild, please pick another name!"`);
+        }
+
+        //check to see if this playbook matches a stock playbook
+        let stock_playbook = FamilyPlaybook.find_stock_playbook( args.playbook );
+        if ( stock_playbook ) {
+            args.playbook = stock_playbook;
         }
 
         //check to see if this playbook name is already in use

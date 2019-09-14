@@ -128,6 +128,17 @@ class FamilyPlaybook {
         };
     }
 
+    static find_stock_playbook( playbookName ) {
+        let playbooks = Object.keys( FamilyPlaybook.playbooks() );
+        for( var i = 0; i < playbooks.length; i++ ) {
+            let pbName = playbooks[i];
+            if ( pbName.includes( playbookName )) {
+                return pbName;
+            }
+        }
+        return null;
+    }
+
     static get_print_coordinates(stat) {
         let print_coordinates = {
             'reach': [148, 38],
