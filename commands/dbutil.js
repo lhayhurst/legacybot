@@ -59,6 +59,17 @@ class DbUtil {
         });
     }
 
+    static async get_guilds_families(guild_id) {
+        let ret = [];
+        await db.find({guild_id: guild_id}).then((docs) => {
+            for( var i = 0; i < docs.length; i++ ) {
+                ret.push( FamilyPlaybook.fromNedbDocument(docs[i]));
+            }
+        }).catch((err) => {
+        });
+        return ret;
+    }
+
     static async insert_family( user_id, guild_id, playbook_name, family_name ) {
         let newFamily = new FamilyPlaybook( playbook_name, guild_id );
         newFamily.user_id = user_id;
