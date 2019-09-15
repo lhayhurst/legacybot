@@ -33,7 +33,12 @@ class CommandsMetadata {
             'surplus': {
                 id: 'surplus',
                 note: 'Set the resources that your Family Surplus.'
+            },
+            'roll': {
+                id: 'roll',
+                note: 'Roll 2d6 or 3d6 with various modifiers.'
             }
+
         }
     }
 }
