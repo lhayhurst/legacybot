@@ -1,25 +1,42 @@
 const {Command} = require('discord-akairo');
-const DbUtil = require('./dbutil');
+const Discord = require('discord.js');
+const FamilyPlaybook = require('../family_playbook');
 const HelpEmbed = require('./help_embed');
+const CommandsMetadata = require('./commands_metadata');
+const config = require('config');
 
-let drop_command_args = [
-    {
-        id: 'help',
-        match: 'flag',
-        prefix: '--h',
-        default: null,
-        helptext: 'Show this message',
-        optional: true
-    },
-];
+
 
 class DropFamilyCommand extends Command {
 
     constructor() {
-        super('drop family command', {
-            aliases: ['drop-family', 'df'],
-            args: drop_command_args
+        let command_args = [
+            {
+                id: 'help',
+                match: 'flag',
+                prefix: '--h',
+                default: null,
+                helptext: 'Show this message',
+                optional: true
+            },
+        ];
+        let aliases = ['drop-family', 'df'];
+        super(CommandsMetadata.getCommands().drop_family.id, {
+            aliases: aliases ,
+            args: command_args
         });
+        this.comments = `This command lets you drop a family if you have already set a family.`;
+        this.command_args = command_args;
+        this.examples = [
+            {
+                command: aliases[1],
+                commentary: `Drops your current family.`
+            },
+            {
+                command: `${aliases[1]} --help`,
+                commentary: `Gets help on this command.`
+            }
+        ]
     }
 
     async aexec(message, args) {
@@ -27,9 +44,10 @@ class DropFamilyCommand extends Command {
         if ( args.help ) {
             return message.reply( new HelpEmbed(
                 this.id, //the name of the command
+                this.command_args,
                 this.aliases,  //its aliases
-                //this.options
-                "Disassociates a user with the named family. This won't delete the family." ).embed );
+                this.comments,
+                this.examples).embed);
         }
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;

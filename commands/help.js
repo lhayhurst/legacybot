@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const FamilyPlaybook = require('../family_playbook');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
+const config = require('config');
 
 class HelpCommand extends Command {
     constructor() {
@@ -31,7 +32,7 @@ class HelpCommand extends Command {
                 helptext: 'Show list all the commands I support',
                 optional: true,
             },
-        ]
+        ];
         super(CommandsMetadata.getCommands().help.id, {
             aliases: ['help','h'],
             allowMention: true,
@@ -56,7 +57,16 @@ class HelpCommand extends Command {
             return message.reply(`Here are some playbooks you can use. You can also make up your own! ${JSON.stringify(Object.keys(FamilyPlaybook.playbooks()))}.`)
         }
         if( args.commands ) {
-
+            let registeredCommands = CommandsMetadata.getCommands();
+            let rcKeys = Object.keys( registeredCommands);
+            let embed = new Discord.RichEmbed();
+            embed.setTitle("Legacybot Commands");
+            embed.setDescription(`Here are the commands that Legacybot supports. Type in the command name followed by --help to learn more about it.`);
+            for( var i =0; i < rcKeys.length; i++ ) {
+                let rc = registeredCommands[rcKeys[i]];
+                embed.addField( `\`${config.get("LegacyBotCommandPrefix")}${rc.id}\``, rc.note, true );
+            }
+            return message.reply(embed);
         }
         else {
             return message.reply( new HelpEmbed(

@@ -5,6 +5,7 @@ const PingCommand = require('./commands/ping');
 const Discord = require('discord.js');
 const HelpEmbed = require('./commands/help_embed');
 const HelpCommand = require('./commands/help');
+const CommandMetadata = require( './commands/commands_metadata');
 
 const config = require('config');
 
@@ -149,11 +150,14 @@ describe( 'command line help', () => {
     });
 });
 
-describe( 'command lines', () => {
-    it( 'get command lines', () => {
+describe( 'register commands test', () => {
+    it( 'can register a commands ', () => {
+        let registeredCommands = CommandMetadata.getCommands();
+        let help_command = new HelpCommand();
+        assert.equal( help_command.id, registeredCommands[help_command.id].id );
+        assert.ok(registeredCommands[help_command.id].note);
     });
 });
-
 
 
 
