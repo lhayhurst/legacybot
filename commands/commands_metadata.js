@@ -14,6 +14,10 @@ class CommandsMetadata {
                 id: 'new-family',
                 note: 'Create a new Family (Legacy Core Rulebook Second Edition pg 23)'
             },
+            'family': {
+                id: 'family',
+                note: 'Get information about your family, or all the families in your guild.'
+            },
         }
     }
 }

@@ -3,8 +3,6 @@ const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
 
 
-
-
 class DropFamilyCommand extends Command {
 
     constructor() {
@@ -34,7 +32,7 @@ class DropFamilyCommand extends Command {
                 command: `${aliases[1]} --help`,
                 commentary: `Gets help on this command.`
             }
-        ]
+        ];
     }
 
     async aexec(message, args) {

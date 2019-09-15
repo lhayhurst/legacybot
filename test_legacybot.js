@@ -5,8 +5,9 @@ const PingCommand = require('./commands/ping');
 const Discord = require('discord.js');
 const HelpEmbed = require('./commands/help_embed');
 const HelpCommand = require('./commands/help');
-const CommandMetadata = require( './commands/commands_metadata');
-
+const FamiliesCommand = require('./commands/family');
+const DropFamilyCommand = require('./commands/drop_command');
+const CommandsMetadata = require( './commands/commands_metadata');
 const config = require('config');
 
 describe('can config', () => {
@@ -152,10 +153,52 @@ describe( 'command line help', () => {
 
 describe( 'register commands test', () => {
     it( 'can register a commands ', () => {
-        let registeredCommands = CommandMetadata.getCommands();
+        let registeredCommands = CommandsMetadata.getCommands();
         let help_command = new HelpCommand();
         assert.equal( help_command.id, registeredCommands[help_command.id].id );
         assert.ok(registeredCommands[help_command.id].note);
+    });
+});
+
+describe( 'family command line help', () => {
+    it( 'get help', () => {
+        let command = new FamiliesCommand();
+        let commandName =  CommandsMetadata.getCommands().family.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.equal( commandName, embed.title);
+    });
+});
+
+describe( 'drop family command line help', () => {
+    it( 'get help', () => {
+        let command = new DropFamilyCommand();
+        let commandName =  CommandsMetadata.getCommands().drop_family.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.equal( commandName, embed.title);
     });
 });
 
