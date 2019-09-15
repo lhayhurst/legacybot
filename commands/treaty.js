@@ -1,39 +1,90 @@
 const {Command} = require('discord-akairo');
 const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
+const HelpEmbed = require('./help_embed');
 
 class TreatyCommand extends Command {
     constructor() {
-        super('treaty command', {
-            aliases: ['treaty', 't'],
-            split: 'quoted',
-            args: [
-                {
-                    id: 'action',
-                    type: "string",
-                    default: null
-                },
-                {
-                    id: 'family',
-                    type: "string",
-                    default: null
-                },
-                {
-                    id: 'bonus',
-                    match: 'prefix',
-                    prefix: '+',
-                    type: "int",
-                    default: null
-                },
+        let command_args =  [
+            {
+                id: 'help',
+                match: 'flag',
+                prefix: '--h',
+                default: null,
+                helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'action',
+                type: "string",
+                default: null,
+                argtype: "command",
+                helptext: 'Valid actions are \`give\`, \`get\`, and \`spend\`.',
+            },
+            {
+                id: 'family',
+                type: "string",
+                default: null,
+                argtype: "argument",
+                helptext: 'The name of the family. Must be a quoted string if the Family name is more than one word.',
+            },
+            {
+                id: 'bonus',
+                match: 'prefix',
+                prefix: '+',
+                type: "int",
+                default: null,
+                helptext: 'A bonus if you want to give, get or spend more than 1-Treaty.',
+                optional: true
+            },
 
-            ]
+        ];
+        let aliases =  ['treaty', 't'];
+        super('treaty command', {
+            aliases: aliases,
+            split: 'quoted',
+            args: command_args
         });
+        this.comments = `The ${aliases[0]} command lets you give, get, or spend Treaty (Core Rulebook, Second Edition page 37). For every other family in the game, you can have Treaty on them, and they can have Treaty on you. To get Treaty on them, use the get command. To give them treaty on you, use the give command. To spend treaty with them, use spend. To see your current treaties, just type in \`${aliases[0]}\`. Note, you can give or get multiple treaty by using the \`+\` options, for example \`+2\`.`;
+        this.command_args = command_args;
+        this.examples = [
+            {
+                command: `${aliases[1]}`,
+                commentary: `Show your current treaties.`
+            },
+            {
+                command: `${aliases[1]} give Warboys`,
+                commentary: `Give the Warboys 1-Treaty`
+            },
+            {
+                command: `${aliases[1]} get "The Bullet Farm" +2`,
+                commentary: `Get from "The Bullet Farm" 2-Treaty`
+            },
+            {
+                command: `${aliases[1]} spend "The Bullet Farm" +2`,
+                commentary: `Spend 2-Treaty with the Bullet Farm`
+            },
+            {
+                command: `${aliases[1]} --help`,
+                commentary: `Gets help on this command.`
+            }
+        ]
     }
 
 
 
 
     async doexec(message, args) {
+
+        if ( args.help ) {
+            return message.reply( new HelpEmbed(
+                this.id, //the name of the command
+                this.command_args,
+                this.aliases,  //its aliases
+                this.comments,
+                this.examples).embed);
+        }
+
         let guild_id = message.guild.id;
         let family_name = args.family;
         let action = args.action;

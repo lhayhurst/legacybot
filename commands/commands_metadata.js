@@ -34,6 +34,10 @@ class CommandsMetadata {
                 id: 'surplus',
                 note: 'Set the resources that your Family Surplus.'
             },
+            'treaty': {
+                id: 'treaty',
+                note: 'Treaty with other players (Legacy CRB pg 37).'
+            },
             'roll': {
                 id: 'roll',
                 note: 'Roll 2d6 or 3d6 with various modifiers.'

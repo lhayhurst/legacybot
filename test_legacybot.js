@@ -11,6 +11,8 @@ const NeedCommand = require('./commands/need');
 const SurplusCommand = require('./commands/surplus');
 const SetFamilyCommand = require('./commands/set_family');
 const FamilyStatCommand = require('./commands/family_stat');
+const TreatyCommand = require('./commands/treaty');
+
 const RollCommand = require('./commands/roll');
 
 const CommandsMetadata = require( './commands/commands_metadata');
@@ -310,7 +312,31 @@ describe( 'set family stat command line help', () => {
     });
 });
 
-describe( 'rollcommand line help', () => {
+describe( 'treaty help', () => {
+    it( 'treaty help', () => {
+        let command = new TreatyCommand();
+        let commandName =  CommandsMetadata.getCommands().treaty.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok( help_embed.commandsHelpText);
+        assert.ok( help_embed.argumentHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
+describe( 'roll command help', () => {
     it( 'roll help', () => {
         let command = new RollCommand();
         let commandName =  CommandsMetadata.getCommands().family_stat.id;
