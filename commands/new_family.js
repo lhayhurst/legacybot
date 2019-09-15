@@ -1,37 +1,72 @@
 const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
 const FamilyPlaybook = require('../family_playbook');
+const HelpEmbed = require('./help_embed');
+const CommandsMetadata = require('./commands_metadata');
+
 
 class NewFamilyCommand extends Command {
     constructor() {
-        super('new family command', {
-            aliases: ['new-family', 'nf'],
+        let command_args =  [
+            {
+                id: 'help',
+                match: 'flag',
+                prefix: '--h',
+                default: null,
+                helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'playbook',
+                match: 'prefix',
+                prefix: 'p=',
+                helptext: 'The playbook to use for the family',
+                default: null
+            },
+            {
+                id: 'name',
+                match: 'prefix',
+                prefix: 'n=',
+                default: null,
+                helptext: 'The name of the family. Must be unique!'
+            }
+        ];
+        let aliases =  ['new-family', 'nf'];
+        super(CommandsMetadata.getCommands().new_family.id, {
+            aliases: aliases,
             split: 'sticky',
-            args: [
-                {
-                    id: 'playbook',
-                    match: 'prefix',
-                    prefix: 'p=',
-                    default: null
-                },
-                {
-                    id: 'name',
-                    match: 'prefix',
-                    prefix: 'n=',
-                    default: null
-                }
-            ]
+            args: command_args
         });
+        this.comments = `This will create a new family. If a family already exists with this name, nothing will happen--all family names must be unique! By creating a new family, that family is not assigned to the Discord user unless the user adds the family using the set-family command. The playbook may be one of the core Legacy family classes. Note, Legacybot will match your playbook string against existing playbooks; for example, setting your playbook to "hive" or "Hive" will result you creating a family from "The Synthetic Hive" playbook`;
+        this.command_args = command_args;
+        this.examples = [
+            {
+                command: `${aliases[1]} -p="enclave" -n="The Brotherhood"` ,
+                commentary: `Creates a new Family from the "Enclave of Bygone Lore" playbook with the name "The Brotherhood"`
+            },
+            {
+                command: `${aliases[1]} --help`,
+                commentary: `Gets help on this command.`
+            }
+        ]
     }
 
-    static reply(args) {
-        return new NewFamilyCommandReply(args).reply;
+    get helpEmbed() {
+        return new HelpEmbed(
+            this.id, //the name of the command
+            this.command_args,
+            this.aliases,  //its aliases
+            this.comments,
+            this.examples).embed;
     }
 
     async doexec(message, args) {
         let guild_id = message.guild.id;
+        if ( args.help ) {
+            return message.reply( this.helpEmbed );
+        }
         if (args.name == null || args.playbook == null ) {
-            return message.reply(`Usage: /nf -p="playbook name" -n="family name"`);
+            return message.reply(`You need to provide both a playbook and name to create a new family. Please run this command with a --help for the details!`);
         }
 
         //check to see if this family name is already in use
