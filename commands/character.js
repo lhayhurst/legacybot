@@ -50,8 +50,8 @@ class CharacterCommand extends Command {
                 commentary: `Shows all characters associated with this guild.`
             },
             {
-                command: `${aliases[1]} name="Max"`,
-                commentary: `Gets the character sheet for the named family.`
+                command: `${aliases[1]} Max`,
+                commentary: `Gets the character sheet for the named character. No quotes needed if a single word name.`
             },
             {
                 command: `${aliases[1]} --help`,

@@ -18,10 +18,11 @@ class FamiliesCommand extends Command {
             },
             {
                 id: 'name',
-                match: 'prefix',
-                prefix: 'name=',
                 default: null,
                 helptext: 'The name of the Family to display',
+                argtype: "argument",
+                type: "string",
+                split: "quoted",
                 optional: true
             },
             {
@@ -50,8 +51,8 @@ class FamiliesCommand extends Command {
                 commentary: `Shows all families associated with this guild.`
             },
             {
-                command: `${aliases[1]} name="Warboys"`,
-                commentary: `Gets the family sheet for the named family.`
+                command: `${aliases[1]} "The Warboys"`,
+                commentary: `Gets the family sheet for the named family. No quotes needed if a single word name.`
             },
             {
                 command: `${aliases[1]} --help`,
@@ -80,7 +81,7 @@ class FamiliesCommand extends Command {
         }
         for( var i = 0; i < families.length; i++ ) {
             let family = families[i];
-            if ( args.all || family.user_id == message.member.user.id ) {
+            if ( args.all || family.user_id == message.member.user.id || family.name === args.name ) {
                 await family.visit(richEmbed, args.all );
             }
         }
