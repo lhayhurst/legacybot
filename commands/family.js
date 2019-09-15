@@ -14,18 +14,23 @@ class FamiliesCommand extends Command {
                 prefix: '--h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
             },
             {
                 id: 'name',
                 match: 'prefix',
                 prefix: 'name=',
-                default: null
+                default: null,
+                helptext: 'The name of the Family to display',
+                optional: true
             },
             {
                 id: 'all',
                 match: 'flag',
                 prefix: '--all',
-                default: null
+                helptext: 'Show all families',
+                default: null,
+                optional: true
             }];
         let aliases = ['family', 'f']
         super(CommandsMetadata.getCommands().family.id, {
@@ -38,7 +43,7 @@ class FamiliesCommand extends Command {
         this.examples = [
             {
                 command: aliases[1],
-                commentary: `Generates your family handout sheets.`
+                commentary: `Generates just your family handout sheets, if you have set one.`
             },
             {
                 command: `${aliases[1]} --all`,

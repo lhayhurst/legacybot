@@ -18,6 +18,10 @@ class CommandsMetadata {
                 id: 'family',
                 note: 'Get information about your family, or all the families in your guild.'
             },
+            'need': {
+                id: 'need',
+                note: 'Set the resources that your Family Needs.'
+            }
         }
     }
 }

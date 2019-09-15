@@ -9,6 +9,8 @@ class HelpEmbed {
         this.comments = comments;
         this.examples = examples;
         this.options = this.findOptions();
+        this.commands = this.findCommands();
+        this.arguments = this.findArguments();
 
     }
 
@@ -23,12 +25,34 @@ class HelpEmbed {
         return ret;
     }
 
+    findCommands() {
+        let ret = [];
+        for (var i = 0; i < this.command_args.length; i++) {
+            let arg = this.command_args[i];
+            if (arg.argtype === 'command') {
+                ret.push(arg);
+            }
+        }
+        return ret;
+    }
+
+    findArguments() {
+        let ret = [];
+        for (var i = 0; i < this.command_args.length; i++) {
+            let arg = this.command_args[i];
+            if (arg.argtype === 'argument') {
+                ret.push(arg);
+            }
+        }
+        return ret;
+    }
+
     get embed() {
         let ret = new Discord.RichEmbed();
 
         let usageString = `${config.get('LegacyBotCommandPrefix')}${this.aliases[0]}`;
 
-        if (this.command_args) {
+        if (this.options) {
             usageString += " [OPTIONS] ";
         }
         if (this.commands) {
@@ -41,12 +65,18 @@ class HelpEmbed {
         ret.setTitle(this.name)
         ret.setDescription(this.comments);
         ret.addField(`Usage: `, usageString, false);
-        ret.addField("Command aliases:", `\t${JSON.stringify(this.aliases)}`);
+        ret.addField("Aliases:", `\t${JSON.stringify(this.aliases)}`);
         if ( this.command_args ) {
             ret.addField( "Options", this.optionsHelpText );
         }
+        if( this.commands ) {
+            ret.addField( "Commands", this.commandsHelpText);
+        }
+        if( this.arguments) {
+            ret.addField( "Arguments", this.argumentHelpText);
+        }
         if( this.examples) {
-            ret.addField( "Command examples", this.examplesHelpText);
+            ret.addField( "Examples", this.examplesHelpText);
         }
         ret.setFooter(`Have a bug to file? Needs more help? Visit https://github.com/lhayhurst/legacybot/issues`,
             `https://cdn.discordapp.com/embed/avatars/0.png`);
@@ -72,6 +102,28 @@ class HelpEmbed {
             if( opt.optional ) {
                 ret += "[optional]"
             }
+            ret += "\n"
+        }
+        return ret;
+    }
+
+    get commandsHelpText() {
+        let ret = ``;
+        for( var i = 0; i < this.commands.length; i++ ) {
+            let opt = this.commands[i];
+            ret += `\t\`${opt.id}\`\t`;
+            ret += `${opt.helptext}\t`;
+            ret += "\n"
+        }
+        return ret;
+    }
+
+    get argumentHelpText() {
+        let ret = ``;
+        for( var i = 0; i < this.arguments.length; i++ ) {
+            let opt = this.arguments[i];
+            ret += `\t\`${opt.id}\`\t`;
+            ret += `${opt.helptext}\t`;
             ret += "\n"
         }
         return ret;

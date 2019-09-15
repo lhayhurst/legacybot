@@ -7,6 +7,7 @@ const HelpEmbed = require('./commands/help_embed');
 const HelpCommand = require('./commands/help');
 const FamiliesCommand = require('./commands/family');
 const DropFamilyCommand = require('./commands/drop_command');
+const NeedCommand = require('./commands/need');
 const CommandsMetadata = require( './commands/commands_metadata');
 const config = require('config');
 
@@ -89,26 +90,26 @@ describe('do treaty stuff', () => {
 
         fam1.giveTreatyTo(fam2);
         assert.ok(fam1.treaties[fam2.name]);
-        assert.equal(1, fam1.treaties[fam2.name].on_me );
+       assert.strictEqual(1, fam1.treaties[fam2.name].on_me );
         assert.ok(fam2.treaties[fam1.name]);
-        assert.equal(1, fam2.treaties[fam1.name].me_on );
+       assert.strictEqual(1, fam2.treaties[fam1.name].me_on );
 
-        assert.equal(true, fam1.hasTreatyWith(fam2));
-        assert.equal(true, fam2.hasTreatyWith(fam1));
+       assert.strictEqual(true, fam1.hasTreatyWith(fam2));
+       assert.strictEqual(true, fam2.hasTreatyWith(fam1));
 
         fam2.spendsTreatyWith(fam1);
-        assert.equal(0, fam2.treaties[fam1.name].me_on );
+       assert.strictEqual(0, fam2.treaties[fam1.name].me_on );
         assert.ok(fam2.treaties[fam1.name]);
-        assert.equal(0, fam1.treaties[fam2.name].on_me );
+       assert.strictEqual(0, fam1.treaties[fam2.name].on_me );
 
-        assert.equal(false, fam1.hasTreatyWith(fam2));
-        assert.equal(false, fam2.hasTreatyWith(fam1));
+       assert.strictEqual(false, fam1.hasTreatyWith(fam2));
+       assert.strictEqual(false, fam2.hasTreatyWith(fam1));
 
         fam1.receiveTreatyFrom(fam2, 2);
-        assert.equal(true, fam1.hasTreatyWith(fam2));
-        assert.equal(true, fam2.hasTreatyWith(fam1));
-        assert.equal(2, fam1.treaties[fam2.name].me_on );
-        assert.equal(2, fam2.treaties[fam1.name].on_me );
+       assert.strictEqual(true, fam1.hasTreatyWith(fam2));
+       assert.strictEqual(true, fam2.hasTreatyWith(fam1));
+       assert.strictEqual(2, fam1.treaties[fam2.name].me_on );
+       assert.strictEqual(2, fam2.treaties[fam1.name].on_me );
 
     });
 });
@@ -117,15 +118,15 @@ describe( 'find stock playbook', () => {
     it( 'can find a stock playbook', () => {
        let pbName = "Starfarers";
        let stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
-       assert.equal('The Stranded Starfarers', stockPlaybook );
+      assert.strictEqual('The Stranded Starfarers', stockPlaybook );
        pbName = "Stairfarers";
        stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
-       assert.equal( null, stockPlaybook );
+      assert.strictEqual( null, stockPlaybook );
 
        //check case insenitive as well
         pbName = "starfarers";
         stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
-        assert.equal('The Stranded Starfarers', stockPlaybook );
+       assert.strictEqual('The Stranded Starfarers', stockPlaybook );
 
     });
 });
@@ -147,7 +148,7 @@ describe( 'command line help', () => {
         assert.ok(embed);
         assert.ok( embed instanceof Discord.RichEmbed);
         assert.ok( embed.title );
-        assert.equal( command_name, embed.title);
+       assert.strictEqual( command_name, embed.title);
     });
 });
 
@@ -155,7 +156,7 @@ describe( 'register commands test', () => {
     it( 'can register a commands ', () => {
         let registeredCommands = CommandsMetadata.getCommands();
         let help_command = new HelpCommand();
-        assert.equal( help_command.id, registeredCommands[help_command.id].id );
+       assert.strictEqual( help_command.id, registeredCommands[help_command.id].id );
         assert.ok(registeredCommands[help_command.id].note);
     });
 });
@@ -177,7 +178,7 @@ describe( 'family command line help', () => {
         assert.ok(embed);
         assert.ok( embed instanceof Discord.RichEmbed);
         assert.ok( embed.title );
-        assert.equal( commandName, embed.title);
+       assert.strictEqual( commandName, embed.title);
     });
 });
 
@@ -198,10 +199,30 @@ describe( 'drop family command line help', () => {
         assert.ok(embed);
         assert.ok( embed instanceof Discord.RichEmbed);
         assert.ok( embed.title );
-        assert.equal( commandName, embed.title);
+       assert.strictEqual( commandName, embed.title);
     });
 });
 
+describe( 'need family command line help', () => {
+    it( 'get help', () => {
+        let command = new NeedCommand();
+        let commandName =  CommandsMetadata.getCommands().need.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
 
 
 
