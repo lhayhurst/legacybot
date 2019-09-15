@@ -45,7 +45,7 @@ class SetFamilyCommand extends Command {
         this.command_args = command_args;
         this.examples = [
             {
-                command: `${aliases[1]} Warboys""`,
+                command: `${aliases[1]} Warboys`,
                 commentary: `Sets the Warboys as your Family.`
             },
             {

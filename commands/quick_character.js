@@ -27,7 +27,7 @@ class QuickCharacterCommand extends Command {
             {
                 id: 'force',
                 match: 'prefix',
-                prefix: 'force=',
+                prefix: 'Force=',
                 type: 'int',
                 helptext: 'Set your Force',
                 optional: false,
@@ -36,7 +36,7 @@ class QuickCharacterCommand extends Command {
             {
                 id: 'lore',
                 match: 'prefix',
-                prefix: 'lore=',
+                prefix: 'Lore=',
                 type: 'int',
                 helptext: 'Set your Lore',
                 optional: false,
@@ -45,7 +45,7 @@ class QuickCharacterCommand extends Command {
             {
                 id: 'steel',
                 match: 'prefix',
-                prefix: 'steel=',
+                prefix: 'Steel=',
                 type: 'int',
                 helptext: 'Set your Steel',
                 optional: false,
@@ -54,7 +54,7 @@ class QuickCharacterCommand extends Command {
             {
                 id: 'sway',
                 match: 'prefix',
-                prefix: 'sway=',
+                prefix: 'Sway=',
                 type: 'int',
                 helptext: 'Set your Sway',
                 optional: false,
@@ -79,8 +79,12 @@ class QuickCharacterCommand extends Command {
         this.command_args = command_args;
         this.examples = [
             {
-                command: `${aliases[1]} -f=Warboys -n=Nux -force=1 -lore=0 -steel=1 -sway=-1`,
+                command: `${aliases[1]} -f=Warboys -n=Nux -Force=1 -Lore=0 -Steel=1 -Sway=-1`,
                 commentary: `Creates a Quick Character in the Warboys Family with the name Nux, Force of 1 (Tyrant Kings bonus), Lore of 0, Steel of 1, and Sway of -1.`
+            },
+            {
+                command: `${aliases[1]} -f="The Hive"" -n=Neo -Force=1 -Lore=0 -Steel=-1 -Sway=0`,
+                commentary: `Creates a Quick Character in the "The Hive" Family with the name Neo`
             },
             {
                 command: `${aliases[1]} --help`,
@@ -136,7 +140,7 @@ class QuickCharacterCommand extends Command {
         //we're good to go. insert the new character
         let retMessage = await DbUtil.insert_character(
             args.name,
-            "quick",
+            "Quick Character",
             guild_id,
             ownerFamily.name,
             args.force,

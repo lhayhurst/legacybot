@@ -62,7 +62,7 @@ class DbUtil {
 
     static async get_guilds_families(guild_id) {
         let ret = [];
-        await db.find({guild_id: guild_id}).then((docs) => {
+        await db.find({guild_id: guild_id, family_playbook: { $exists: true }}).then((docs) => {
             for( var i = 0; i < docs.length; i++ ) {
                 ret.push( FamilyPlaybook.fromNedbDocument(docs[i]));
             }
@@ -177,6 +177,24 @@ class DbUtil {
         }).catch((err) => {
             return err;
         });
+    }
+
+    static async get_guilds_characters(guild_id , db_override=null) {
+        let mydb = null;
+        if ( db_override) { //needed for unit testing.
+            mydb = db_override;
+        }
+        else {
+            mydb = db;
+        }
+        let ret = [];
+        await mydb.find({guild_id: guild_id, character_playbook: { $exists: true }}).then((docs) => {
+            for( var i = 0; i < docs.length; i++ ) {
+                ret.push( CharacterPlaybook.fromNedbDocument(docs[i]));
+            }
+        }).catch((err) => {
+        });
+        return ret;
     }
 
 

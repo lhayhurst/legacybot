@@ -1,3 +1,4 @@
+const Jimp = require('jimp');
 
 class CharacterPlaybook {
     static playbooks() {
@@ -54,6 +55,10 @@ class CharacterPlaybook {
                 playbookName: "The Untamed",
                 characterSheetImage: 'assets/characters/char-the-untamed.png',
             },
+            "Quick Character" : {
+                playbookName: "Quick Character",
+                characterSheetImage: `/home/lhayhurst/WebstormProjects/legacybot/assets/characters/char-quick-character.png`
+            }
         };
     }
 
@@ -77,6 +82,7 @@ class CharacterPlaybook {
         this.lore = lore;
         this.steel = steel;
         this.sway = sway;
+        this.character_username = null;
     }
 
     static fromNedbDocument(document) {
@@ -102,6 +108,66 @@ class CharacterPlaybook {
 
     get user_id() {
         return this.character_user_id;
+    }
+
+    get username() {
+        return this.character_username;
+    }
+
+    get family() {
+        return this.family_name;
+    }
+
+    static get_print_coordinates(item) {
+        let print_coordinates = {
+            'name': [867, 41],
+            'force': [853, 88],
+            'lore': [994, 88],
+            'steel': [1136, 88],
+            'sway': [1280, 88],
+
+        };
+        return print_coordinates[item];
+    }
+
+    async visit(richEmbed, summary_only=true) {
+        if (summary_only) {
+            richEmbed
+                .addField('Name', this.name, true)
+                .addField('Playbook', this.playbook, true)
+                .addField('Family', this.family, true)
+                .addField('Username', this.username, true)
+                .addBlankField()
+        } else {
+            let playbooks = CharacterPlaybook.playbooks();
+            let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
+            if (playbooks[this.playbook]) {
+                let pb = playbooks[this.playbook];
+                let playbookSheetPath = pb.characterSheetImage;
+                let playbookSheetImage = await Jimp.read(playbookSheetPath);
+                let name_coordinates = CharacterPlaybook.get_print_coordinates('name');
+                await playbookSheetImage.print(font, name_coordinates[0], name_coordinates[1], this.name);
+
+                let stats = [
+                    {key: 'force', 'val': this.force},
+                    {key: 'lore', 'val': this.lore},
+                    {key: 'steel', 'val': this.steel},
+                    {key: 'sway', 'val': this.sway}
+                ];
+                for (var i = 0; i < stats.length; i++) {
+                    let stat_item = stats[i];
+                    if (stat_item.val) {
+                        let coordinates = CharacterPlaybook.get_print_coordinates(stat_item.key);
+                        await playbookSheetImage.print(font, coordinates[0], coordinates[1], stat_item.val);
+                    }
+                }
+
+
+                let imgBuf = await playbookSheetImage.getBufferAsync(Jimp.AUTO);
+                let imageName = `image.png`
+                richEmbed.attachFiles([{name: imageName, attachment: imgBuf}]).setImage(`attachment://${imageName}`);
+            }
+        }
     }
 }
 

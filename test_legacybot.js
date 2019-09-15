@@ -17,6 +17,7 @@ const FamilyResourceCommand = require('./commands/family_resource');
 const CharacterPlaybook = require('./character_playbook');
 const NewCharacterCommand = require('./commands/new_character');
 const QuickCharacterCommand = require('./commands/quick_character');
+const CharacterCommand = require('./commands/character');
 
 const RollCommand = require('./commands/roll');
 
@@ -431,6 +432,28 @@ describe( 'quick character help', () => {
     });
 });
 
+describe( 'character help', () => {
+    it( 'character help', () => {
+        let command = new CharacterCommand();
+        let commandName =  CommandsMetadata.getCommands().character.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
 
 describe( 'character playbooks', () => {
     let playbooks = CharacterPlaybook.playbooks();
@@ -512,6 +535,11 @@ describe( 'character db queries', async () => {
         assert.strictEqual( name, character2.name);
         assert.strictEqual( user_id, character2.user_id);
 
+    });
+
+    it("can get_guild_characters", async () => {
+        let characters = await DbUtil.get_guilds_characters(guild_id, db_override=test_db)
+        assert.ok(characters.length >0) ;
     });
 
 });

@@ -346,9 +346,9 @@ class FamilyPlaybook {
     async visit(richEmbed, summary_only = true) {
         if (summary_only) {
             richEmbed
-                .addField('Family Name', this.name, true)
-                .addField('Family Playbook', this.playbook, true)
-                .addField('Username', this.playbook_username, true)
+                .addField('Name', this.name, true)
+                .addField('Playbook', this.playbook, true)
+                .addField('Player', this.playbook_username, true)
                 .addBlankField()
                 .addBlankField()
         } else {
