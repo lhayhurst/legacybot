@@ -24,7 +24,7 @@ class CommandsMetadata {
             },
             'family_resource': {
                 id: 'family-resource',
-                note: 'Treaty with other players (Legacy CRB pg 37).'
+                note: `Get or spend your Family's resources -- Tech and Data.`
             },
             'drop_family': {
                 id: 'drop-family',
