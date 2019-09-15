@@ -2,8 +2,9 @@ const assert = require('assert');
 const db = require('./db');
 const FamilyPlaybook = require('./family_playbook');
 const PingCommand = require('./commands/ping');
-const NewFamilyCommand = require('./commands/new_family');
-const set_family_stats = require('./commands/set_family_stats');
+const Discord = require('discord.js');
+const HelpEmbed = require('./commands/help_embed');
+const HelpCommand = require('./commands/help');
 
 const config = require('config');
 
@@ -119,8 +120,41 @@ describe( 'find stock playbook', () => {
        stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
        assert.equal( null, stockPlaybook );
 
+       //check case insenitive as well
+        pbName = "starfarers";
+        stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
+        assert.equal('The Stranded Starfarers', stockPlaybook );
+
     });
 });
+
+describe( 'command line help', () => {
+    it( 'get help', () => {
+        let command_name = "test_help";
+        let help_command = new HelpCommand();
+        let help_embed = new HelpEmbed( command_name,
+            help_command.command_args,
+            help_command.aliases,
+            help_command.comments,
+            help_command.examples
+            );
+        assert.ok(help_embed);
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.equal( command_name, embed.title);
+    });
+});
+
+describe( 'command lines', () => {
+    it( 'get command lines', () => {
+    });
+});
+
+
 
 
 

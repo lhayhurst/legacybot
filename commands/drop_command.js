@@ -2,13 +2,14 @@ const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('./help_embed');
 
-let args = [
+let drop_command_args = [
     {
         id: 'help',
         match: 'flag',
         prefix: '--h',
         default: null,
-        helptext: 'Show this message'
+        helptext: 'Show this message',
+        optional: true
     },
 ];
 
@@ -17,14 +18,18 @@ class DropFamilyCommand extends Command {
     constructor() {
         super('drop family command', {
             aliases: ['drop-family', 'df'],
-            args: args
+            args: drop_command_args
         });
     }
 
-    async doexec(message, args) {
+    async aexec(message, args) {
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(this.id, this.aliases, "Disassociates a user with the named family. This won't delete the family." ).embed );
+            return message.reply( new HelpEmbed(
+                this.id, //the name of the command
+                this.aliases,  //its aliases
+                //this.options
+                "Disassociates a user with the named family. This won't delete the family." ).embed );
         }
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
@@ -41,7 +46,7 @@ class DropFamilyCommand extends Command {
     }
 
     exec(message, args) {
-        return this.doexec(message, args);
+        return this.aexec(message, args);
     }
 }
 

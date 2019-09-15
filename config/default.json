@@ -1,5 +1,5 @@
 {
   "LegacyBotToken":"your-bot-token",
   "LegacyBotOwnerID": "your-owner-id",
-  "LegacyBotCommandPrefix": "/"
+  "LegacyBotCommandPrefix": "."
 }

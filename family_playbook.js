@@ -132,7 +132,7 @@ class FamilyPlaybook {
         let playbooks = Object.keys( FamilyPlaybook.playbooks() );
         for( var i = 0; i < playbooks.length; i++ ) {
             let pbName = playbooks[i];
-            if ( pbName.includes( playbookName )) {
+            if ( pbName.toLowerCase().includes( playbookName.toLowerCase() )) {
                 return pbName;
             }
         }
