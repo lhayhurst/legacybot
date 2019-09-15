@@ -68,15 +68,21 @@ class CharacterPlaybook {
         return null;
     }
 
-    constructor( character_name, playbook_name, guild_id, family_name ) {
+    constructor( character_name, playbook_name, guild_id, family_name, force=0, lore=0, steel=0, sway=0 ) {
         this.character_name = character_name;
         this.character_playbook = playbook_name;
         this.guild_id = guild_id;
         this.family_name = family_name;
+        this.force = force;
+        this.lore = lore;
+        this.steel = steel;
+        this.sway = sway;
     }
 
     static fromNedbDocument(document) {
-        let ret = new CharacterPlaybook(document.character_name, document.character_playbook, document.guild_id, document.family_name);
+        let ret = new CharacterPlaybook(document.character_name, document.character_playbook,
+            document.guild_id, document.family_name,
+            document.force, document.lore, document.steel, document.sway);
 
         if (document.character_user_id) {
             ret.character_user_id = document.character_user_id;

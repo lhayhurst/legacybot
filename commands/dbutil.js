@@ -86,7 +86,7 @@ class DbUtil {
     }
 
 
-    static async insert_character(character_name, playbook_name, guild_id, family_name, db_override=null ) {
+    static async insert_character(character_name, playbook_name, guild_id, family_name, force=0, lore=0, steel=0, sway=0, db_override=null ) {
         let mydb = null;
         if ( db_override) { //needed for unit testing.
             mydb = db_override;
@@ -94,7 +94,7 @@ class DbUtil {
         else {
             mydb = db;
         }
-        let newCharacter = new CharacterPlaybook( character_name, playbook_name, guild_id, family_name);
+        let newCharacter = new CharacterPlaybook( character_name, playbook_name, guild_id, family_name, force, lore, steel, sway);
 
         return await mydb.insert(newCharacter)
             .then(() => {

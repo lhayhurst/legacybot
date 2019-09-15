@@ -50,6 +50,15 @@ class CommandsMetadata {
                 id: 'new-character',
                 note: 'Create a new character.'
             },
+            'quick_character': {
+                id: 'quick-character',
+                note: 'Create a quick character.'
+            },
+            'character': {
+                id: 'character',
+                note: 'Get information about your character, or other characters in play.'
+            },
+
 
         }
     }

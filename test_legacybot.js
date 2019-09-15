@@ -15,6 +15,8 @@ const FamilyStatCommand = require('./commands/family_stat');
 const TreatyCommand = require('./commands/treaty');
 const FamilyResourceCommand = require('./commands/family_resource');
 const CharacterPlaybook = require('./character_playbook');
+const NewCharacterCommand = require('./commands/new_character');
+const QuickCharacterCommand = require('./commands/quick_character');
 
 const RollCommand = require('./commands/roll');
 
@@ -385,6 +387,51 @@ describe( 'family resource help', () => {
     });
 });
 
+describe( 'new character help', () => {
+    it( 'new character help', () => {
+        let command = new NewCharacterCommand();
+        let commandName =  CommandsMetadata.getCommands().new_character.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
+describe( 'quick character help', () => {
+    it( 'quick character help', () => {
+        let command = new QuickCharacterCommand();
+        let commandName =  CommandsMetadata.getCommands().quick_character.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
+
 describe( 'character playbooks', () => {
     let playbooks = CharacterPlaybook.playbooks();
 
@@ -415,16 +462,16 @@ describe( 'character db queries', async () => {
     let user_id = 1;
 
     it("can't get a character that doesn't exist yet", async () => {
-        let character = await DbUtil.get_character(name, guild_id, "test-family", test_db)
+        let character = await DbUtil.get_character(name, guild_id, "test-family", db_override=test_db)
         assert.ok( character == null );
     });
 
     it("create and get", async () => {
 
-        await DbUtil.insert_character(name, playbook, guild_id, "test-family", test_db);
+        await DbUtil.insert_character(name, playbook, guild_id, "test-family", 0, 0, 0, 0, test_db);
 
         //its inserted, now go get it
-        let character = await DbUtil.get_character(name, guild_id, "test-family",  test_db)
+        let character = await DbUtil.get_character(name, guild_id, "test-family", db_override=test_db)
         assert.ok( character );
         assert.strictEqual( playbook, character.playbook);
         assert.strictEqual( name, character.name);
@@ -436,6 +483,11 @@ describe( 'character db queries', async () => {
         //its inserted, now go get it
         let character = await DbUtil.get_character_by_playbook(playbook, guild_id, test_db)
         assert.ok( character );
+        assert.strictEqual(0, character.force);
+        assert.strictEqual(0, character.lore);
+        assert.strictEqual(0, character.steel);
+        assert.strictEqual(0, character.sway);
+
         assert.strictEqual( playbook, character.playbook);
         assert.strictEqual( name, character.name);
     });
