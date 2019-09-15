@@ -52,13 +52,13 @@ class HelpEmbed {
 
         let usageString = `${config.get('LegacyBotCommandPrefix')}${this.aliases[0]}`;
 
-        if (this.options) {
+        if (this.options.length) {
             usageString += " [OPTIONS] ";
         }
-        if (this.commands) {
+        if (this.commands.length) {
             usageString += " COMMAND ";
         }
-        if (this.arguments) {
+        if (this.arguments.length) {
             usageString += " [ARGS]..."
         }
 

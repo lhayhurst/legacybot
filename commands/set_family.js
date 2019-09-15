@@ -1,6 +1,8 @@
 const {Command} = require('discord-akairo');
 const FamilyPlaybook = require('../family_playbook');
 const {db} = require('../bot')
+const HelpEmbed = require('./help_embed');
+const CommandsMetadata = require('./commands_metadata');
 
 class SetFamilyCommandReply {
     constructor(args) {
@@ -15,17 +17,46 @@ class SetFamilyCommandReply {
 
 class SetFamilyCommand extends Command {
     constructor() {
+        let command_args = [
+            {
+                id: 'help',
+                match: 'flag',
+                prefix: '--h',
+                default: null,
+                helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'name',
+                split: 'quoted',
+                type: 'string',
+                optional: false,
+                argtype: "argument",
+                helptext: `The name of the Family you are adopting. Run the families command to see what families are currently in play.`
+            }
+        ];
+        let aliases =  ['set-family', 'sf']
         super('set family command', {
-            aliases: ['set-family', 'sf'],
+            aliases: aliases,
             split: 'quoted',
-            args: [
-                {
-                    id: 'name',
-                    split: 'quoted',
-                    type: 'string',
-                }
-            ]
+            args: command_args
         });
+        this.comments = `The ${aliases[0]} command is needed for if you want to run any Family specific related commands like need, surplus, treaty. Also, when you roll dice, if you've set your family, you can add stat modifiers to the dice rolls.`;
+        this.command_args = command_args;
+        this.examples = [
+            {
+                command: `${aliases[1]} Warboys""`,
+                commentary: `Sets the Warboys as your Family.`
+            },
+            {
+                command: `${aliases[1]} "Durnk Bots"`,
+                commentary: `Sets the Durnk Bots as your Family.`
+            },
+            {
+                command: `${aliases[1]} --help`,
+                commentary: `Gets help on this command.`
+            }
+        ]
     }
 
     static reply(args) {
@@ -33,6 +64,14 @@ class SetFamilyCommand extends Command {
     }
 
     exec(message, args) {
+        if ( args.help ) {
+            return message.reply( new HelpEmbed(
+                this.id, //the name of the command
+                this.command_args,
+                this.aliases,  //its aliases
+                this.comments,
+                this.examples).embed);
+        }
         db.find({family_name: args.name}).then((docs) => {
             if (docs.length === 0) { //no family found with that name
                 return message.reply(`No family found with name ${args.name}!`);

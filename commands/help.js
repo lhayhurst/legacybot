@@ -38,7 +38,8 @@ class HelpCommand extends Command {
             allowMention: true,
             args: command_args
         });
-        this.comments = `Welcome to LegacyBot! You can learn more about this bot, and the commands it supports, by heading over to [https://github.com/lhayhurst/legacybot/blob/master/README.md](here)`;
+        this.prefix = config.get("LegacyBotCommandPrefix");
+        this.comments = `While exploring the Ruins, you come across a ancient Robot running some variant of UNIX! You can learn more about the commands it supports by typing in \`${this.prefix}${this.aliases[0]} -c\`. You can learn more about this bot by heading to the [project home page](https://github.com/lhayhurst/legacybot/blob/master/README.md).`;
         this.command_args = command_args;
         this.examples = [
             {
@@ -64,7 +65,7 @@ class HelpCommand extends Command {
             embed.setDescription(`Here are the commands that Legacybot supports. Type in the command name followed by --help to learn more about it.`);
             for( var i =0; i < rcKeys.length; i++ ) {
                 let rc = registeredCommands[rcKeys[i]];
-                embed.addField( `\`${config.get("LegacyBotCommandPrefix")}${rc.id}\``, rc.note, true );
+                embed.addField( `\`${this.prefix}${rc.id}\``, rc.note, false );
             }
             return message.reply(embed);
         }

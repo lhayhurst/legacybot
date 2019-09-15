@@ -37,7 +37,7 @@ class NeedCommand extends Command {
             split: 'quoted',
             args: command_args,
         });
-        this.comments = `The need command lets you add or remove Needs (Core Rulebook, Second Edition page 31). It will accept any resource name as an argument.`;
+        this.comments = `The ${aliases[0]} command lets you add or remove Needs (Core Rulebook, Second Edition page 31). It will accept any resource name as an argument.`;
         this.command_args = command_args;
         this.examples = [
             {

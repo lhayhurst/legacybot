@@ -8,6 +8,8 @@ const HelpCommand = require('./commands/help');
 const FamiliesCommand = require('./commands/family');
 const DropFamilyCommand = require('./commands/drop_command');
 const NeedCommand = require('./commands/need');
+const SurplusCommand = require('./commands/surplus');
+const SetFamilyCommand = require('./commands/set_family');
 const CommandsMetadata = require( './commands/commands_metadata');
 const config = require('config');
 
@@ -133,7 +135,7 @@ describe( 'find stock playbook', () => {
 
 describe( 'command line help', () => {
     it( 'get help', () => {
-        let command_name = "test_help";
+        let command_name = "help";
         let help_command = new HelpCommand();
         let help_embed = new HelpEmbed( command_name,
             help_command.command_args,
@@ -144,6 +146,7 @@ describe( 'command line help', () => {
         assert.ok(help_embed);
         assert.ok(help_embed.optionsHelpText);
         assert.ok(help_embed.examplesHelpText);
+
         let embed = help_embed.embed;
         assert.ok(embed);
         assert.ok( embed instanceof Discord.RichEmbed);
@@ -171,6 +174,7 @@ describe( 'family command line help', () => {
             command.comments,
             command.examples
         );
+        assert.ok( command.options );
         assert.ok(help_embed);
         assert.ok(help_embed.optionsHelpText);
         assert.ok(help_embed.examplesHelpText);
@@ -192,6 +196,7 @@ describe( 'drop family command line help', () => {
             command.comments,
             command.examples
         );
+        assert.ok( command.options );
         assert.ok(help_embed);
         assert.ok(help_embed.optionsHelpText);
         assert.ok(help_embed.examplesHelpText);
@@ -214,8 +219,64 @@ describe( 'need family command line help', () => {
             command.examples
         );
         assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok( help_embed.commands );
         assert.ok(help_embed.optionsHelpText);
         assert.ok(help_embed.examplesHelpText);
+        assert.ok(help_embed.argumentHelpText);
+        assert.ok(help_embed.commandsHelpText);
+
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
+describe( 'surplus family command line help', () => {
+    it( 'surplus help', () => {
+        let command = new SurplusCommand();
+        let commandName =  CommandsMetadata.getCommands().surplus.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok( help_embed.commands );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        assert.ok(help_embed.argumentHelpText);
+        assert.ok(help_embed.commandsHelpText);
+
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
+
+describe( 'set family command line help', () => {
+    it( 'set family help', () => {
+        let command = new SetFamilyCommand();
+        let commandName =  CommandsMetadata.getCommands().set_family.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        assert.ok(help_embed.argumentHelpText);
+
         let embed = help_embed.embed;
         assert.ok(embed);
         assert.ok( embed instanceof Discord.RichEmbed);
