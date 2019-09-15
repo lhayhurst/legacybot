@@ -460,7 +460,7 @@ describe( 'character playbooks', () => {
 
     it( 'character playbooks', () => {
         assert.ok( playbooks );
-        assert.strictEqual( 13, Object.keys(playbooks).length );
+        assert.strictEqual( 14, Object.keys(playbooks).length );
     });
 
     it( 'find stock playbooks', () => {
