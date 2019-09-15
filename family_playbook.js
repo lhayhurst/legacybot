@@ -174,6 +174,10 @@ class FamilyPlaybook {
         this.treaties = {};
         this.surpluses = [];
         this.needs = [];
+        this.tech = 0;
+        this.data_resource = 0;
+        this.playbook_username = null;
+        this.playbook_user_id = null;
     }
 
     get playbook() {
@@ -187,9 +191,8 @@ class FamilyPlaybook {
         ret.reach = document.reach;
         ret.grasp = document.grasp;
         ret.sleight = document.sleight;
-        ret.family_data = document.family_data; //data is reserved
-        ret.family_tech = document.tech;
-        ret.mood = document.mood;
+        ret.data_resource = document.family_data; //data is reserved
+        ret.tech = document.family_tech;
         ret.advantages_rolls = document.advantages_rolls;
         ret.guild_id = document.guild_id;
         ret.user = document.user;
@@ -198,27 +201,27 @@ class FamilyPlaybook {
         ret.surpluses = document.surpluses;
 
         if (document.user_id) {
-            ret.user_id = document.user_id;
-            ret.username = document.username;
+            ret.playbook_user_id = document.user_id;
+            ret.playbook_username = document.username;
         }
 
         return ret;
     }
 
-    get user_id() {
-        return this.playbook_user_id;
+    get playbook_user_id() {
+        return this.user_id;
     }
 
-    set user_id(userid) {
-        this.playbook_user_id = userid;
+    set playbook_user_id(userid) {
+        this.user_id = userid;
     }
 
-    set username(user_name) {
-        this.playbook_username = user_name;
+    set playbook_username(user_name) {
+        this.username = user_name;
     }
 
-    get username() {
-        return this.playbook_username;
+    get playbook_username() {
+        return this.username;
     }
 
     addSurplus(resource) {
@@ -317,8 +320,15 @@ class FamilyPlaybook {
         }
     }
 
+    visitResources(richEmbed) {
+        richEmbed.setTitle( `${this.name}'s Resources`);
+        richEmbed.addField( "Mood", this.mood, true);
+        richEmbed.addField( "Tech", this.tech, true);
+        richEmbed.addField( "Data", this.data_resource, true);
+    }
+
     visitTreaties(richEmbed) {
-        richEmbed.setTitle('Your Treaties');
+        richEmbed.setTitle(`${this.name}\'s Treaties`);
         if (this.treaties) {
             let families = Object.keys(this.treaties);
             for (var i = 0; i < families.length; i++) {
@@ -338,7 +348,7 @@ class FamilyPlaybook {
             richEmbed
                 .addField('Family Name', this.name, true)
                 .addField('Family Playbook', this.playbook, true)
-                .addField('Username', this.username, true)
+                .addField('Username', this.playbook_username, true)
                 .addBlankField()
                 .addBlankField()
         } else {
@@ -364,7 +374,7 @@ class FamilyPlaybook {
                 {key: 'grasp', 'val': this.grasp},
                 {key: 'sleight', 'val': this.sleight},
                 {key: 'mood', 'val': this.mood},
-                {key: 'family_data', 'val': this.data_stat},
+                {key: 'family_data', 'val': this.data_resource},
                 {key: 'tech', 'val': this.tech},
 
             ];
@@ -442,31 +452,48 @@ class FamilyPlaybook {
     }
 
     get reach() {
+        if( ! this.family_reach ) {
+            this.family_reach = 0;
+        }
         return this.family_reach;
     }
 
-    get data_stat() {
+    get data_resource() {
+        if( ! this.family_data ) {
+            this.family_data = 0;
+        }
         return this.family_data;
     }
 
-    set data_stat(stat_value) {
+    get data_resource_update() {
+        return {
+            'family_data' : this.data_resource
+        }
+    }
+
+    set data_resource(stat_value) {
         this.family_data = stat_value;
     }
 
     get mood() {
-        return this.family_mood;
-    }
-
-    set mood(mood) {
-        this.family_mood = mood;
+        return this.surpluses.length - this.needs.length;
     }
 
     get tech() {
+        if( ! this.family_tech ) {
+            this.family_tech = 0;
+        }
         return this.family_tech;
     }
 
     set tech(tech_value) {
         this.family_tech = tech_value;
+    }
+
+    get tech_resource_update() {
+        return {
+            'family_tech' : this.tech
+        }
     }
 
 

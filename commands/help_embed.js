@@ -64,6 +64,9 @@ class HelpEmbed {
 
         ret.setTitle(this.name)
         ret.setDescription(this.comments);
+        if( this.examples.length ) {
+            ret.addField( "Examples", this.examplesHelpText);
+        }
         ret.addField(`Usage: `, usageString, false);
         ret.addField("Aliases:", `\t${JSON.stringify(this.aliases)}`);
         if ( this.command_args.length ) {
@@ -75,9 +78,7 @@ class HelpEmbed {
         if( this.arguments.length ) {
             ret.addField( "Arguments", this.argumentHelpText);
         }
-        if( this.examples.length ) {
-            ret.addField( "Examples", this.examplesHelpText);
-        }
+
         ret.setFooter(`Have a bug to file? Needs more help? Visit https://github.com/lhayhurst/legacybot/issues`,
             `https://cdn.discordapp.com/embed/avatars/0.png`);
 

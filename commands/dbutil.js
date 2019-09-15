@@ -72,7 +72,7 @@ class DbUtil {
 
     static async insert_family( user_id, guild_id, playbook_name, family_name ) {
         let newFamily = new FamilyPlaybook( playbook_name, guild_id );
-        newFamily.user_id = user_id;
+        newFamily.playbook_user_id = user_id;
         newFamily.name = family_name;
 
         return await db.insert(newFamily)

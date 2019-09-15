@@ -2,6 +2,7 @@ const {Command} = require('discord-akairo');
 const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('./help_embed');
+const CommandsMetadata = require('./commands_metadata');
 
 class TreatyCommand extends Command {
     constructor() {
@@ -40,7 +41,7 @@ class TreatyCommand extends Command {
 
         ];
         let aliases =  ['treaty', 't'];
-        super('treaty command', {
+        super(CommandsMetadata.getCommands().treaty.id, {
             aliases: aliases,
             split: 'quoted',
             args: command_args

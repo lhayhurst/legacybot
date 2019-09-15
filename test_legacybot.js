@@ -12,6 +12,7 @@ const SurplusCommand = require('./commands/surplus');
 const SetFamilyCommand = require('./commands/set_family');
 const FamilyStatCommand = require('./commands/family_stat');
 const TreatyCommand = require('./commands/treaty');
+const FamilyResourceCommand = require('./commands/family_resource');
 
 const RollCommand = require('./commands/roll');
 
@@ -349,6 +350,30 @@ describe( 'roll command help', () => {
         assert.ok(help_embed);
         assert.ok( help_embed.arguments );
         assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
+describe( 'family resource help', () => {
+    it( 'family resource help', () => {
+        let command = new FamilyResourceCommand();
+        let commandName =  CommandsMetadata.getCommands().family_resource.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok( help_embed.commandsHelpText);
+        assert.ok( help_embed.argumentHelpText);
         assert.ok(help_embed.examplesHelpText);
         let embed = help_embed.embed;
         assert.ok(embed);
