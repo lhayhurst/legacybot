@@ -1,5 +1,6 @@
 const {db} = require('../bot');
 const FamilyPlaybook = require('../family_playbook');
+const CharacterPlaybook = require('../character_playbook');
 
 class DbUtil {
     static async update_family(family, updateKey, updateValue) {
@@ -83,6 +84,103 @@ class DbUtil {
                 return(`insert failed! ${err}`);
             });
     }
+
+
+    static async insert_character(character_name, playbook_name, guild_id, family_name, db_override=null ) {
+        let mydb = null;
+        if ( db_override) { //needed for unit testing.
+            mydb = db_override;
+        }
+        else {
+            mydb = db;
+        }
+        let newCharacter = new CharacterPlaybook( character_name, playbook_name, guild_id, family_name);
+
+        return await mydb.insert(newCharacter)
+            .then(() => {
+                return(`created new character: ${JSON.stringify(newCharacter)}`);
+            })
+            .catch((err) => {
+                return(`insert failed! ${err}`);
+            });
+    }
+
+    static async get_character(character_name, guild_id, family_name, db_override=null) {
+        let mydb = null;
+        if ( db_override) { //needed for unit testing.
+            mydb = db_override;
+        }
+        else {
+            mydb = db;
+        }
+        return await mydb.find({character_name: character_name, guild_id: guild_id, family_name: family_name}).then((docs) => {
+            if (docs.length === 0) { //not found
+                return null;
+            }
+            return CharacterPlaybook.fromNedbDocument(docs[0]);
+        }).catch((err) => {
+            return null;
+        });
+
+    }
+
+    static async get_users_character(user_id, guild_id, db_override=null) {
+        let mydb = null;
+        if ( db_override) { //needed for unit testing.
+            mydb = db_override;
+        }
+        else {
+            mydb = db;
+        }
+        return await mydb.find({character_user_id: user_id, guild_id: guild_id}).then((docs) => {
+            if (docs.length === 0) { //not found
+                return null;
+            }
+            return CharacterPlaybook.fromNedbDocument(docs[0]);
+        }).catch((err) => {
+            return null;
+        });
+    }
+
+    static async get_character_by_playbook(playbook_name, guild_id, db_override=null) {
+        let mydb = null;
+        if ( db_override) { //needed for unit testing.
+            mydb = db_override;
+        }
+        else {
+            mydb = db;
+        }
+        return await mydb.find({character_playbook: playbook_name, guild_id: guild_id}).then((docs) => {
+            if (docs.length === 0) { //not found
+                return null;
+            }
+            return CharacterPlaybook.fromNedbDocument(docs[0]);
+        }).catch((err) => {
+            return null;
+        });
+
+    }
+
+    static async update_character(character, updateKey, updateValue, db_override=null) {
+        let mydb = null;
+        if ( db_override) { //needed for unit testing.
+            mydb = db_override;
+        }
+        else {
+            mydb = db;
+        }
+        return await mydb.update({
+            guild_id: character.guild_id,
+            character_name: character.name,
+        }, {$set: {[updateKey]: updateValue}}, []).then((updatedDocs) => {
+            return updatedDocs;
+        }).catch((err) => {
+            return err;
+        });
+    }
+
+
+
 
 }
 module.exports = DbUtil;

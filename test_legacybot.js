@@ -1,5 +1,6 @@
 const assert = require('assert');
 const db = require('./db');
+const DbUtil = require('./commands/dbutil');
 const FamilyPlaybook = require('./family_playbook');
 const PingCommand = require('./commands/ping');
 const Discord = require('discord.js');
@@ -13,6 +14,7 @@ const SetFamilyCommand = require('./commands/set_family');
 const FamilyStatCommand = require('./commands/family_stat');
 const TreatyCommand = require('./commands/treaty');
 const FamilyResourceCommand = require('./commands/family_resource');
+const CharacterPlaybook = require('./character_playbook');
 
 const RollCommand = require('./commands/roll');
 
@@ -383,6 +385,84 @@ describe( 'family resource help', () => {
     });
 });
 
+describe( 'character playbooks', () => {
+    let playbooks = CharacterPlaybook.playbooks();
+
+    it( 'character playbooks', () => {
+        assert.ok( playbooks );
+        assert.strictEqual( 13, Object.keys(playbooks).length );
+    });
+
+    it( 'find stock playbooks', () => {
+        let spb = CharacterPlaybook.find_stock_playbook("elder");
+        assert.ok( spb );
+        assert.strictEqual( "The Elder", spb);
+        spb = CharacterPlaybook.find_stock_playbook("Elder");
+        assert.ok( spb );
+        assert.strictEqual( "The Elder", spb);
+        spb = CharacterPlaybook.find_stock_playbook("foobar");
+        assert.ok( spb == null );
+    })
+});
+
+
+describe( 'character db queries', async () => {
+
+    let test_db = db.create();
+    let playbook = 'Survivor';
+    let name = 'Max';
+    let guild_id = 1;
+    let user_id = 1;
+
+    it("can't get a character that doesn't exist yet", async () => {
+        let character = await DbUtil.get_character(name, guild_id, "test-family", test_db)
+        assert.ok( character == null );
+    });
+
+    it("create and get", async () => {
+
+        await DbUtil.insert_character(name, playbook, guild_id, "test-family", test_db);
+
+        //its inserted, now go get it
+        let character = await DbUtil.get_character(name, guild_id, "test-family",  test_db)
+        assert.ok( character );
+        assert.strictEqual( playbook, character.playbook);
+        assert.strictEqual( name, character.name);
+    });
+
+    it("get character by playbook", async () => {
+        await DbUtil.insert_character(name, playbook, guild_id, "test-family", test_db);
+
+        //its inserted, now go get it
+        let character = await DbUtil.get_character_by_playbook(playbook, guild_id, test_db)
+        assert.ok( character );
+        assert.strictEqual( playbook, character.playbook);
+        assert.strictEqual( name, character.name);
+    });
+
+    it("get character by user", async () => {
+
+        await DbUtil.insert_character(name, playbook, guild_id, "test-family", test_db);
+
+        //its inserted, now go get it
+        let character = await DbUtil.get_character_by_playbook(playbook, guild_id, test_db)
+        assert.ok( character );
+        assert.strictEqual( playbook, character.playbook);
+        assert.strictEqual( name, character.name);
+
+        //now update it
+        await DbUtil.update_character( character, "character_user_id", user_id, test_db);
+
+        //now go get it by user
+        let character2 = await DbUtil.get_users_character(user_id, guild_id, test_db);
+        assert.ok( character2);
+        assert.strictEqual( playbook, character2.playbook);
+        assert.strictEqual( name, character2.name);
+        assert.strictEqual( user_id, character2.user_id);
+
+    });
+
+});
 
 
 

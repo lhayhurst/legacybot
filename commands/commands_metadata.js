@@ -45,7 +45,11 @@ class CommandsMetadata {
             'roll': {
                 id: 'roll',
                 note: 'Roll 2d6 or 3d6 with various modifiers.'
-            }
+            },
+            'new_character': {
+                id: 'new-character',
+                note: 'Create a new character.'
+            },
 
         }
     }

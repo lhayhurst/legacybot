@@ -5,21 +5,7 @@ This is a Discordbot for helping out with "play by post" games of [Legacy: Life 
 Past [this link](https://discordapp.com/api/oauth2/authorize?client_id=619678791626915850&permissions=8&scope=bot) into your browser and select the server you'd like the bot to join.
 
 ## Commands
-All commands to Legacybot begin with a forward slash "/".  Legacybot supports the following commands:
-
-### Legacy Bot Commands 
-| Command/Alias        | Args           | Example  | Notes |
-| ------------- |:-------------:| -----:|:----------:|
-| `/help` or `/h` or @Legacybot   | -p | `/h` , `/h -p` | Ask the bot for help. If you give it a `-p` flag it will print out the supported playbooks that come with the bot. |  
-| `/family` or `/f`   | `name='<STRING>'` | `/f`, `/f name="Duhnah"`, `/f --all`| A `/f` command will get the family associated with the player (if any; see the `set-family` command). A `/f --all` command  will list all the families currently in play for your guild. `/f name="Duhnah"` command will list the family sheet for the family with the name "Duhnah".  |  
-| `/new-family` or `/nf`   | `p="Playbook Name"` `n="Family Name"`| `/new-family p="Cultivator of the New Flesh" n="Duhnah"`  | This will create a new family. If a family already exists with this name, nothing will happen (all family names must be unique).  By creating a new family, that family is not assigned to the Discord user unless the user adds the family. The playbook must be one of the core Legacy family classes; see ["Supported Family Playbooks"](#supported-family-playbooks) section below. Note, Legacybot will helpfuly match your playbook string against existing playbooks -- for example, if you enter `/nf p=Hive`, it will match you with "The Synthetic Hive." | 
- /`set-family` or `/sf`    | family name      |   `/set-family "Duhnah"` | Associates a user with the named family. This won't delete the family. |
-| `/drop-family` or `/df`     |  |   `/df` | Disassociates a user with the named family. This won't delete the family. |
-| `/set-family-stats` or `/sfs` | `s=<INT> r=<INT> g=<INT> m=<INT> d=<INT> t=<INT>`      |    `/sfs g=-1` | Sets the named stat, with the short-hand `r` for `reach`, `g` for `grasp`, `s` for `sleight`, `d` for data, and `t` for `tech`. The stat will be set for the family associated with the user.|
-| `/treaty` or `/t` | `give` or `get` or `spend` `"Family Name"` `+<INT>` |  `/t give +2 "The Faith"`, `/t get "The Faith"` , `/t spend "The Faith" ` | For every other family in the game, you can have Treaty on them, and they can have Treaty on you. To get Treaty on them, use the `get` command. To give them treaty on you, use the `give` command. To spend treaty with them, use `spend`. To see your current treaties, just type in  `/t`. Note, you can give or get multiple treaty by  using the `+` options, for example `+2`. |
-| `/surplus` or `/s` | `add` or `remove `"Resource Name"`  |  `/s add "Barter Goods"` ` | Adds or removes a Surplus |
-| `/need` or `/n` | `add` or `remove` `"Resource Name"`  |  `/ add "Barter Goods"` | Adds or removes a Need |
-| `/roll`  | `-a` `-d`  `-b=<INT>` `+STAT` |  `/roll -a -b=1`, /roll -d +Sleight |  Rolls the dice for your assumed Family or Character. The roll command takes an optional `-a` or `-d` argument or advantage or disadvantage, respectively. If you provide a +STAT argument, it'll add that stat bonus to your roll; for example, `/roll +s` or `/roll +sleight` or `/roll +Sleight` will role with Sleight modifier. Finally, you can provide a `b=<INT>` to set an optional bonus, for example `b=1`. Note that your bonuses will net out; for example, if you have a -1 sleight and a +1 bonus, it will net out to zero. |
+All commands to Legacybot begin with a dot "."  Legacybot's command help is built in to the bot; to get started, typing in `help -c`
 
 ### Commands To Develop
 | Command        | Args           | Example  | Notes |
