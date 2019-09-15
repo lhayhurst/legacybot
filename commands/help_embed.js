@@ -97,7 +97,7 @@ class HelpEmbed {
         let ret = ``;
         for( var i = 0; i < this.options.length; i++ ) {
             let opt = this.options[i];
-            ret += `\t${opt.prefix}\t`;
+            ret += `\t\`${opt.prefix}\`\t`;
             ret += `${opt.helptext}\t`;
             if( opt.optional ) {
                 ret += "[optional]"

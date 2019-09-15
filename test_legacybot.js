@@ -10,6 +10,8 @@ const DropFamilyCommand = require('./commands/drop_command');
 const NeedCommand = require('./commands/need');
 const SurplusCommand = require('./commands/surplus');
 const SetFamilyCommand = require('./commands/set_family');
+const FamilyStatCommand = require('./commands/family_stat');
+
 const CommandsMetadata = require( './commands/commands_metadata');
 const config = require('config');
 
@@ -284,6 +286,29 @@ describe( 'set family command line help', () => {
         assert.strictEqual( commandName, embed.title);
     });
 });
+
+describe( 'set family stat command line help', () => {
+    it( 'set family stat help', () => {
+        let command = new FamilyStatCommand();
+        let commandName =  CommandsMetadata.getCommands().family_stat.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok(help_embed);
+        assert.ok( help_embed.arguments );
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
+
 
 
 

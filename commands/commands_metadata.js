@@ -18,6 +18,10 @@ class CommandsMetadata {
                 id: 'set-family',
                 note: 'Adopt a family to play in the game.'
             },
+            'family_stat': {
+                id: 'family-stat',
+                note: 'Change one of your three family stats (Grasp, Sleight, and Reach; see Legacy CRB 2.0 page 24).'
+            },
             'drop_family': {
                 id: 'drop-family',
                 note: 'Allows you to drop a Family (if you have set one)'
