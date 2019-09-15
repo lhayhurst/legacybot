@@ -41,10 +41,6 @@ class NeedCommand extends Command {
         this.command_args = command_args;
         this.examples = [
             {
-                command: aliases[1],
-                commentary: `Generates just your family handout sheets, if you have set one.`
-            },
-            {
                 command: `${aliases[1]} add "Barter Goods"`,
                 commentary: `Adds the resource "Barter Goods" to your Family Needs.`
             },
@@ -79,7 +75,7 @@ class NeedCommand extends Command {
         }
 
         if (!(action === "add" || action === "remove")) {
-            return message.reply(`Unknown action ${action}, valid actions are "add" or "remove. Please run thos command with --help to learn about it.`);
+            return message.reply(`Unknown action ${action}, valid actions are "add" or "remove. Please run this command with --help to learn about it.`);
         }
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);

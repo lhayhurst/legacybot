@@ -66,16 +66,16 @@ class HelpEmbed {
         ret.setDescription(this.comments);
         ret.addField(`Usage: `, usageString, false);
         ret.addField("Aliases:", `\t${JSON.stringify(this.aliases)}`);
-        if ( this.command_args ) {
+        if ( this.command_args.length ) {
             ret.addField( "Options", this.optionsHelpText );
         }
-        if( this.commands ) {
+        if( this.commands.length ) {
             ret.addField( "Commands", this.commandsHelpText);
         }
-        if( this.arguments) {
+        if( this.arguments.length ) {
             ret.addField( "Arguments", this.argumentHelpText);
         }
-        if( this.examples) {
+        if( this.examples.length ) {
             ret.addField( "Examples", this.examplesHelpText);
         }
         ret.setFooter(`Have a bug to file? Needs more help? Visit https://github.com/lhayhurst/legacybot/issues`,
