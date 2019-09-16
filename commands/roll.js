@@ -116,15 +116,15 @@ class RollCommand extends Command {
         let stat = args.stat;
 
         //TODO: these belong in a meta-data file somewhere, eh?
-        let reachStatAliases =  ['r', 'reach', 'Reach'];
-        let graspStatAliases = [ 'g', 'grasp', 'Grasp'];
-        let sleightStatAliases = ['s', 'sleight', 'Sleight'];
-        let validFamilyStats = [ reachStatAliases, ...graspStatAliases, ...sleightStatAliases];
+        let reachStatAliases =  ['r',  'R', 'reach', 'Reach'];
+        let graspStatAliases = [ 'g', 'G', 'grasp', 'Grasp'];
+        let sleightStatAliases = ['s', 'S', 'sleight', 'Sleight'];
+        let validFamilyStats = [ ...reachStatAliases, ...graspStatAliases, ...sleightStatAliases];
 
-        let forceStatAliases = ['f', 'force', 'Force'];
-        let loreStatAliases = ['l', 'lore', 'Lore'];
-        let steelStatAliases = ['st', 'steel', 'Steel'];
-        let swayStatAliases = ['sw', 'sway', 'Sway'];
+        let forceStatAliases = ['f', 'F', 'force', 'Force'];
+        let loreStatAliases = ['l', 'L', 'lore', 'Lore'];
+        let steelStatAliases = ['st', 'ST', 'steel', 'Steel'];
+        let swayStatAliases = ['sw', 'SW', 'sway', 'Sway'];
 
         let validCharacterStats = [...forceStatAliases, ...loreStatAliases, ...steelStatAliases, ...swayStatAliases];
 

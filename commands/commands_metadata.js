@@ -20,7 +20,7 @@ class CommandsMetadata {
             },
             'family_stat': {
                 id: 'family-stat',
-                note: 'Change one of your three family stats (Grasp, Sleight, and Reach; see Legacy CRB 2.0 page 24).'
+                note: 'Change one or more of your three family stats (Grasp, Sleight, and Reach; see Legacy CRB 2.0 page 24).'
             },
             'family_resource': {
                 id: 'family-resource',
@@ -61,6 +61,10 @@ class CommandsMetadata {
             'set_character': {
                 id: 'set-character',
                 note: 'Set a character to play in the game.'
+            },
+            'character_stat': {
+                id: 'character-stat',
+                note: 'Change one or more of your four Character stats (Force, Lore, Steel and Sway.'
             },
             'drop_character': {
                 id: 'drop-character',
