@@ -7,7 +7,7 @@ const Discord = require('discord.js');
 const HelpEmbed = require('./commands/help_embed');
 const HelpCommand = require('./commands/help');
 const FamiliesCommand = require('./commands/family');
-const DropFamilyCommand = require('./commands/drop_command');
+const DropFamilyCommand = require('./commands/drop_family');
 const NeedCommand = require('./commands/need');
 const SurplusCommand = require('./commands/surplus');
 const SetFamilyCommand = require('./commands/set_family');
@@ -19,7 +19,7 @@ const NewCharacterCommand = require('./commands/new_character');
 const QuickCharacterCommand = require('./commands/quick_character');
 const CharacterCommand = require('./commands/character');
 const SetCharacterCommand = require('./commands/set_character');
-
+const DropCharacterCommand = require('./commands/drop_character');
 const RollCommand = require('./commands/roll');
 
 const CommandsMetadata = require( './commands/commands_metadata');
@@ -478,6 +478,27 @@ describe( 'set character help', () => {
     });
 });
 
+describe( 'drop character command line help', () => {
+    it( 'get help', () => {
+        let command = new DropCharacterCommand();
+        let commandName =  CommandsMetadata.getCommands().drop_character.id;
+        let help_embed = new HelpEmbed( commandName,
+            command.command_args,
+            command.aliases,
+            command.comments,
+            command.examples
+        );
+        assert.ok( command.options );
+        assert.ok(help_embed);
+        assert.ok(help_embed.optionsHelpText);
+        assert.ok(help_embed.examplesHelpText);
+        let embed = help_embed.embed;
+        assert.ok(embed);
+        assert.ok( embed instanceof Discord.RichEmbed);
+        assert.ok( embed.title );
+        assert.strictEqual( commandName, embed.title);
+    });
+});
 
 describe( 'character playbooks', () => {
     let playbooks = CharacterPlaybook.playbooks();

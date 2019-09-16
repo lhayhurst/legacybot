@@ -1,9 +1,9 @@
 const {Command} = require('discord-akairo');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
+const DbUtil = require('./dbutil');
 
-
-class DropFamilyCommand extends Command {
+class DropCharacterCommand extends Command {
 
     constructor() {
         let command_args = [
@@ -16,17 +16,17 @@ class DropFamilyCommand extends Command {
                 optional: true
             },
         ];
-        let aliases = ['drop-family', 'df'];
-        super(CommandsMetadata.getCommands().drop_family.id, {
+        let aliases = ['drop-character', 'dc'];
+        super(CommandsMetadata.getCommands().drop_character.id, {
             aliases: aliases ,
             args: command_args
         });
-        this.comments = `This command lets you drop a family if you have already set a family.`;
+        this.comments = `This command lets you character a family if you have already set a family.`;
         this.command_args = command_args;
         this.examples = [
             {
                 command: aliases[1],
-                commentary: `Drops your current family.`
+                commentary: `Drops your current character.`
             },
             {
                 command: `${aliases[1]} --help`,
@@ -47,14 +47,14 @@ class DropFamilyCommand extends Command {
         }
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
-        let ownerFamily = await DbUtil.get_users_family(user_id, guild_id);
+        let ownerCharacter = await DbUtil.get_users_character(user_id, guild_id);
 
-        if (!ownerFamily) {
-            return message.reply(`You do not have a family to drop!`);
+        if (!ownerCharacter) {
+            return message.reply(`You do not have a character to drop!`);
         }
         else {
-            await DbUtil.update_family_multiple_values(ownerFamily, { user_id : null, username: null } );
-            return message.reply(`dropped your family, please run the /nf command to take a new family`);
+            await DbUtil.update_character_multiple_values(ownerCharacter, { character_user_id : null, character_username: null } );
+            return message.reply(`dropped your character, please run the \`sc\` command to take a new character`);
         }
 
     }
@@ -64,4 +64,4 @@ class DropFamilyCommand extends Command {
     }
 }
 
-module.exports = DropFamilyCommand;
+module.exports = DropCharacterCommand;

@@ -62,7 +62,10 @@ class CommandsMetadata {
                 id: 'set-character',
                 note: 'Set a character to play in the game.'
             },
-
+            'drop_character': {
+                id: 'drop-character',
+                note: 'Allows you to drop a Character (if you have set one)'
+            },
         }
     }
 }
