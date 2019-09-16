@@ -58,7 +58,10 @@ class CommandsMetadata {
                 id: 'character',
                 note: 'Get information about your character, or other characters in play.'
             },
-
+            'set_character': {
+                id: 'set-character',
+                note: 'Set a character to play in the game.'
+            },
 
         }
     }

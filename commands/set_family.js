@@ -36,7 +36,7 @@ class SetFamilyCommand extends Command {
             }
         ];
         let aliases =  ['set-family', 'sf']
-        super('set family command', {
+        super(CommandsMetadata.getCommands().set_family.id, {
             aliases: aliases,
             split: 'quoted',
             args: command_args
@@ -72,7 +72,7 @@ class SetFamilyCommand extends Command {
                 this.comments,
                 this.examples).embed);
         }
-        db.find({family_name: args.name}).then((docs) => {
+        db.find({family_name: args.name, guild_id: message.guild.id}).then((docs) => {
             if (docs.length === 0) { //no family found with that name
                 return message.reply(`No family found with name ${args.name}!`);
             } else { //it already exists, just let the user know

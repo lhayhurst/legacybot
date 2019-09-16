@@ -105,6 +105,25 @@ class DbUtil {
             });
     }
 
+    static async get_character_by_name(character_name, guild_id, db_override=null) {
+        let mydb = null;
+        if ( db_override) { //needed for unit testing.
+            mydb = db_override;
+        }
+        else {
+            mydb = db;
+        }
+        return await mydb.find({character_name: character_name, guild_id: guild_id}).then((docs) => {
+            if (docs.length === 0) { //not found
+                return null;
+            }
+            return CharacterPlaybook.fromNedbDocument(docs[0]);
+        }).catch((err) => {
+            return null;
+        });
+
+    }
+
     static async get_character(character_name, guild_id, family_name, db_override=null) {
         let mydb = null;
         if ( db_override) { //needed for unit testing.
@@ -173,6 +192,17 @@ class DbUtil {
             guild_id: character.guild_id,
             character_name: character.name,
         }, {$set: {[updateKey]: updateValue}}, []).then((updatedDocs) => {
+            return updatedDocs;
+        }).catch((err) => {
+            return err;
+        });
+    }
+
+    static async update_character_multiple_values(character, updateValues) {
+        return await db.update({
+            guild_id: character.guild_id,
+            character_name: character.name,
+        }, {$set: updateValues }, []).then((updatedDocs) => {
             return updatedDocs;
         }).catch((err) => {
             return err;
