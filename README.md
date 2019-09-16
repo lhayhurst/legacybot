@@ -1,6 +1,9 @@
 # Legacybot
 This is a Discordbot for helping out with "play by post" games of [Legacy: Life Among the Ruins](https://ufopress.co.uk/our-games/legacy-life-among-ruins/). If you want to jump right in, the commands used by the bot are listed below, and the [TUTORIAL.md](TUTORIAL.md) has a bunch of examples. 
 
+Legacy Bot is currently in ALPHA TESTING and as such any data written to it can be blown away at any moment! Once it proceeds to BETA it will have permanent storage.
+
+
 ## Installation
 Past https://discordapp.com/api/oauth2/authorize?client_id=619678791626915850&permissions=201837632&scope=bot into your browser and select the server you'd like the bot to join.
 
