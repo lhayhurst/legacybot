@@ -47,22 +47,6 @@ class RollCommand extends Command {
                     default: null,
                     helptext: 'Roll with disadvantage (3d6, drop highest)',
                     optional: true
-                },
-                {
-                    id: 'family',
-                    match: 'flag',
-                    prefix: '-f',
-                    default: true,
-                    helptext: 'Family roll. Defaults to true.',
-                    optional: true
-                },
-                {
-                    id: 'character',
-                    match: 'flag',
-                    prefix: '-c',
-                    default: null,
-                    helptext: 'Character roll. Defaults to false.',
-                    optional: true
                 }
             ];
         let aliases =  ['roll', 'r'];
@@ -123,12 +107,26 @@ class RollCommand extends Command {
     }
 
 
+
+
     async aexec(message, args) {
 
         let modifier = 0;
         let usingModifier = false;
         let stat = args.stat;
-        let validStats = ['r', 'reach', 'Reach', 'g', 'grasp', 'Grasp', 's', 'sleight', 'Sleight']
+
+        //TODO: these belong in a meta-data file somewhere, eh?
+        let reachStatAliases =  ['r', 'reach', 'Reach'];
+        let graspStatAliases = [ 'g', 'grasp', 'Grasp'];
+        let sleightStatAliases = ['s', 'sleight', 'Sleight'];
+        let validFamilyStats = [ reachStatAliases, ...graspStatAliases, ...sleightStatAliases];
+
+        let forceStatAliases = ['f', 'force', 'Force'];
+        let loreStatAliases = ['l', 'lore', 'Lore'];
+        let steelStatAliases = ['st', 'steel', 'Steel'];
+        let swayStatAliases = ['sw', 'sway', 'Sway'];
+
+        let validCharacterStats = [...forceStatAliases, ...loreStatAliases, ...steelStatAliases, ...swayStatAliases];
 
         if ( args.help ) {
             return message.reply( new HelpEmbed(
@@ -140,30 +138,60 @@ class RollCommand extends Command {
         }
 
         if (stat) {
-            if (validStats.indexOf(stat) === -1) {
-                return message.reply(`You gave me a stat that I didn't recognize. Valid stats are: ${JSON.stringify(validStats)} `);
+            let isFamilyStat = validFamilyStats.includes(stat);
+            let isCharacterStat = validCharacterStats.includes(stat);
+            if (!isFamilyStat && !isCharacterStat) {
+                return message.reply(`You gave me a stat that I didn't recognize. Valid stats for Families are ${JSON.stringify(validFamilyStats)}, and valid stats for Characters are  ${JSON.stringify(validCharacterStats)} `);
             }
-            //its a good stat, but now we have to make sure that the player has a family
+
+            //so far so good.
             let guild_id = message.guild.id;
             let user_id = message.member.user.id;
-            let ownerFamily = await DbUtil.get_users_family(user_id, guild_id);
-            if (ownerFamily == null) {
-                return message.reply(`You gave me a valid stat but you haven't taken on a family or character yet. Please /sf or /sc if you want to roll with a stat modifier!`);
+            let userPlaybook = null;
+            if ( isFamilyStat) {
+                userPlaybook = await DbUtil.get_users_family(user_id, guild_id);
             }
-            if (stat === 'r' || stat === 'reach' || stat === 'Reach') {
-                if (ownerFamily.reach) {
+            else {
+                userPlaybook = await DbUtil.get_users_character(user_id, guild_id);
+            }
+
+            if (userPlaybook == null ) {
+                return message.reply(`You gave me a valid stat but you haven't taken on a playbook yet. Please \`.sf\` or \`.sc\` first.`);
+            }
+            if (reachStatAliases.includes(stat) ) {
+                if (userPlaybook.reach) {
                     usingModifier = true;
-                    modifier += parseInt(ownerFamily.reach, 10);
+                    modifier += parseInt(userPlaybook.reach, 10);
                 }
-            } else if (stat === 'g' || stat === 'grasp' || stat === 'Grasp') {
-                if (ownerFamily.grasp) {
+            } else if (graspStatAliases.includes(stat) ) {
+                if (userPlaybook.grasp) {
                     usingModifier = true;
-                    modifier += parseInt(ownerFamily.grasp, 10);
+                    modifier += parseInt(userPlaybook.grasp, 10);
                 }
-            } else if (stat === 's' || stat === 'sleight' || stat == 'Sleight') {
-                if (ownerFamily.sleight) {
+            } else if (sleightStatAliases.includes(stat) ) {
+                if (userPlaybook.sleight) {
                     usingModifier = true;
-                    modifier += parseInt(ownerFamily.sleight, 10);
+                    modifier += parseInt(userPlaybook.sleight, 10);
+                }
+            } else if ( forceStatAliases.includes(stat)) {
+                if (userPlaybook.force ) {
+                    usingModifier = true;
+                    modifier += parseInt(userPlaybook.force, 10);
+                }
+            }  else if ( loreStatAliases.includes(stat)) {
+                if (userPlaybook.lore ) {
+                    usingModifier = true;
+                    modifier += parseInt(userPlaybook.lore, 10);
+                }
+            }  else if ( steelStatAliases.includes(stat)) {
+                if (userPlaybook.steel ) {
+                    usingModifier = true;
+                    modifier += parseInt(userPlaybook.steel, 10);
+                }
+            }  else if ( swayStatAliases.includes(stat)) {
+                if (userPlaybook.sway ) {
+                    usingModifier = true;
+                    modifier += parseInt(userPlaybook.sway, 10);
                 }
             }
         }
