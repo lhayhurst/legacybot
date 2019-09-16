@@ -83,6 +83,7 @@ class CharacterPlaybook {
         this.steel = steel;
         this.sway = sway;
         this.character_username = null;
+        this.notes = null;
     }
 
     static fromNedbDocument(document) {
@@ -93,6 +94,10 @@ class CharacterPlaybook {
         if (document.character_user_id) {
             ret.character_user_id = document.character_user_id;
             ret.character_username = document.character_username;
+        }
+
+        if ( document.notes ) {
+            ret.notes = document.notes;
         }
 
         return ret;
@@ -125,7 +130,7 @@ class CharacterPlaybook {
             'lore': [994, 88],
             'steel': [1136, 88],
             'sway': [1280, 88],
-
+            'notes': [61,253]
         };
         return print_coordinates[item];
     }
@@ -160,6 +165,12 @@ class CharacterPlaybook {
                         let coordinates = CharacterPlaybook.get_print_coordinates(stat_item.key);
                         await playbookSheetImage.print(font, coordinates[0], coordinates[1], stat_item.val);
                     }
+                }
+
+                if ( this.notes ) {
+                    let notesFont = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+                    let notesCoordinates = CharacterPlaybook.get_print_coordinates('notes');
+                    await playbookSheetImage.print( notesFont, notesCoordinates[0], notesCoordinates[1], this.notes, 600 );
                 }
 
 

@@ -19,7 +19,8 @@ class CharacterCommand extends Command {
                 id: 'name',
                 default: null,
                 helptext: 'The name of the Character to display',
-                argtype: "argument",
+                match: 'prefix',
+                prefix: 'n=',
                 type: "string",
                 split: "quoted",
                 optional: true
@@ -31,7 +32,24 @@ class CharacterCommand extends Command {
                 helptext: 'Show all Characters ',
                 default: null,
                 optional: true
-            }];
+            },
+            {
+                id: 'action', //notes
+                type: "string",
+                helptext: '\`notes\` the only action you can type in here',
+                argtype: "command",
+                optional: true,
+                default: null
+            },
+            {
+                id: 'notes',
+                type: "string",
+                default: null,
+                optional: false,
+                argtype: "argument",
+                helptext: `Your notes for this Character`
+            }
+        ];
         let aliases = ['character', 'c']
         super(CommandsMetadata.getCommands().character.id, {
             aliases: aliases,
@@ -54,6 +72,10 @@ class CharacterCommand extends Command {
                 commentary: `Gets the character sheet for the named character. No quotes needed if a single word name.`
             },
             {
+                command: `${aliases[1]} notes "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."`,
+                commentary: `Let's you set the character notes for this character.`
+            },
+            {
                 command: `${aliases[1]} --help`,
                 commentary: `Gets help on this command.`
             }
@@ -70,6 +92,17 @@ class CharacterCommand extends Command {
                 this.examples).embed);
         }
         let richEmbed = new Discord.RichEmbed();
+        let guild_id = message.guild.id;
+        let user_id = message.member.user.id;
+
+        if ( args.action && args.action === 'note') {
+            let character = await DbUtil.get_users_character(user_id, guild_id);
+            if (character == null ) {
+                return message.reply(`Before setting your Character's notes, you need to run the \`set-character\` command`);
+            }
+            await DbUtil.update_character(character, "notes", args.notes);
+            return message.reply( `You have set your character's notes`);
+        }
 
         if (args.all) {
             richEmbed.setTitle('Characters Created So Far');

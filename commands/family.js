@@ -20,7 +20,8 @@ class FamiliesCommand extends Command {
                 id: 'name',
                 default: null,
                 helptext: 'The name of the Family to display',
-                argtype: "argument",
+                match: 'prefix',
+                prefix: 'n=',
                 type: "string",
                 split: "quoted",
                 optional: true
@@ -32,7 +33,24 @@ class FamiliesCommand extends Command {
                 helptext: 'Show all families',
                 default: null,
                 optional: true
-            }];
+            },
+            {
+                id: 'action', //notes
+                type: "string",
+                helptext: '\`notes\` the only action you can type in here',
+                argtype: "command",
+                optional: true,
+                default: null
+            },
+            {
+                id: 'notes',
+                type: "string",
+                default: null,
+                optional: false,
+                argtype: "argument",
+                helptext: `Your notes for this Family`
+            }
+            ];
         let aliases = ['family', 'f']
         super(CommandsMetadata.getCommands().family.id, {
             aliases: aliases,
@@ -55,6 +73,10 @@ class FamiliesCommand extends Command {
                 commentary: `Gets the family sheet for the named family. No quotes needed if a single word name.`
             },
             {
+                command: `${aliases[1]} note "War Boys are the paramilitary arm of The Citadel and serve as Immortan Joe's servants and soldiers. War Boys are hand picked at a young age by the guardians of the elevator platform of The Citadel and are indoctrinated as zealots in the cult of V8 with Immortan Joe as their immortal leader."`,
+                commentary: `Let's you set the character notes for this Family.`
+            },
+            {
                 command: `${aliases[1]} --help`,
                 commentary: `Gets help on this command.`
             }
@@ -71,6 +93,18 @@ class FamiliesCommand extends Command {
                 this.examples).embed);
         }
         let richEmbed = new Discord.RichEmbed();
+        let guild_id = message.guild.id;
+        let user_id = message.member.user.id;
+
+        if ( args.action && args.action === 'note') {
+            let family = await DbUtil.get_users_family(user_id, guild_id);
+            if (family == null ) {
+                return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);
+            }
+            await DbUtil.update_family(family, "notes", args.notes);
+            return message.reply( `You have set your Family notes`);
+        }
+
 
         if (args.all) {
             richEmbed.setTitle('Families Created So Far');

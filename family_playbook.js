@@ -151,7 +151,8 @@ class FamilyPlaybook {
             'family_name': [849, 153],
             'treaties': {start: [50, 203], yoursOnThem: [311, 203], theirsOnYou: [478, 203]},
             'surpluses': [50, 559],
-            'needs': [348, 559]
+            'needs': [348, 559],
+            'notes': [738, 276]
         };
         return print_coordinates[stat];
     }
@@ -178,6 +179,7 @@ class FamilyPlaybook {
         this.data_resource = 0;
         this.playbook_username = null;
         this.playbook_user_id = null;
+        this.notes = null;
     }
 
     get playbook() {
@@ -203,6 +205,10 @@ class FamilyPlaybook {
         if (document.user_id) {
             ret.playbook_user_id = document.user_id;
             ret.playbook_username = document.username;
+        }
+
+        if( document.notes ) {
+            ret.notes = document.notes;
         }
 
         return ret;
@@ -363,8 +369,18 @@ class FamilyPlaybook {
                 let playbookSheetImage = await Jimp.read(playbookSheetPath);
                 let name_coordinates = FamilyPlaybook.get_print_coordinates('family_name');
                 await playbookSheetImage.print(font, name_coordinates[0], name_coordinates[1], this.name);
+
+                if ( this.notes ) {
+                    let notesFont = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+                    let notesCoordinates = FamilyPlaybook.get_print_coordinates('notes');
+                    await playbookSheetImage.print( notesFont, notesCoordinates[0], notesCoordinates[1], this.notes, 600 );
+                }
+
                 imagesToPublish.push(playbookSheetImage);
+
             }
+
+
 
             let statsSheetImage = await Jimp.read('assets/families/family-sheet-2.png');
 
