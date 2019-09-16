@@ -95,7 +95,7 @@ class NewFamilyCommand extends Command {
         }
 
         //we're good to go. insert the new family
-        let retMessage = await DbUtil.insert_family( user_id, guild_id, args.playbook, args.name );
+        let retMessage = await DbUtil.insert_family( null, guild_id, args.playbook, args.name );
         return message.reply(retMessage);
     }
     exec(message, args) {

@@ -79,7 +79,7 @@ class QuickCharacterCommand extends Command {
         this.command_args = command_args;
         this.examples = [
             {
-                command: `${aliases[1]} -f=Warboys -n=Nux -Force=1 -Lore=0 -Steel=1 -Sway=-1`,
+                command: `${aliases[1]} f=Warboys n=Nux Force=1 Lore=0 Steel=1 Sway=-1`,
                 commentary: `Creates a Quick Character in the Warboys Family with the name Nux, Force of 1 (Tyrant Kings bonus), Lore of 0, Steel of 1, and Sway of -1.`
             },
             {

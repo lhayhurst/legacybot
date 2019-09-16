@@ -53,7 +53,63 @@ Mood is automatically calculated from Surplus and Need, but Data and Tech are se
 
 ## Treaty
 
-Treaty can be given or taken using the `.treaty` command. To give treaty to another Family, simply `.t give 
+Treaty can be given or taken using the `.treaty` command. To give treaty to another Family, use the `.t give` command. For example:
+
+![treaty](assets/screenshots/treaty1.png)
+
+Treaty can be spent using `.treaty spend "Bullet Farm"`, for example. Remember you can always do a `--help` with any command, or example `.treaty --help`.
+
+## Surplus and Need
+Surplus and need can be managed using the `.surplus` and `.need` commands. They are easy to use. To create a surplus, do something like `.surplus add "Barter Goods"`. 
+
+![surplus-needs](assets/screenshots/surplus-needs.png)
+
+After you've added some needs and surpluses, they will show up on your Family sheet, along with Mood:
+
+![surplus-needs](assets/screenshots/surplus-needs-2.png)
+
+## Rolling Dice
+
+Legacybot has a complete dice rolling solution. Run `.roll --help` to have a look:
+
+![dice](assets/screenshots/dice1.png)
+
+Let's roll some bones!
+
+![dice](assets/screenshots/dice2.png)
+
+## Character Playbooks
+
+Legacybot supports Characters too! To create a new charcter, run the `.character`. Note, you have to have an associated family before you can create a standard character. As with Families, Legacybot will auto-match against existing Character Playbooks if the playbook you type in contains their name.
+
+![char](assets/screenshots/char1.png)
+
+You can also create Quick Characters using the `.quick-character` command.
+
+![quick](assets/screenshots/quick.png)
+
+## Character Attributes
+
+Character notes can be set the same way as family notes, using the `.c note` command. For example, if I type in `.c note "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."` and then run the `.c` command I get:
+
+![charnotes](assets/screenshots/charnotes.png)
+
+Finally, character stats can be set using the `cs` command. 
+
+![cstats](assets/screenshots/cstats.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

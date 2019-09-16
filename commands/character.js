@@ -72,7 +72,7 @@ class CharacterCommand extends Command {
                 commentary: `Gets the character sheet for the named character. No quotes needed if a single word name.`
             },
             {
-                command: `${aliases[1]} notes "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."`,
+                command: `${aliases[1]} note "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."`,
                 commentary: `Let's you set the character notes for this character.`
             },
             {
