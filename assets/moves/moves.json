@@ -1,5 +1,6 @@
 [
   {
+    "moveSource": "Core Rulebook",
     "moveName": "Claim by Force",
     "moveType": "Basic",
     "movePlaybook": "Family",
@@ -17,6 +18,7 @@
     }
   },
   {
+    "moveSource": "Core Rulebook",
     "moveName": "Defuse",
     "moveType": "Core",
     "movePlaybook":"Character",
