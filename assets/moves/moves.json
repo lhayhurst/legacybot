@@ -1,0 +1,34 @@
+[
+  {
+    "moveName": "Claim by Force",
+    "moveType": "Basic",
+    "movePlaybook": "Family",
+    "moveFlavorText": "When you direct your Family to seize or maintain control of a resource, roll +Grasp. On a hit it’s theirs, but not without cost",
+    "choices": [
+      "You need to commit more assets to securing it. Tie one of your surpluses to the resource – if you lose the resource, you lose the surplus and vice versa.",
+      "There is a cost to your victory. Your family gets a need of the GM’s choice.",
+      "You hurt someone; the GM will say who, and they get 2-Treaty on you."
+    ],
+    "pick": {
+      "Setback": 0,
+      "Mixed Success": 1,
+      "Full Success": 2
+    }
+  },
+  {
+    "moveName": "Defuse",
+    "moveType": "Core",
+    "movePlaybook":"Character",
+    "moveFlavorText": "When you de-escalate a dangerous situation with 1) Intimidation or physical exertion, roll +Force. 2) Fast talking or misdirection, roll +Sway. 3) Endurance or quick action, roll +Steel .4) Improvised technology or remembered information, roll +Lore.",
+    "choices": [
+      "The GM will demand a sacrifice to secure your safety",
+      "It’s only a temporary reprieve, and the danger will soon return",
+      "The danger’s still present but threatening someone or something else.",
+    ],
+    "pick": {
+      "Setback": 0,
+      "Mixed Success": 1,
+      "Full Success": 0
+    }
+  }
+]
