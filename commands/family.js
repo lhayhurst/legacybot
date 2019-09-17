@@ -1,5 +1,4 @@
 const {Command} = require('discord-akairo');
-const FamilyPlaybook = require('../family_playbook');
 const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('./help_embed');
@@ -96,7 +95,7 @@ class FamiliesCommand extends Command {
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
 
-        if ( args.action && args.action === 'note') {
+        if ( args.action && args.action === 'notes') {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (family == null ) {
                 return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);

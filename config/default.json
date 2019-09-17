@@ -1,5 +1,7 @@
 {
   "LegacyBotToken":"your-bot-token",
   "LegacyBotOwnerID": "your-owner-id",
-  "LegacyBotCommandPrefix": "."
+  "LegacyBotCommandPrefix": ".",
+  "MongoDbURI": "your-mongo-db-uri",
+  "AppEnv": "test"
 }

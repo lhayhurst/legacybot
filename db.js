@@ -1,16 +1,12 @@
-const Datastore  = require('nedb-promises');
-
-const createDb = (dbFileName, autoload) => {
-    if (dbFileName == null) {
-        return Datastore.create(); //for testing
-    }
-    let db = Datastore.create({ filename: dbFileName, autoload: autoload });
-    return db;
-
-};
+const config = require('config');
+const mongoose = require('mongoose');
+mongoose.connect(config.get("MongoDbURI"), {useNewUrlParser: true, useUnifiedTopology: true, createIndexes: true });
+mongoose.connection.once('open', () => console.log("Connected to Mongodb!")).on('error', (error) => {
+    console.warn(`Mongodb error: ${error}`)
+});
 
 module.exports = {
-    create: function (dbFileName, autoload) {
-        return createDb(dbFileName, autoload);
+    collection: function (collectionName) {
+        return mongoose.connection.collection(collectionName);
     }
 };

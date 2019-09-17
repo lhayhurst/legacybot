@@ -72,7 +72,7 @@ class CharacterCommand extends Command {
                 commentary: `Gets the character sheet for the named character. No quotes needed if a single word name.`
             },
             {
-                command: `${aliases[1]} note "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."`,
+                command: `${aliases[1]} notes "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."`,
                 commentary: `Let's you set the character notes for this character.`
             },
             {
@@ -95,13 +95,16 @@ class CharacterCommand extends Command {
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
 
-        if ( args.action && args.action === 'note') {
-            let character = await DbUtil.get_users_character(user_id, guild_id);
-            if (character == null ) {
-                return message.reply(`Before setting your Character's notes, you need to run the \`set-character\` command`);
+        if ( args.action && args.action === 'notes') {
+            if ( args.notes ) {
+                let character = await DbUtil.get_users_character(user_id, guild_id);
+                if (character == null ) {
+                    return message.reply(`Before setting your Character's notes, you need to run the \`set-character\` command`);
+                }
+                await DbUtil.update_character(character, "notes", args.notes);
+                return message.reply( `You have set your character's notes`);
             }
-            await DbUtil.update_character(character, "notes", args.notes);
-            return message.reply( `You have set your character's notes`);
+
         }
 
         if (args.all) {

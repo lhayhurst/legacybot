@@ -1,29 +1,28 @@
 const assert = require('assert');
-const db = require('./db');
-const DbUtil = require('./commands/dbutil');
-const FamilyPlaybook = require('./family_playbook');
-const PingCommand = require('./commands/ping');
+const FamilyPlaybook = require('../family_playbook');
+const PingCommand = require('../commands/ping');
 const Discord = require('discord.js');
-const HelpEmbed = require('./commands/help_embed');
-const HelpCommand = require('./commands/help');
-const FamiliesCommand = require('./commands/family');
-const DropFamilyCommand = require('./commands/drop_family');
-const NeedCommand = require('./commands/need');
-const SurplusCommand = require('./commands/surplus');
-const SetFamilyCommand = require('./commands/set_family');
-const FamilyStatCommand = require('./commands/family_stat');
-const TreatyCommand = require('./commands/treaty');
-const FamilyResourceCommand = require('./commands/family_resource');
-const CharacterPlaybook = require('./character_playbook');
-const NewCharacterCommand = require('./commands/new_character');
-const QuickCharacterCommand = require('./commands/quick_character');
-const CharacterCommand = require('./commands/character');
-const SetCharacterCommand = require('./commands/set_character');
-const DropCharacterCommand = require('./commands/drop_character');
-const RollCommand = require('./commands/roll');
+const HelpEmbed = require('../commands/help_embed');
+const HelpCommand = require('../commands/help');
+const FamiliesCommand = require('../commands/family');
+const DropFamilyCommand = require('../commands/drop_family');
+const NeedCommand = require('../commands/need');
+const SurplusCommand = require('../commands/surplus');
+const SetFamilyCommand = require('../commands/set_family');
+const FamilyStatCommand = require('../commands/family_stat');
+const TreatyCommand = require('../commands/treaty');
+const FamilyResourceCommand = require('../commands/family_resource');
+const CharacterPlaybook = require('../character_playbook');
+const NewCharacterCommand = require('../commands/new_character');
+const QuickCharacterCommand = require('../commands/quick_character');
+const CharacterCommand = require('../commands/character');
+const SetCharacterCommand = require('../commands/set_character');
+const DropCharacterCommand = require('../commands/drop_character');
+const RollCommand = require('../commands/roll');
 
-const CommandsMetadata = require( './commands/commands_metadata');
+const CommandsMetadata = require( '../commands/commands_metadata');
 const config = require('config');
+
 
 describe('can config', () => {
    it('should be able to get a config value', () => {
@@ -35,59 +34,6 @@ describe('can config', () => {
        assert.ok( ownerID != null && ownerID.length > 0);
 
    })
-});
-
-describe('make db', () => {
-    it('should be able to make a db', () => {
-        let mydb = db.create();
-        assert.ok(mydb != null);
-    });
-});
-
-describe('query db', () => {
-    it('should be able to query a db', () => {
-        let mydb = db.create();
-        let doc = { playbook: 'The Hive', n: 5 };
-        mydb.insert(doc);
-        mydb.find({ playbook: 'The Hive' }).then((docs) => {
-            let foundDoc = docs[0];
-            assert.ok(foundDoc.playbook === 'The Hive');
-        }).catch(() => {
-            assert.ok(false);
-        });
-    });
-});
-
-describe('create family playbook ', () => {
-    it('can create a family playbook', () => {
-        let family = new FamilyPlaybook('Cultivator');
-        family.name = 'Duhnah';
-        assert.ok(family.playbook === 'Cultivator');
-        assert.ok(family.name === 'Duhnah');
-        family.reach = 1;
-        assert.ok(1 === family.reach);
-    });
-});
-
-describe('persist family playbook ', () => {
-    it('can persist a family playbook', () => {
-        let playbookName = 'Cultivator';
-        let familyName = 'duhnah';
-        let family = new FamilyPlaybook(playbookName);
-        family.name = familyName;
-        family.reach = 1;
-        let mydb = db.create();
-        mydb.insert(family);
-        mydb.find({ family_name : familyName }).then((docs) => {
-            assert.ok(docs.length === 1);
-            let insertedRec = docs[0];
-            assert.ok(familyName === insertedRec.family_name);
-            assert.ok(playbookName === insertedRec.family_playbook);
-            assert.ok(insertedRec.family_reach === 1);
-        }).catch(() => {
-            assert.fail();
-        });
-    });
 });
 
 describe('process ping bot command', () => {
@@ -521,35 +467,34 @@ describe( 'character playbooks', () => {
 });
 
 
-describe( 'character db queries', async () => {
+describe.skip( 'character db queries', async () => {
 
-    let test_db = db.create();
     let playbook = 'Survivor';
     let name = 'Max';
     let guild_id = 1;
     let user_id = 1;
 
     it("can't get a character that doesn't exist yet", async () => {
-        let character = await DbUtil.get_character(name, guild_id, "test-family", db_override=test_db)
+        let character = await DbUtil.get_character(name, guild_id, "test-family")
         assert.ok( character == null );
     });
 
     it("create and get", async () => {
 
-        await DbUtil.insert_character(name, playbook, guild_id, "test-family", 0, 0, 0, 0, test_db);
+        DbUtil.insert_character(name, playbook, guild_id, "test-family", 0, 0, 0, 0);
 
         //its inserted, now go get it
-        let character = await DbUtil.get_character(name, guild_id, "test-family", db_override=test_db)
+        let character = DbUtil.get_character(name, guild_id, "test-family")
         assert.ok( character );
         assert.strictEqual( playbook, character.playbook);
         assert.strictEqual( name, character.name);
     });
 
     it("get character by playbook", async () => {
-        await DbUtil.insert_character(name, playbook, guild_id, "test-family", test_db);
+        await DbUtil.insert_character(name, playbook, guild_id, "test-family");
 
         //its inserted, now go get it
-        let character = await DbUtil.get_character_by_playbook(playbook, guild_id, test_db)
+        let character = DbUtil.get_character_by_playbook(playbook, guild_id)
         assert.ok( character );
         assert.strictEqual(0, character.force);
         assert.strictEqual(0, character.lore);
@@ -562,19 +507,19 @@ describe( 'character db queries', async () => {
 
     it("get character by user", async () => {
 
-        await DbUtil.insert_character(name, playbook, guild_id, "test-family", test_db);
+        await DbUtil.insert_character(name, playbook, guild_id, "test-family");
 
         //its inserted, now go get it
-        let character = await DbUtil.get_character_by_playbook(playbook, guild_id, test_db)
+        let character = await DbUtil.get_character_by_playbook(playbook, guild_id)
         assert.ok( character );
         assert.strictEqual( playbook, character.playbook);
         assert.strictEqual( name, character.name);
 
         //now update it
-        await DbUtil.update_character( character, "character_user_id", user_id, test_db);
+        await DbUtil.update_character( character, "character_user_id", user_id);
 
         //now go get it by user
-        let character2 = await DbUtil.get_users_character(user_id, guild_id, test_db);
+        let character2 = await DbUtil.get_users_character(user_id, guild_id);
         assert.ok( character2);
         assert.strictEqual( playbook, character2.playbook);
         assert.strictEqual( name, character2.name);
@@ -583,7 +528,7 @@ describe( 'character db queries', async () => {
     });
 
     it("can get_guild_characters", async () => {
-        let characters = await DbUtil.get_guilds_characters(guild_id, db_override=test_db)
+        let characters = await DbUtil.get_guilds_characters(guild_id)
         assert.ok(characters.length >0) ;
     });
 

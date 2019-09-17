@@ -77,7 +77,7 @@ class CharacterPlaybook {
         this.character_name = character_name;
         this.character_playbook = playbook_name;
         this.guild_id = guild_id;
-        this.family_name = family_name;
+        this.family = family_name;
         this.force = force;
         this.lore = lore;
         this.steel = steel;
@@ -119,8 +119,8 @@ class CharacterPlaybook {
         return this.character_username;
     }
 
-    get family() {
-        return this.family_name;
+    get associated_family() {
+        return this.family;
     }
 
     static get_print_coordinates(item) {
@@ -140,7 +140,7 @@ class CharacterPlaybook {
             richEmbed
                 .addField('Name', this.name, true)
                 .addField('Playbook', this.playbook, true)
-                .addField('Family', this.family, true)
+                .addField('Family', this.associated_family, true)
                 .addField('Username', this.username, true)
                 .addBlankField()
         } else {

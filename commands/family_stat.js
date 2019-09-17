@@ -1,9 +1,7 @@
 const {Command} = require('discord-akairo');
-const {db} = require('../bot');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const Discord = require('discord.js');
-const FamilyPlaybook = require('../family_playbook');
 const DbUtil = require('./dbutil');
 
 class FamilyStatCommand extends Command {

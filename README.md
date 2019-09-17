@@ -32,7 +32,7 @@ Third, make a note of the your `token` and `owner id`. These can be configured i
 Run `make install`
 
 ### Testing
-Run a `make test` to run the unit tests. Tests can be found in `test_legacybot.js`.
+Run a `make test` to run the unit tests. Tests can be found in `bot_tests.js`.
 
 ### Running
 Run `make run`

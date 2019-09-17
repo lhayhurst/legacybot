@@ -1,4 +1,6 @@
 {
   "LegacyBotToken":"LEGACY_BOT_TOKEN",
-  "LegacyBotOwnerID": "LEGACY_BOT_OWNER_ID"
+  "LegacyBotOwnerID": "LEGACY_BOT_OWNER_ID",
+  "MongoDbURI": "MONGODB_URI",
+  "AppEnv": "APP_ENV"
 }
