@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 
 const PlaybookSchema = new mongoose.Schema({
-    created_by_user_id: {type: Number, required: true},
-    guild_id: {type: Number, required: true},
+    created_by_user_id: {type: String, required: true},
+    guild_id: {type: String, required: true},
     playbook: {type: String, required: true},
     name: {type: String, default: null },
-    managed_by_user_id: { type: Number, default: null },
+    managed_by_user_id: { type: String, default: null },
     managed_by_username: { type: String, default: null }
 });
 

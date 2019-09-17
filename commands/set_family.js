@@ -1,19 +1,7 @@
 const {Command} = require('discord-akairo');
 const FamilyPlaybook = require('../family_playbook');
-const db = require('../db')
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
-
-class SetFamilyCommandReply {
-    constructor(args) {
-        this.args = args;
-    }
-
-    get reply() {
-        return true;
-    }
-
-}
 
 class SetFamilyCommand extends Command {
     constructor() {
@@ -57,10 +45,6 @@ class SetFamilyCommand extends Command {
                 commentary: `Gets help on this command.`
             }
         ]
-    }
-
-    static reply(args) {
-        return new SetFamilyCommandReply(args).reply;
     }
 
     exec(message, args) {

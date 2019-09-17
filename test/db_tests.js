@@ -22,8 +22,8 @@ before(function (done) {
 
 let theCitadel;
 let theSurvivor;
-let guild_id = 1;
-let user_id = 1;
+let guild_id = "1";
+let user_id = "1";
 
 beforeEach(async function () {
     theCitadel = new FPlaybook({playbook: 'Tyrant', created_by_user_id: user_id, guild_id: guild_id});
@@ -150,7 +150,7 @@ describe('family playbook tests ', () => {
     });
 
     it('cannot create a duplicate playbook', async () => {
-        let pb = new FPlaybook({playbook: 'Tyrant', guild_id: guild_id, created_by_user_id: 1});
+        let pb = new FPlaybook({playbook: 'Tyrant', guild_id: guild_id, created_by_user_id: user_id});
 
         await pb.save().catch((err) => {
             assert.ok(err);
@@ -159,7 +159,7 @@ describe('family playbook tests ', () => {
     });
 
     it('cannot create a duplicate name', async () => {
-        let pb = new FPlaybook({playbook: 'Hive', name: "The Citadel", guild_id: guild_id, created_by_user_id: 1});
+        let pb = new FPlaybook({playbook: 'Hive', name: "The Citadel", guild_id: guild_id, created_by_user_id: user_id});
         await pb.save().catch((err) => {
             assert.ok(err);
             assert.strictEqual(err.name, "MongoError");

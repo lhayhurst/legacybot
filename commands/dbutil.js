@@ -1,5 +1,3 @@
-const FamilyPlaybook = require('../family_playbook');
-const CharacterPlaybook = require('../character_playbook');
 const CPlaybook = require('../model/cplaybook');
 const FPlaybook = require('../model/fplaybook');
 

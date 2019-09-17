@@ -1,6 +1,6 @@
 const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
-const FamilyPlaybook = require('../family_playbook');
+const FPlaybook = require('../model/fplaybook');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
 
@@ -41,7 +41,7 @@ class NewFamilyCommand extends Command {
         this.command_args = command_args;
         this.examples = [
             {
-                command: `${aliases[1]} -p="enclave" -n="The Brotherhood"` ,
+                command: `${aliases[1]} p="enclave" n="The Brotherhood"` ,
                 commentary: `Creates a new Family from the "Enclave of Bygone Lore" playbook with the name "The Brotherhood"`
             },
             {
@@ -62,6 +62,8 @@ class NewFamilyCommand extends Command {
 
     async doexec(message, args) {
         let guild_id = message.guild.id;
+        let user_id = message.member.user.id;
+
         if ( args.help ) {
             return message.reply( this.helpEmbed );
         }
@@ -75,12 +77,6 @@ class NewFamilyCommand extends Command {
             return message.reply(`A family with the name "${existingFamily.name}" is already in play for this guild, please pick another name!"`);
         }
 
-        //check to see if this playbook matches a stock playbook
-        let stock_playbook = FamilyPlaybook.find_stock_playbook( args.playbook );
-        if ( stock_playbook ) {
-            args.playbook = stock_playbook;
-        }
-
         //check to see if this playbook name is already in use
         let existingPlaybook = await DbUtil.get_family_by_playbook(args.playbook, guild_id);
         if ( existingPlaybook ) {
@@ -88,15 +84,19 @@ class NewFamilyCommand extends Command {
         }
 
         //check to see if this user already has a family
-        let user_id = message.member.user.id;
         let ownerFamily = await DbUtil.get_users_family(user_id, guild_id);
         if (ownerFamily !== null) {
             return message.reply(`You have already set your family to the family with the name "${ownerFamily.name}". Please drop that family before taking on a new one!`);
         }
 
         //we're good to go. insert the new family
-        let retMessage = await DbUtil.insert_family( null, guild_id, args.playbook, args.name );
-        return message.reply(retMessage);
+        let newFamily = new FPlaybook( { playbook: args.playbook,
+            name: args.name,
+            guild_id : guild_id,
+            created_by_user_id : user_id
+        });
+        await newFamily.save();
+        return message.reply("Created your family!");
     }
     exec(message, args) {
         return this.doexec(message, args);
