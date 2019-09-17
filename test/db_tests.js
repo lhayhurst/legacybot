@@ -67,6 +67,36 @@ describe( `family search tests - two`, () => {
         assert.strictEqual(guild_id, family.guild_id);
         assert.strictEqual( theCitadel._id.toString(), family._id.toString())
     });
+});
+
+describe( `family search tests - three`, () => {
+
+    it("can get family by name", async () => {
+        theCitadel.name = "Mad Max";
+
+        await theCitadel.save().then(() => {
+        });
+
+        let family = await DbUtil.get_family_by_playbook(theCitadel.playbook, guild_id);
+        assert.ok( family._id );
+        assert.strictEqual(guild_id, family.guild_id);
+        assert.strictEqual(family.playbook, "The Tyrant Kings");
+    });
+})
+
+describe( `family search tests - four`, () => {
+
+    it("can get family by playbook", async () => {
+
+        await theCitadel.save().then(() => {
+        });
+
+        let family = await DbUtil.get_family(theCitadel.name, guild_id);
+        assert.ok( family != null );
+        assert.strictEqual(guild_id, family.guild_id);
+        assert.strictEqual(family.name, theCitadel.name);
+        assert.strictEqual( theCitadel._id.toString(), family._id.toString())
+    });
 })
 
 

@@ -28,27 +28,16 @@ class DbUtil {
     }
 
     static async get_family(family_name, guild_id) {
-        return await db.collection("test").find({family_name: family_name, guild_id: guild_id}).then((docs) => {
-            if (docs.length === 0) { //not found
-                return null;
-            }
-            return FamilyPlaybook.fromNedbDocument(docs[0]);
-        }).catch((err) => {
-            return null;
+        return await FPlaybook.findOne({name: family_name, guild_id: guild_id}).then((doc) => {
+            return doc;
         });
 
     }
 
     static async get_family_by_playbook(playbook_name, guild_id) {
-        return await db.collection("test").find({family_playbook: playbook_name, guild_id: guild_id}).then((docs) => {
-            if (docs.length === 0) { //not found
-                return null;
-            }
-            return FamilyPlaybook.fromNedbDocument(docs[0]);
-        }).catch((err) => {
-            return null;
+        return await FPlaybook.findOne({playbook: playbook_name, guild_id: guild_id}).then((doc) => {
+            return doc;
         });
-
     }
 
     static async get_users_family(user_id, guild_id) {
