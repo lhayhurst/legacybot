@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+mongoose.set('useCreateIndex', true);
+
 const PlaybookSchema = new mongoose.Schema({
     created_by_user_id: {type: Number, required: true},
     guild_id: {type: Number, required: true},
