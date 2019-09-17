@@ -80,6 +80,19 @@ describe('family playbook tests ', () => {
         });
     });
 
+    it("can get families for a guild", async () => {
+        theCitadel.name = "The Citadel";
+        let families = await DbUtil.get_guilds_families(guild_id);
+        assert.ok( families.length === 0 );
+        await theCitadel.save().then(() => {
+        });
+
+        let newFamililies = await DbUtil.get_guilds_families(guild_id);
+        assert.strictEqual(  newFamililies.length, 1 );
+
+    });
+
+
     it('cannot create a duplicate playbook', async () => {
         let pb = new FPlaybook({playbook: 'Tyrant', created_by_user_id: 1});
         await pb.save().catch((err) => {
@@ -180,9 +193,28 @@ describe('more character playbook tests ', () => {
         let newgc2 = await DbUtil.get_users_character(newgc.managed_by_user_id, newgc.guild_id);
         assert.ok(newgc2);
         assert.strictEqual("me2", newgc2.managed_by_username);
-
-
     });
-
-
 });
+
+describe('character-family relationship', () => {
+    it("can set the family relationship", async () => {
+        //first save the survivor
+        await theSurvivor.save().catch((err) => {
+            assert.ok(!err);
+        });
+
+        //then save the citadel
+        await theCitadel.save().catch((err) => {
+            assert.ok(!err);
+        });
+
+        await DbUtil.update_character(theSurvivor, { family: theCitadel});
+
+        //check to see that its all good
+        let newgc = await DbUtil.get_character_by_playbook(theSurvivor.playbook, guild_id);
+        //theCitadel = await DbUtil.get_character_by_playbook(theCitadel.playbook, guild_id)
+        assert.ok( newgc );
+        assert.strictEqual( theCitadel._id.toString(), newgc.family._id.toString()) ;
+    });
+});
+

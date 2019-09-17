@@ -3,7 +3,15 @@ const CharacterPlaybook = require('../character_playbook');
 const PlaybookSchema = require('./playbook');
 const extendSchema = require('./extend_schema');
 
-const CPlaybookSchema = extendSchema(PlaybookSchema, {});
+const CharacterSchema = {
+    family: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'FPlaybook',
+        default: null
+    }
+};
+
+const CPlaybookSchema = extendSchema(PlaybookSchema, CharacterSchema);
 
 CPlaybookSchema.post('init',  doc => {
     //help the user out by looking up their playbook name
