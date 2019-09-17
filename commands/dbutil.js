@@ -127,25 +127,14 @@ class DbUtil {
     }
 
     static async get_users_character(user_id, guild_id) {
-        return await db.collection("test").find({character_user_id: user_id, guild_id: guild_id}).then((docs) => {
-            if (docs.length === 0) { //not found
-                return null;
-            }
-            return CharacterPlaybook.fromNedbDocument(docs[0]);
-        }).catch((err) => {
-            return null;
+        return await CPlaybook.findOne({managed_by_user_id: user_id, guild_id: guild_id}).then((doc) => {
+            return doc;
         });
     }
 
     static async get_character_by_playbook(playbook_name, guild_id) {
-
-        return await db.collection("test").find({character_playbook: playbook_name, guild_id: guild_id}).then((docs) => {
-            if (docs.length === 0) { //not found
-                return null;
-            }
-            return CharacterPlaybook.fromNedbDocument(docs[0]);
-        }).catch((err) => {
-            return null;
+        return await CPlaybook.findOne({playbook: playbook_name, guild_id: guild_id}).then((doc) => {
+            return doc;
         });
 
     }

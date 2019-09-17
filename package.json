@@ -20,7 +20,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/bot_tests.js",
+    "test": "mocha --exit test/*",
     "start": "node index.js"
   },
   "keywords": ["Legacy", "Discord", "Bot", "Role-Playing Game"],

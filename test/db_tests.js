@@ -5,10 +5,7 @@ const assert = require('assert');
 const DbUtil = require('../commands/dbutil');
 mongoose.Promise = Promise;
 
-before(function (done) {
-    mongoose.connect("mongodb://127.0.0.1/test",
-        {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true}
-    );
+function cleanup_collections() {
     mongoose.connection
         .once('open', () => {
             mongoose.connection.collections.FamilyPlaybooks.drop(() => {
@@ -20,14 +17,16 @@ before(function (done) {
         .on('error', (error) => {
             console.warn('Error : ', error);
         });
+}
+
+before(function (done) {
+    mongoose.connect("mongodb://127.0.0.1/test",
+        {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true}
+    );
+    cleanup_collections();
     done();
 });
 
-after(function (done) {
-    mongoose.connection.close();
-    done();
-    return;
-});
 
 let theCitadel;
 let theSurvivor;
@@ -35,13 +34,20 @@ let guild_id = 1;
 let user_id = 1;
 
 beforeEach(function (done) {
-    theCitadel = new FPlaybook({playbook: 'Tyrant', created_by_user_id: user_id, guild_id: guild_id });
-    theSurvivor = new CPlaybook({playbook: 'Survivor', name: "Max", created_by_user_id: user_id, guild_id: guild_id });
+    theCitadel = new FPlaybook({playbook: 'Tyrant', created_by_user_id: user_id, guild_id: guild_id});
+    theSurvivor = new CPlaybook({playbook: 'Survivor', name: "Max", created_by_user_id: user_id, guild_id: guild_id});
     done();
 });
 
 afterEach(function (done) {
     // runs after each test in this block
+    theSurvivor = null;
+    theCitadel = null;
+    done();
+});
+
+after(function  (done) {
+    mongoose.connection.close();
     done();
 });
 
@@ -79,7 +85,7 @@ describe('family playbook tests ', () => {
         await pb.save().catch((err) => {
             assert.ok(err);
             assert.strictEqual(err.name, "MongoError");
-            assert.strictEqual(11000, err.code ); //duplicate key error
+            assert.strictEqual(11000, err.code); //duplicate key error
         });
     });
 
@@ -88,16 +94,16 @@ describe('family playbook tests ', () => {
         await pb.save().catch((err) => {
             assert.ok(err);
             assert.strictEqual(err.name, "MongoError");
-            assert.strictEqual(11000, err.code ); //duplicate key error
+            assert.strictEqual(11000, err.code); //duplicate key error
         });
     });
 
 });
 
 describe('character playbook tests ', () => {
-    it( 'can has a character', async() => {
-       assert.ok(theSurvivor);
-       assert.strictEqual(theSurvivor.name, "Max");
+    it('can has a character', async () => {
+        assert.ok(theSurvivor);
+        assert.strictEqual(theSurvivor.name, "Max");
     });
 
     it('can save and search a character playbook', async () => {
@@ -128,22 +134,48 @@ describe('character playbook tests ', () => {
     });
 
     it('cannot create a duplicate character name', async () => {
-        let pb = new CPlaybook({playbook: 'Reaver', name: "Mad Max", created_by_user_id: 1, guild_id: 1 });
+        let pb = new CPlaybook({playbook: 'Reaver', name: "Mad Max", created_by_user_id: 1, guild_id: 1});
         await pb.save().catch((err) => {
             assert.ok(err);
             assert.strictEqual(err.name, "MongoError");
-            assert.strictEqual(11000, err.code ); //duplicate key error
+            assert.strictEqual(11000, err.code); //duplicate key error
         });
     });
 
     it("can get_guild_characters", async () => {
         let characters = await DbUtil.get_guilds_characters(guild_id)
-        assert.ok(characters.length >0) ;
+        assert.ok(characters.length > 0);
         let gc = characters[0];
-        assert.strictEqual(gc.guild_id, theSurvivor.guild_id );
-
+        assert.strictEqual(gc.guild_id, theSurvivor.guild_id);
     });
 
+    it("can get character by playbook", async () => {
+        let gc = await DbUtil.get_character_by_playbook(theSurvivor.playbook, theSurvivor.guild_id);
+        assert.ok(gc);
+        assert.strictEqual(gc.guild_id, theSurvivor.guild_id);
+        assert.strictEqual(gc.playbook, "The Survivor");
+    });
+
+});
+
+describe('more character playbook tests ', () => {
+    it("can get character for user", async () => {
+        let gc = await DbUtil.get_users_character(user_id, guild_id);
+        assert.ok(gc == null);
+        //as expected, not managed by anyone
+        theSurvivor.managed_by_user_id = user_id;
+        await CPlaybook.updateOne(
+            {
+                playbook: theSurvivor.playbook,
+                guild_id: theSurvivor.guild_id,
+            }, {$set: {managed_by_user_id: user_id}}).then((updatedDoc) => {
+        });
+
+        //let's try that again
+        let newgc = await DbUtil.get_users_character(theSurvivor.managed_by_user_id, theSurvivor.guild_id);
+        assert.ok(newgc);
+        assert.strictEqual(user_id, newgc.managed_by_user_id);
+    });
 
 
 });

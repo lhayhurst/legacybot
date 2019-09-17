@@ -527,11 +527,6 @@ describe.skip( 'character db queries', async () => {
 
     });
 
-    it("can get_guild_characters", async () => {
-        let characters = await DbUtil.get_guilds_characters(guild_id)
-        assert.ok(characters.length >0) ;
-    });
-
 });
 
 
