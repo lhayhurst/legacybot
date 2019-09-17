@@ -97,10 +97,30 @@ describe( `family search tests - four`, () => {
         assert.strictEqual(family.name, theCitadel.name);
         assert.strictEqual( theCitadel._id.toString(), family._id.toString())
     });
-})
+});
 
 
-describe.skip('family playbook tests ', () => {
+describe( `test family update`, () => {
+
+    it("can get family by playbook", async () => {
+
+        await theCitadel.save().then(() => {
+        });
+
+        await DbUtil.update_family( theCitadel, { managed_by_user_id: user_id});
+
+        let family = await DbUtil.get_family(theCitadel.name, guild_id);
+        assert.ok( family != null );
+        assert.strictEqual(guild_id, family.guild_id);
+        assert.strictEqual(family.name, theCitadel.name);
+        assert.strictEqual( family.managed_by_user_id, user_id );
+        assert.strictEqual( theCitadel._id.toString(), family._id.toString())
+
+    });
+});
+
+
+describe('family playbook tests ', () => {
 
     it('can save and search a family playbook', async () => {
         theCitadel.name = "The Citadel";

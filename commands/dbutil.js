@@ -5,25 +5,14 @@ const FPlaybook = require('../model/fplaybook');
 
 
 class DbUtil {
-    static async update_family(family, updateKey, updateValue) {
-        return await db.collection("test").update({
-            guild_id: family.guild_id,
-            family_name: family.name,
-        }, {$set: {[updateKey]: updateValue}}, []).then((updatedDocs) => {
-            return updatedDocs;
-        }).catch((err) => {
-            return err;
-        });
-    }
 
-    static async update_family_multiple_values(family, updateValues) {
-        return await DbUtil.db.collection("test").update({
-            guild_id: family.guild_id,
-            family_name: family.name,
-        }, {$set: updateValues }, []).then((updatedDocs) => {
-            return updatedDocs;
-        }).catch((err) => {
-            return err;
+    static async update_family(family, update) {
+        await FPlaybook.updateOne(
+            {
+                playbook: family.playbook,
+                guild_id: family.guild_id,
+                name: family.name,
+            }, update ).then((updatedDoc) => {
         });
     }
 
@@ -78,7 +67,6 @@ class DbUtil {
                 guild_id: character.guild_id,
                 name: character.name,
             }, update ).then((updatedDoc) => {
-                console.log(updatedDoc);
         });
     }
 
