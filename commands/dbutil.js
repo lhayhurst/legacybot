@@ -52,13 +52,8 @@ class DbUtil {
     }
 
     static async get_users_family(user_id, guild_id) {
-        return await db.collection("test").find({user_id: user_id, guild_id: guild_id}).then((docs) => {
-            if (docs.length === 0) { //not found
-                return null;
-            }
-            return FamilyPlaybook.fromNedbDocument(docs[0]);
-        }).catch((err) => {
-            return null;
+        return await FPlaybook.findOne({managed_by_user_id: user_id, guild_id: guild_id}).then((doc) => {
+            return doc;
         });
     }
 
@@ -68,27 +63,9 @@ class DbUtil {
         });
     }
 
-    static async get_character_by_name(character_name, guild_id) {
-        return await db.collection("test").find({character_name: character_name, guild_id: guild_id}).then((docs) => {
-            if (docs.length === 0) { //not found
-                return null;
-            }
-            return CharacterPlaybook.fromNedbDocument(docs[0]);
-        }).catch((err) => {
-            return null;
-        });
-
-    }
-
-    static get_character(character_name, guild_id, family_name) {
-        return db.collection("test").find({character_name: character_name, guild_id: guild_id, family: family_name}, function(err, docs) {
-            if (err) {
-                throw err;
-            }
-            if (docs.length === 0) { //not found
-                return null;
-            }
-            return CharacterPlaybook.fromNedbDocument(docs[0]);
+    static async get_character_by_name(character) {
+        return await CPlaybook.findOne( { name: character.name, guild_id: character.guild_id }).then((doc) => {
+           return doc;
         });
     }
 
@@ -113,17 +90,6 @@ class DbUtil {
                 name: character.name,
             }, update ).then((updatedDoc) => {
                 console.log(updatedDoc);
-        });
-    }
-
-    static async update_character_multiple_values(character, updateValues) {
-        return await db.collection("test").update({
-            guild_id: character.guild_id,
-            character_name: character.name,
-        }, {$set: updateValues }, []).then((updatedDocs) => {
-            return updatedDocs;
-        }).catch((err) => {
-            return err;
         });
     }
 

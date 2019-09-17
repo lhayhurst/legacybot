@@ -41,17 +41,31 @@ after(function  (done) {
     done();
 });
 
-describe( `family search tests`, () => {
+describe( `family search tests - one`, () => {
     it("can get families for a guild", async () => {
         theCitadel.name = "The Citadel";
+
         let families = await DbUtil.get_guilds_families(guild_id);
-        assert.ok( families.length == 0 );
+        assert.strictEqual(families.length, 0);
+
         await theCitadel.save().then(() => {
         });
 
         let newFamililies = await DbUtil.get_guilds_families(guild_id);
-        assert.strictEqual(  newFamililies.length, 1 );
+        assert.strictEqual(newFamililies.length, 1);
+    });
+});
+describe( `family search tests - two`, () => {
 
+    it("can get families for a user", async () => {
+        theCitadel.managed_by_user_id = user_id;
+        await theCitadel.save().then(() => {
+        });
+        let family = await DbUtil.get_users_family(user_id, guild_id);
+        assert.ok( family._id );
+        assert.strictEqual(user_id, family.managed_by_user_id);
+        assert.strictEqual(guild_id, family.guild_id);
+        assert.strictEqual( theCitadel._id.toString(), family._id.toString())
     });
 })
 
@@ -159,6 +173,14 @@ describe('character playbook tests ', () => {
     it("can get character by playbook", async () => {
         await theSurvivor.save();
         let gc = await DbUtil.get_character_by_playbook(theSurvivor.playbook, theSurvivor.guild_id);
+        assert.ok(gc);
+        assert.strictEqual(gc.guild_id, theSurvivor.guild_id);
+        assert.strictEqual(gc.playbook, "The Survivor");
+    });
+
+    it("can get character by name", async () => {
+        await theSurvivor.save();
+        let gc = await DbUtil.get_character_by_name(theSurvivor);
         assert.ok(gc);
         assert.strictEqual(gc.guild_id, theSurvivor.guild_id);
         assert.strictEqual(gc.playbook, "The Survivor");
