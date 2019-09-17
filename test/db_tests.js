@@ -35,7 +35,7 @@ let user_id = 1;
 
 beforeEach(function (done) {
     theCitadel = new FPlaybook({playbook: 'Tyrant', created_by_user_id: user_id, guild_id: guild_id});
-    theSurvivor = new CPlaybook({playbook: 'Survivor', name: "Max", created_by_user_id: user_id, guild_id: guild_id});
+    theSurvivor = new CPlaybook({playbook: 'The Survivor', name: "Max", created_by_user_id: user_id, guild_id: guild_id});
     done();
 });
 
@@ -107,7 +107,7 @@ describe('character playbook tests ', () => {
     });
 
     it('can save and search a character playbook', async () => {
-        theSurvivor.name = "Mad Max";
+        theSurvivor.managed_by_username = "me";
         await theSurvivor.save().then(() => {
         });
 
@@ -159,22 +159,29 @@ describe('character playbook tests ', () => {
 });
 
 describe('more character playbook tests ', () => {
-    it("can get character for user", async () => {
+    it("can get and update character for user", async () => {
+        await theSurvivor.save().catch((err) => {
+            assert.ok(!err);
+        });
+
         let gc = await DbUtil.get_users_character(user_id, guild_id);
         assert.ok(gc == null);
         //as expected, not managed by anyone
-        theSurvivor.managed_by_user_id = user_id;
-        await CPlaybook.updateOne(
-            {
-                playbook: theSurvivor.playbook,
-                guild_id: theSurvivor.guild_id,
-            }, {$set: {managed_by_user_id: user_id}}).then((updatedDoc) => {
-        });
+
+        await DbUtil.update_character( theSurvivor, {managed_by_user_id: user_id});
 
         //let's try that again
-        let newgc = await DbUtil.get_users_character(theSurvivor.managed_by_user_id, theSurvivor.guild_id);
+        let newgc = await DbUtil.get_users_character(user_id, guild_id);
         assert.ok(newgc);
         assert.strictEqual(user_id, newgc.managed_by_user_id);
+
+        //lets try it with the update character function!
+        await DbUtil.update_character( newgc, {managed_by_username: 'me2'});
+        let newgc2 = await DbUtil.get_users_character(newgc.managed_by_user_id, newgc.guild_id);
+        assert.ok(newgc2);
+        assert.strictEqual("me2", newgc2.managed_by_username);
+
+
     });
 
 

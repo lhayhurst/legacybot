@@ -139,14 +139,13 @@ class DbUtil {
 
     }
 
-    static async update_character(character, updateKey, updateValue) {
-        return await db.collection("test").update({
-            guild_id: character.guild_id,
-            character_name: character.name,
-        }, {$set: {[updateKey]: updateValue}}, []).then((updatedDocs) => {
-            return updatedDocs;
-        }).catch((err) => {
-            return err;
+    static async update_character(character, update) {
+        await CPlaybook.updateOne(
+            {
+                playbook: character.playbook,
+                guild_id: character.guild_id,
+                name: character.name,
+            }, update ).then((updatedDoc) => {
         });
     }
 
