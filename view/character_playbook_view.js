@@ -8,15 +8,20 @@ class CharacterPlaybookView {
         this.richEmbed = richEmbed;
     }
 
+    async getFamily(character) {
+        let fname = `_none_`;
+        if ( character.family ) {
+            let family = await DbUtil.get_family_by_object_id(character.family);
+            fname = family.name;
+        }
+        return fname;
+    }
+
     async visitAll(characters) {
         this.richEmbed.setTitle('Characters in this Legacy Game'); //TODO: have bot give the game a name
         for (var i = 0; i < characters.length; i++) {
             let character = characters[i];
-            let fname = `_none_`;
-            if ( character.family ) {
-                let family = await DbUtil.get_family_by_object_id(character.family);
-                fname = family.name;
-            }
+            let fname = this.getFamily(character);
             this.richEmbed
                 .addField(" Name", character.name, true)
                 .addField("Playbook", character.playbook, true)
@@ -39,9 +44,32 @@ class CharacterPlaybookView {
     }
 
 
-    async visitCharacter(character) {
+    async visitCharacter(character, text_output) {
         this.richEmbed.setTitle(`Character Sheet`);
 
+        if (text_output) {
+            return await this.outputAsText(character);
+        } else {
+            return await this.outputAsImage(character);
+        }
+    }
+
+    async outputAsText(character) {
+        let fname = await this.getFamily(character);
+
+        this.richEmbed.setTitle( `\`${character.name}, ${character.playbook} of ${fname}\`` )
+            .setDescription(`Notes: ${character.notes}`)
+            .addField( 'Force', character.force, true)
+            .addField( 'Lore', character.lore, true)
+            .addField( 'Steel', character.steel, true)
+            .addField( 'Sway', character.sway, true)
+            .addBlankField();
+        this.richEmbed.setFooter( `Have a bug to file? Needs more help? Visit https://github.com/lhayhurst/legacybot/issues`,
+            `https://cdn.discordapp.com/embed/avatars/0.png`);
+
+    }
+
+    async outputAsImage(character) {
         let playbooks = CharacterPlaybook.playbooks();
         let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
         if (playbooks[character.playbook]) {

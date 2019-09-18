@@ -36,6 +36,14 @@ class CharacterCommand extends Command {
                 optional: true
             },
             {
+                id: 'text_output_mode',
+                match: 'flag',
+                prefix: '--text',
+                helptext: 'Output character sheet as simple text',
+                default: false,
+                optional: true
+            },
+            {
                 id: 'properties',
                 match: 'flag',
                 prefix: '--p',
@@ -90,7 +98,7 @@ class CharacterCommand extends Command {
                 commentary: `Gets the character sheet for the named character. No quotes needed if a single word name.`
             },
             {
-                command: `${aliases[1]} notes "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."`,
+                command: `${aliases[1]} set notes "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."`,
                 commentary: `Let's you set the character notes for this character.`
             },
             {
@@ -139,7 +147,7 @@ class CharacterCommand extends Command {
             if (character == null) {
                 return `Before running an action command, you need to run the \`set-character\` command`;
             }
-            console_results = await cview.visitCharacter(character);
+            console_results = await cview.visitCharacter(character, args.text_output_mode);
         }
         if( console_results ) {
             return message.reply(console_results);

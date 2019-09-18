@@ -35,15 +35,23 @@ class FamiliesCommand extends Command {
                 optional: true
             },
             {
-                id: 'action', //notes
+                id: 'property_name', //from CPlaybook
                 type: "string",
-                helptext: '\`notes\` or \`name\`',
+                helptext: `\`property\` is prop you are interested in, run \`.c --properties\``,
                 argtype: "command",
                 optional: true,
                 default: null
             },
             {
-                id: 'action_value',
+                id: 'property_action',
+                type: "string",
+                default: null,
+                optional: false,
+                argtype: "argument",
+                helptext: `whatever action value you are setting`
+            },
+            {
+                id: 'property_value',
                 type: "string",
                 default: null,
                 optional: false,
@@ -83,6 +91,14 @@ class FamiliesCommand extends Command {
         ]
     }
 
+    async propertyCrud(args) {
+        let name = args.property_name;
+        let action = args.property_action;
+        let value = args.property_value;
+        return `Not implemented yet`;
+    }
+
+
     async aexec(message, args) {
         if ( args.help ) {
             return message.reply( new HelpEmbed(
@@ -96,16 +112,16 @@ class FamiliesCommand extends Command {
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
 
-        if ( args.action && args.action === 'notes') {
+        if ( args.property_name && args.property_action && args.proprety_value ) {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (family == null ) {
                 return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);
             }
-            await DbUtil.update_family(family, { "notes" : args.action_value } );
-            return message.reply( `You have set your Family notes`);
+            let changes = await this.propertyCrud( args );
+            return message.reply( changes);
         }
 
-        if ( args.action && args.action === 'name') {
+        if ( args.prop && args.action === 'name') {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (family == null ) {
                 return message.reply(`Before setting your Family name, you need to run the \`set-family\` command`);
@@ -113,6 +129,7 @@ class FamiliesCommand extends Command {
             await DbUtil.update_family(family, {name: args.action_value});
             return message.reply( `You have set your Family name to ${args.action_value}`);
         }
+
 
         if (args.all) {
             richEmbed.setTitle('Families Created So Far');
