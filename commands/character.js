@@ -4,6 +4,7 @@ const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const CharacterPlaybookView = require('../view/character_playbook_view');
+const CPlaybook = require( '../model/cplaybook');
 
 class CharacterCommand extends Command {
     constructor() {
@@ -31,6 +32,14 @@ class CharacterCommand extends Command {
                 match: 'flag',
                 prefix: '--all',
                 helptext: 'Show all Characters ',
+                default: null,
+                optional: true
+            },
+            {
+                id: 'properties',
+                match: 'flag',
+                prefix: '--p',
+                helptext: 'Show the get-able, set-able, and add-able properties of the character ',
                 default: null,
                 optional: true
             },
@@ -107,6 +116,11 @@ class CharacterCommand extends Command {
         let cview = new CharacterPlaybookView(  re );
         let console_results = null
 
+        if( args.properties) {
+            return message.reply(`This command isn't supported yet`)
+        }
+
+
         if(args.property_name) {
             console_results = await this.handleAction(args, user_id, guild_id, cview);
         }
@@ -115,11 +129,17 @@ class CharacterCommand extends Command {
         }
 
         else {
-            let character = await DbUtil.get_users_character(user_id, guild_id);
+            let character = null;
+            if (args.name) {
+                character = await DbUtil.get_character_by_name(args.name, guild_id);
+            }
+            else {
+                character = await DbUtil.get_users_character(user_id, guild_id);
+            }
             if (character == null) {
                 return `Before running an action command, you need to run the \`set-character\` command`;
             }
-            console_results = cview.visitCharacter(cview);
+            console_results = await cview.visitCharacter(character);
         }
         if( console_results ) {
             return message.reply(console_results);
@@ -138,6 +158,7 @@ class CharacterCommand extends Command {
         }
 
         return `Do something interesting here`;
+
     }
 
     async handleAll( guild_id, view ) {

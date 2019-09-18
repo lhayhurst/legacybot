@@ -137,7 +137,7 @@ class CharacterStatCommand extends Command {
             statsToUpdate.sway = args.sway;
         }
 
-        await DbUtil.update_character_multiple_values(character, statsToUpdate);
+        await DbUtil.update_character(character, statsToUpdate);
         return message.reply(`updated ${JSON.stringify(statsToUpdate)} for character "${character.name}"`);
     }
 

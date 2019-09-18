@@ -2,7 +2,7 @@ const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
-const CharacterPlaybook = require('../character_playbook');
+const CPlaybook = require('../model/cplaybook')
 
 
 class QuickCharacterCommand extends Command {
@@ -104,6 +104,7 @@ class QuickCharacterCommand extends Command {
 
     async doexec(message, args) {
         let guild_id = message.guild.id;
+        let user_id = message.member.user.id;
         if (args.help) {
             return message.reply(this.helpEmbed);
         }
@@ -132,22 +133,36 @@ class QuickCharacterCommand extends Command {
         }
 
         //check to see if this character name is already in use
-        let existingCharacter = await DbUtil.get_character(args.name, guild_id);
+        let existingCharacter = await DbUtil.get_character_by_name(args.name, guild_id);
         if (existingCharacter) {
             return message.reply(`A character with the name "${existingCharacter.name}" is already in play for this guild, please pick another name!"`);
         }
 
         //we're good to go. insert the new character
-        let retMessage = await DbUtil.insert_character(
-            args.name,
-            "Quick Character",
-            guild_id,
-            ownerFamily.name,
-            args.force,
-            args.lore,
-            args.steel,
-            args.sway);
-        return message.reply(retMessage);
+
+        let newCharacter = new CPlaybook({
+            playbook: "Quick Character",
+            quick: true,
+            family: ownerFamily,
+            name: args.name,
+            created_by_user_id: user_id,
+            guild_id: guild_id,
+            force: args.force,
+            lore: args.lore,
+            steel: args.steel,
+            sway: args.sway
+        });
+
+        //we're good to go. insert the new character
+
+        await newCharacter.save().catch((err) => {
+            if( err ) {
+                return message.reply(`Was unable to save the character! ${err}`);
+            }
+        });
+
+        return message.reply(`New quick character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ --help\` or \`.sc --help \` to learn more`);
+
     }
 
     exec(message, args) {
