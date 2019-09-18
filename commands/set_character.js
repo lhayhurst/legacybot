@@ -1,5 +1,5 @@
 const {Command} = require('discord-akairo');
-const HelpEmbed = require('./help_embed');
+const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const DbUtil = require('./dbutil');
 
@@ -58,32 +58,42 @@ class SetCharacterCommand extends Command {
                 this.examples).embed);
         }
         //search for this character
+        let guild_id = message.guild.id;
+        let user_id = message.member.user.id;
+
         if ( args.name === null ) {
             return message.reply("Please provide a character name to this command (--help to see some examples");
         }
 
-        let guild_id = message.guild.id;
         let character = await DbUtil.get_character_by_name( args.name, guild_id );
         if ( character == null ) {
             return message.reply(`A character with name ${args.name} could not be found`);
         }
 
-        if( character.user_id == message.member.user.id ) {
+        if( character.user_id == user_id ) {
             return message.reply("You are already playing this character!");
         }
         if ( character.user_id) {
             //someone else already has this one
-            return message.reply(`Player ${character.user_id} is already playing this character.`);
+            return message.reply(`${character.managed_by_username} is already playing this character! Ask them to `.dc` for you.`);
+        }
+
+        let family = await DbUtil.get_users_family(user_id, guild_id);
+        if (family == null ) {
+            return message.reply(`You need to \`.sf\` before you can add a character`);
         }
 
         //ok, we're good to go
-        await DbUtil.update_character_multiple_values(
+
+        await DbUtil.update_character(
             character,
             {
-                "character_username": message.member.user.username,
-                "character_user_id" : message.member.user.id } );
+                "managed_by_username": message.member.user.username,
+                "managed_by_user_id" : user_id,
+                 },
+            );
 
-        return message.reply( `You have set your character to \`${args.name}\``);
+        return message.reply( `You are now managing ${character.name}, ${character.playbook} of ${family.name}`);
     }
 
     exec(message, args) {

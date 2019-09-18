@@ -27,6 +27,12 @@ class DbUtil {
         });
     }
 
+    static async get_family_by_object_id( family_id ) {
+        return FPlaybook.findById(family_id).then((doc) => {
+            return doc;
+        });
+    }
+
     static async get_users_family(user_id, guild_id) {
         return await FPlaybook.findOne({managed_by_user_id: user_id, guild_id: guild_id}).then((doc) => {
             return doc;
@@ -39,8 +45,8 @@ class DbUtil {
         });
     }
 
-    static async get_character_by_name(character) {
-        return await CPlaybook.findOne( { name: character.name, guild_id: character.guild_id }).then((doc) => {
+    static async get_character_by_name(character, guild_id) {
+        return await CPlaybook.findOne( { name: character, guild_id: guild_id }).then((doc) => {
            return doc;
         });
     }

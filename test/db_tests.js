@@ -328,7 +328,7 @@ describe('character playbook tests ', () => {
 
     it("can get character by name", async () => {
         await theSurvivor.save();
-        let gc = await DbUtil.get_character_by_name(theSurvivor);
+        let gc = await DbUtil.get_character_by_name(theSurvivor.name, guild_id);
         assert.ok(gc);
         assert.strictEqual(gc.guild_id, theSurvivor.guild_id);
         assert.strictEqual(gc.playbook, "The Survivor");
@@ -380,6 +380,12 @@ describe('character-family relationship', () => {
         //theCitadel = await DbUtil.get_character_by_playbook(theCitadel.playbook, guild_id)
         assert.ok( newgc );
         assert.strictEqual( theCitadel._id.toString(), newgc.family._id.toString()) ;
+
+        //look it up by object id too
+        let family = await DbUtil.get_family_by_object_id( theCitadel._id );
+        assert.ok( family );
+        assert.strictEqual( theCitadel._id.toString(), family._id.toString()) ;
+
     });
 });
 

@@ -1,6 +1,6 @@
 const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
-const HelpEmbed = require('./help_embed');
+const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 
 class SetFamilyCommand extends Command {

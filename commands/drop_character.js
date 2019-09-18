@@ -1,5 +1,5 @@
 const {Command} = require('discord-akairo');
-const HelpEmbed = require('./help_embed');
+const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const DbUtil = require('./dbutil');
 
@@ -53,7 +53,7 @@ class DropCharacterCommand extends Command {
             return message.reply(`You do not have a character to drop!`);
         }
         else {
-            await DbUtil.update_character_multiple_values(ownerCharacter, { character_user_id : null, character_username: null } );
+            await DbUtil.update_character(ownerCharacter, { managed_by_username : null, managed_by_user_id: null, family: null } );
             return message.reply(`dropped your character, please run the \`sc\` command to take a new character`);
         }
 

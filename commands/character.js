@@ -1,8 +1,9 @@
 const {Command} = require('discord-akairo');
 const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
-const HelpEmbed = require('./help_embed');
+const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
+const CharacterPlaybookView = require('../view/character_playbook_view');
 
 class CharacterCommand extends Command {
     constructor() {
@@ -34,23 +35,31 @@ class CharacterCommand extends Command {
                 optional: true
             },
             {
-                id: 'action', //notes
+                id: 'property_name', //from CPlaybook
                 type: "string",
-                helptext: '\`notes\` the only action you can type in here',
+                helptext: `\`property\` is prop you are interested in, run \`.c --properties\``,
                 argtype: "command",
                 optional: true,
                 default: null
             },
             {
-                id: 'notes',
+                id: 'action',
                 type: "string",
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `Your notes for this Character`
+                helptext: `get or set or add or clear`
+            },
+            {
+                id: 'property_value',
+                type: "string",
+                default: null,
+                optional: false,
+                argtype: "argument",
+                helptext: `your value for the property. see examples`
             }
         ];
-        let aliases = ['character', 'c']
+        let aliases = ['character', '.char', 'c']
         super(CommandsMetadata.getCommands().character.id, {
             aliases: aliases,
             split: 'quoted',
@@ -91,36 +100,53 @@ class CharacterCommand extends Command {
                 this.comments,
                 this.examples).embed);
         }
-        let richEmbed = new Discord.RichEmbed();
+
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
+        let re = new Discord.RichEmbed();
+        let cview = new CharacterPlaybookView(  re );
+        let console_results = null
 
-        if ( args.action && args.action === 'notes') {
-            if ( args.notes ) {
-                let character = await DbUtil.get_users_character(user_id, guild_id);
-                if (character == null ) {
-                    return message.reply(`Before setting your Character's notes, you need to run the \`set-character\` command`);
-                }
-                await DbUtil.update_character(character, "notes", args.notes);
-                return message.reply( `You have set your character's notes`);
+        if(args.property_name) {
+            console_results = await this.handleAction(args, user_id, guild_id, cview);
+        }
+        else if(args.all) {
+            console_results = await this.handleAll(guild_id, cview);
+        }
+
+        else {
+            let character = await DbUtil.get_users_character(user_id, guild_id);
+            if (character == null) {
+                return `Before running an action command, you need to run the \`set-character\` command`;
             }
+            console_results = cview.visitCharacter(cview);
+        }
+        if( console_results ) {
+            return message.reply(console_results);
+        }
+        else {
+            return message.reply(cview.richEmbed);
+        }
+    }
 
+
+    async handleAction(args, user_id, guild_id, view ) {
+
+        let character = await DbUtil.get_users_character(user_id, guild_id);
+        if (character == null) {
+            return `Before running an action command, you need to run the \`set-character\` command`;
         }
 
-        if (args.all) {
-            richEmbed.setTitle('Characters Created So Far');
-        }
-        let characters = await DbUtil.get_guilds_characters(message.guild.id);
+        return `Do something interesting here`;
+    }
+
+    async handleAll( guild_id, view ) {
+        let characters = await DbUtil.get_guilds_characters(guild_id);
         if ( characters.length === 0 ) {
-            return message.reply( `It seems your guild hasn't created any new characters yet! Please run .help and try out the .new-characters command first.`);
+            return `It seems your guild hasn't created any new characters yet! Please run .help and try out the .new-characters command first.`;
         }
-        for( var i = 0; i < characters.length; i++ ) {
-            let character = characters[i];
-            if ( args.all || character.user_id === message.member.user.id || character.name === args.name ) {
-                await character.visit(richEmbed, args.all );
-            }
-        }
-        return message.reply(richEmbed);
+        await view.visitAll(characters);
+        return null;
     }
 
     exec(message, args) {

@@ -2,7 +2,7 @@ const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
 const droll = require('droll');
 const CommandsMetadata = require('./commands_metadata');
-const HelpEmbed = require('./help_embed');
+const HelpEmbed = require('../view/help_embed');
 
 class RollCommand extends Command {
     constructor() {
