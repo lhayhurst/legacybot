@@ -19,6 +19,10 @@ const FamilySchema = {
     traditions: [String],
     assets: [String],
     moves:  [String],
+    role_move: {
+        type: String,
+        default: null
+    },
     needs:  [String],
     surpluses: [String],
     notes: {

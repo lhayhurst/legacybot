@@ -3,8 +3,7 @@ const DbUtil = require('./dbutil');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const CharacterPlaybook = require('../character_playbook');
-
-
+const CPlaybook = require( '../model/cplaybook');
 
 class NewCharacterCommand extends Command {
     constructor() {
@@ -67,36 +66,12 @@ class NewCharacterCommand extends Command {
 
     async doexec(message, args) {
         let guild_id = message.guild.id;
+        let user_id = message.member.user.id;
         if ( args.help ) {
             return message.reply( this.helpEmbed );
         }
         if (args.name == null || args.playbook == null ) {
             return message.reply(`You need to provide both a playbook and name to create a new character. Please run this command with a --help for the details!`);
-        }
-
-        //check to see if this family name is already in use
-        let existingCharacter = await DbUtil.get_character(args.name, guild_id);
-        if ( existingCharacter ) {
-            return message.reply(`A character with the name "${existingCharacter.name}" is already in play for this guild, please pick another name!"`);
-        }
-
-        //check to see if this playbook matches a stock playbook
-        let stock_playbook = CharacterPlaybook.find_stock_playbook( args.playbook );
-        if ( stock_playbook ) {
-            args.playbook = stock_playbook;
-        }
-
-        //check to see if this playbook name is already in use
-        let existingPlaybook = await DbUtil.get_character_by_playbook(args.playbook, guild_id);
-        if ( existingPlaybook ) {
-            return message.reply(`A character with the playbook "${args.playbook}" is already in play for this guild, please pick another playbook!`);
-        }
-
-        //check to see if this user already has a character
-        let user_id = message.member.user.id;
-        let ownerCharacter = await DbUtil.get_users_character(user_id, guild_id);
-        if (ownerCharacter !== null) {
-            return message.reply(`You have already set your character to the character with the name "${ownerCharacter.name}". Please drop that character before creating a new one!`);
         }
 
         //check to see if this user already has a family
@@ -105,9 +80,39 @@ class NewCharacterCommand extends Command {
             return message.reply(`In order to create a character, you must first set your family using the \`set-family\` command.`);
         }
 
+        //check to see if this user already has a character
+        let ownerCharacter = await DbUtil.get_users_character(user_id, guild_id);
+        if (ownerCharacter !== null) {
+            return message.reply(`You have already set your character to the character with the name "${ownerCharacter.name}". Please drop that character before creating a new one!`);
+        }
+
+        //check to see if this character name is already in use
+        let existingCharacter = await DbUtil.get_character_by_name(args.name, guild_id);
+        if ( existingCharacter ) {
+            return message.reply(`A character with the name "${existingCharacter.name}" is already in play for this guild, please pick another name!"`);
+        }
+
+        //check to see if this playbook matches a stock playbook
+        let stock_playbook = CharacterPlaybook.find_stock_playbook( args.playbook );
+        if ( stock_playbook ) {
+            args.playbook = stock_playbook; //need for below!! side effects are iffy but i'm lazy :P
+        }
+
+        //check to see if this playbook name is already in use
+        let existingPlaybook = await DbUtil.get_character_by_playbook(args.playbook, guild_id);
+        if ( existingPlaybook ) {
+            return message.reply(`A character with the playbook "${args.playbook}" is already in play for this guild, please pick another playbook!`);
+        }
+
+
+
+
+        let newCharacter = new CPlaybook({playbook: args.playbook, name: args.name, created_by_user_id: user_id, guild_id: guild_id});
+
+
         //we're good to go. insert the new character
-        let retMessage = await DbUtil.insert_character( args.name, args.playbook, guild_id, ownerFamily.name);
-        return message.reply(retMessage);
+        await newCharacter.save();
+        return message.reply("Created, type in \`.c --help\` or `\.c`");
     }
     exec(message, args) {
         return this.doexec(message, args);

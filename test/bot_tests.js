@@ -1,5 +1,5 @@
 const assert = require('assert');
-const FamilyPlaybook = require('../family_playbook');
+const FamilyPlaybookGameData = require('../family_playbook');
 const PingCommand = require('../commands/ping');
 const Discord = require('discord.js');
 const HelpEmbed = require('../commands/help_embed');
@@ -43,49 +43,19 @@ describe('process ping bot command', () => {
     });
 });
 
-describe('do treaty stuff', () => {
-    it('can give and receive treaties for two families', () => {
-        let fam1 = new FamilyPlaybook("The Cultivators", 1);
-        let fam2 = new FamilyPlaybook("The Hive", 1);
-
-        fam1.giveTreatyTo(fam2);
-        assert.ok(fam1.treaties[fam2.name]);
-       assert.strictEqual(1, fam1.treaties[fam2.name].on_me );
-        assert.ok(fam2.treaties[fam1.name]);
-       assert.strictEqual(1, fam2.treaties[fam1.name].me_on );
-
-       assert.strictEqual(true, fam1.hasTreatyWith(fam2));
-       assert.strictEqual(true, fam2.hasTreatyWith(fam1));
-
-        fam2.spendsTreatyWith(fam1);
-       assert.strictEqual(0, fam2.treaties[fam1.name].me_on );
-        assert.ok(fam2.treaties[fam1.name]);
-       assert.strictEqual(0, fam1.treaties[fam2.name].on_me );
-
-       assert.strictEqual(false, fam1.hasTreatyWith(fam2));
-       assert.strictEqual(false, fam2.hasTreatyWith(fam1));
-
-        fam1.receiveTreatyFrom(fam2, 2);
-       assert.strictEqual(true, fam1.hasTreatyWith(fam2));
-       assert.strictEqual(true, fam2.hasTreatyWith(fam1));
-       assert.strictEqual(2, fam1.treaties[fam2.name].me_on );
-       assert.strictEqual(2, fam2.treaties[fam1.name].on_me );
-
-    });
-});
 
 describe( 'find stock playbook', () => {
     it( 'can find a stock playbook', () => {
        let pbName = "Starfarers";
-       let stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
+       let stockPlaybook = FamilyPlaybookGameData.find_stock_playbook( pbName );
       assert.strictEqual('The Stranded Starfarers', stockPlaybook );
        pbName = "Stairfarers";
-       stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
+       stockPlaybook = FamilyPlaybookGameData.find_stock_playbook( pbName );
       assert.strictEqual( null, stockPlaybook );
 
        //check case insenitive as well
         pbName = "starfarers";
-        stockPlaybook = FamilyPlaybook.find_stock_playbook( pbName );
+        stockPlaybook = FamilyPlaybookGameData.find_stock_playbook( pbName );
        assert.strictEqual('The Stranded Starfarers', stockPlaybook );
 
     });
