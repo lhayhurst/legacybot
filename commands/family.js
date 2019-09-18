@@ -37,18 +37,18 @@ class FamiliesCommand extends Command {
             {
                 id: 'action', //notes
                 type: "string",
-                helptext: '\`notes\` the only action you can type in here',
+                helptext: '\`notes\` or \`name\`',
                 argtype: "command",
                 optional: true,
                 default: null
             },
             {
-                id: 'notes',
+                id: 'action_value',
                 type: "string",
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `Your notes for this Family`
+                helptext: `whatever action value you are setting`
             }
             ];
         let aliases = ['family', 'f']
@@ -101,9 +101,19 @@ class FamiliesCommand extends Command {
             if (family == null ) {
                 return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);
             }
-            await DbUtil.update_family(family, "notes", args.notes);
+            await DbUtil.update_family(family, "notes", args.action_value);
             return message.reply( `You have set your Family notes`);
         }
+
+        if ( args.action && args.action === 'name') {
+            let family = await DbUtil.get_users_family(user_id, guild_id);
+            if (family == null ) {
+                return message.reply(`Before setting your Family name, you need to run the \`set-family\` command`);
+            }
+            await DbUtil.update_family(family, {name: args.action_value});
+            return message.reply( `You have set your Family name to ${args.action_value}`);
+        }
+
 
 
         if (args.all) {
