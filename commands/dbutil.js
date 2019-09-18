@@ -11,7 +11,6 @@ class DbUtil {
                 guild_id: family.guild_id,
                 name: family.name,
             }, update ).then((updatedDoc) => {
-                console.log(`updated family with ${JSON.stringify(update)}`);
         });
     }
 

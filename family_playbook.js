@@ -294,7 +294,6 @@ class FamilyPlaybook {
         targetFamily.initTreatyFor(this);
         this.treaties[targetFamily.name].me_on += bonus;
         targetFamily.treaties[this.name].on_me += bonus;
-
     }
 
     hasTreatyWith(targetFamily) {

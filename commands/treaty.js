@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
+const FamilyPlaybookView = require('../view/family_playbook_view');
 
 class TreatyCommand extends Command {
     constructor() {
@@ -97,7 +98,8 @@ class TreatyCommand extends Command {
 
         if (family_name == null && action == null) {
             let richEmbed = new Discord.RichEmbed();
-            ownerFamily.visitTreaties(richEmbed)
+            let view = new FamilyPlaybookView(ownerFamily);
+            await view.visitTreaties(richEmbed)
             return message.reply(richEmbed);
         }
         if (!(action === 'give' || action === 'get' || action === 'spend')) {
@@ -142,8 +144,8 @@ class TreatyCommand extends Command {
             }
         }
         if (do_update) {
-            await DbUtil.update_family(targetFamily, 'treaties', targetFamily.treaties);
-            await DbUtil.update_family(ownerFamily, 'treaties', ownerFamily.treaties);
+            await DbUtil.update_family(targetFamily, {'treaties' : targetFamily.treaties } );
+            await DbUtil.update_family(ownerFamily,  { 'treaties' : ownerFamily.treaties } );
         }
         return message.reply(reply);
 

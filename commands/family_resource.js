@@ -110,32 +110,32 @@ class FamilyResourceCommand extends Command {
             bonus = parseInt(args.bonus, 10 );
         }
 
-        let update_val = null;
+        let update_val = {};
         if (action === "get") {
             if ( resource === 'tech' ) {
                 ownerFamily.tech = ownerFamily.tech + bonus;
-                update_val = ownerFamily.tech_resource_update;
+                update_val.tech = ownerFamily.tech;
             }
             else {
                 ownerFamily.data_resource = ownerFamily.data_resource + bonus;
-                update_val = ownerFamily.data_resource_update;
+                update_val.data_resource = ownerFamily.data_resource;
             }
 
         } else { //spend
             if ( resource === 'tech' ) {
                 ownerFamily.tech = ownerFamily.tech - bonus;
-                update_val = ownerFamily.tech_resource_update;
+                update_val.tech = ownerFamily.tech;
             }
             else {
                 ownerFamily.data_resource = ownerFamily.data_resource - bonus;
-                update_val = ownerFamily.data_resource_update;
+                update_val.data_resource = ownerFamily.data_resource;
             }
         }
         let update_int_val = Object.values(update_val)[0];
         if( update_int_val < 0 ) {
             return message.reply(`You can't spend more resources than you have!`);
         }
-        await DbUtil.update_family_multiple_values(ownerFamily, update_val);
+        await DbUtil.update_family(ownerFamily, update_val);
 
         return message.reply(`Updated ${resource} to ${Object.values(update_val)[0]}`);
 

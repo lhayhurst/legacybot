@@ -85,11 +85,16 @@ class NeedCommand extends Command {
 
         //ready to rock
         if (action === "add") {
-            ownerFamily.addNeed(resource);
+            if (ownerFamily.needs.indexOf(resource) === -1) {
+                ownerFamily.needs.push(resource);
+            }
         } else {
-            ownerFamily.removeNeed(resource)
+            let index = ownerFamily.needs.indexOf(resource);
+            if (index > -1) {
+                ownerFamily.needs.splice(index, 1);
+            }
         }
-        await DbUtil.update_family(ownerFamily, 'needs', ownerFamily.needs);
+        await DbUtil.update_family(ownerFamily, { 'needs': ownerFamily.needs } );
         return message.reply(`Family ${ownerFamily.name} now has Needs: ${JSON.stringify(ownerFamily.needs)}`)
     }
 

@@ -87,11 +87,16 @@ class SurplusCommand extends Command {
 
         //ready to rock
         if (action === "add") {
-            ownerFamily.addSurplus(resource);
+            if (ownerFamily.surpluses.indexOf(resource) === -1) {
+                ownerFamily.surpluses.push(resource);
+            }
         } else {
-            ownerFamily.removeSurplus(resource)
+            let index = ownerFamily.surpluses.indexOf(resource);
+            if (index > -1) {
+                ownerFamily.surpluses.splice(index, 1);
+            }
         }
-        await DbUtil.update_family(ownerFamily, 'surpluses', ownerFamily.surpluses);
+        await DbUtil.update_family(ownerFamily,  {'surpluses' : ownerFamily.surpluses });
         return message.reply(`Family ${ownerFamily.name} now has Surpluses: ${JSON.stringify(ownerFamily.surpluses)}`)
     }
 

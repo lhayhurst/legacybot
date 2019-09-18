@@ -139,12 +139,86 @@ describe( `test family notes`, () => {
 });
 
 
+describe( `test family treaty`, () => {
+
+    it("test has treaty with, int treaty, give treaty, get treaty, spend treaty", async () => {
+
+        bulletfarm = new FPlaybook({playbook: 'enclave', name: "Bulletfarm",
+            created_by_user_id: user_id, guild_id: guild_id});
+
+        theCitadel.name = "The Citadel";
+        await theCitadel.save().then(() => {
+        });
+
+        await bulletfarm.save().then(() => {
+        });
+
+        //they start out having no treaty
+        //assert.strictEqual( theCitadel.hasTreatyWith(bulletfarm), false );
+
+        //let's deal
+        //first init stuff. the helper methods should do this too.
+        theCitadel.initTreatyFor( bulletfarm );
+        assert.strictEqual(theCitadel.findTreatyWith(bulletfarm), 0 );
+
+        bulletfarm.initTreatyFor( theCitadel );
+        assert.strictEqual(bulletfarm.findTreatyWith(theCitadel), 0 );
+
+
+        theCitadel.giveTreatyTo(bulletfarm, 1);
+        assert.strictEqual(bulletfarm.findTreatyWith(theCitadel), 1 );
+        theCitadel.giveTreatyTo(bulletfarm, 1);
+        assert.strictEqual(bulletfarm.findTreatyWith(theCitadel), 2);
+
+
+        theCitadel.receiveTreatyFrom(bulletfarm, 2);
+        assert.strictEqual(theCitadel.findTreatyWith(bulletfarm), 2 );
+
+        assert.strictEqual( theCitadel.hasEnoughTreaty( bulletfarm, 3), false);
+        assert.strictEqual( theCitadel.hasEnoughTreaty( bulletfarm, 2), true);
+
+        //finally!
+        theCitadel.spendTreatyWith(bulletfarm, 1);
+        assert.strictEqual(theCitadel.findTreatyWith(bulletfarm), 1 );
+
+        await DbUtil.update_family(theCitadel, { 'treaties': theCitadel.treaties });
+        await DbUtil.update_family(bulletfarm, { 'treaties': bulletfarm.treaties });
+
+
+        //and let's make sure it saved ok!
+        let chkCitadel = await DbUtil.get_family(theCitadel.name, theCitadel.guild_id);
+        let chkBullet = await DbUtil.get_family(bulletfarm.name, bulletfarm.guild_id);
+        assert.strictEqual(chkCitadel.findTreatyWith(chkBullet), 1 );
+        assert.strictEqual(chkBullet.findTreatyWith(chkCitadel), 2 );
+
+
+    });
+});
+
+describe( 'family mood tests',  () => {
+    it( "can use virtual mood property", () => {
+        assert.equal( theCitadel.mood, 0 );
+        theCitadel.surpluses.push( "Mothers Milk");
+        assert.equal(theCitadel.mood, 1 );
+        theCitadel.needs.push("Bullets");
+        assert.equal(theCitadel.mood, 0 );
+
+        theCitadel.mood_override = 2;
+        assert.equal(theCitadel.mood, 2 );
+        theCitadel.needs.push("Gasoline");
+        assert.equal(theCitadel.mood, 2 );
+
+        theCitadel.mood_override = 0;
+        assert.equal(theCitadel.mood, -1 );
+        theCitadel.needs.push("Breeders"); //fuuuuriosssaa!!!
+        assert.equal(theCitadel.mood, -2 );
+
+
+    });
+});
 
 describe('family playbook tests ', () => {
 
-    it( "can use virtual mood property", () => {
-        assert.equal( theCitadel.mood, 0 );
-    })
 
     it('can save and search a family playbook', async () => {
         theCitadel.name = "The Citadel";

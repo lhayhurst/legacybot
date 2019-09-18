@@ -1,9 +1,26 @@
 const Jimp = require('jimp');
 const FamilyPlaybook = require('../family_playbook');
+const DbUtil = require("../commands/dbutil");
 
 class FamilyPlaybookView {
     constructor( fpmodel ) {
         this.fplaybook = fpmodel;
+    }
+
+    async visitTreaties( richEmbed ) {
+        richEmbed.setTitle(`${ this.fplaybook.name}\'s Treaties`);
+        if (this.fplaybook.treaties) {
+            for( const familyPlaybookName of this.fplaybook.treaties.keys() ) {
+                let family = await DbUtil.get_family_by_playbook(familyPlaybookName, this.fplaybook.guild_id );
+                if ( family ) {
+                    richEmbed
+                        .addField("Family Name", family.name, true)
+                        .addField("Me on Them",  this.fplaybook.findTreatyWith(family), true)
+                        .addField("Them on Me",  family.findTreatyWith(this.fplaybook), true)
+                        .addBlankField();
+                }
+            }
+        }
     }
 
     async visit( richEmbed, summary_only=true ) {
@@ -72,13 +89,11 @@ class FamilyPlaybookView {
 
             let startYCoordinate = treatyStartCoord[1];
             if ( this.fplaybook.treaties ) {
-                let treatyFamilies = Object.keys(this.treaties);
-                for (var k = 0; k < treatyFamilies.length; k++) {
-                    let familyName = treatyFamilies[k];
-                    let treaties = this.fplaybook.treaties[familyName];
-                    let yoursOnThem = treaties.me_on;
-                    let themOnMe = treaties.on_me;
-                    await statsSheetImage.print(font, treatyStartCoord[0], startYCoordinate, familyName);
+                for (const familyName of this.fplaybook.treaties.keys() ) {
+                    let family = await DbUtil.get_family_by_playbook(familyName, this.fplaybook.guild_id );
+                    let yoursOnThem = this.fplaybook.findTreatyWith(family);
+                    let themOnMe = family.findTreatyWith(this.fplaybook);
+                    await statsSheetImage.print(font, treatyStartCoord[0], startYCoordinate, family.name);
                     await statsSheetImage.print(font, yoursOnThemCoord[0], startYCoordinate, yoursOnThem);
                     await statsSheetImage.print(font, theirsOnYouCoord[0], startYCoordinate, themOnMe);
                     startYCoordinate += 40;
@@ -90,7 +105,7 @@ class FamilyPlaybookView {
                 let surplusesCoordinates = FamilyPlaybook.get_print_coordinates('surpluses');
                 let surplusStartYCoord = surplusesCoordinates[1];
                 for (var l = 0; l < this.fplaybook.surpluses.length; l++) {
-                    await statsSheetImage.print(font, surplusesCoordinates[0], surplusStartYCoord, this.surpluses[l]);
+                    await statsSheetImage.print(font, surplusesCoordinates[0], surplusStartYCoord, this.fplaybook.surpluses[l]);
                     surplusStartYCoord += 40;
                 }
             }
@@ -99,7 +114,7 @@ class FamilyPlaybookView {
                 let needsCoordinates = FamilyPlaybook.get_print_coordinates('needs');
                 let needsStartYCoord = needsCoordinates[1];
                 for (var m = 0; m < this.fplaybook.needs.length; m++) {
-                    await statsSheetImage.print(font, needsCoordinates[0], needsStartYCoord, this.needs[m]);
+                    await statsSheetImage.print(font, needsCoordinates[0], needsStartYCoord, this.fplaybook.needs[m]);
                     needsStartYCoord += 40;
                 }
             }

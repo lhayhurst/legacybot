@@ -25,14 +25,10 @@ const CharacterSchema = {
         type: Boolean,
         default: false
     },
-    character_moves: {
-        type: [String],
-        default: undefined
-    },
-    role_moves: {
-        type: [String],
-        default: undefined
-    },
+    character_moves: [String],
+    role_moves: [String],
+    roles: [String],
+    gear: [String],
     notes: {
         type: String,
         default: null
