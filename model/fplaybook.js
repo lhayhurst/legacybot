@@ -4,6 +4,10 @@ const PlaybookSchema = require('./playbook');
 const extendSchema = require('./extend_schema');
 
 const FamilySchema = {
+    theme: {
+        type: String,
+        default: null
+    },
     doctrine: {
         type: String,
         default: null
@@ -13,6 +17,10 @@ const FamilySchema = {
         default: null,
     },
     traditions: {
+        type: [String],
+        default: undefined,
+    },
+    assets: {
         type: [String],
         default: undefined,
     },

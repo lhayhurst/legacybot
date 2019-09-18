@@ -119,6 +119,26 @@ describe( `test family update`, () => {
     });
 });
 
+describe( `test family notes`, () => {
+
+    it("can set notes", async () => {
+
+        await theCitadel.save().then(() => {
+        });
+
+        await DbUtil.update_family( theCitadel, { notes: "Witness me!"});
+
+        let family = await DbUtil.get_family(theCitadel.name, guild_id);
+        assert.ok( family != null );
+        assert.strictEqual(guild_id, family.guild_id);
+        assert.strictEqual(family.name, theCitadel.name);
+        assert.strictEqual( family.notes, "Witness me!" );
+        assert.strictEqual( theCitadel._id.toString(), family._id.toString())
+
+    });
+});
+
+
 
 describe('family playbook tests ', () => {
 

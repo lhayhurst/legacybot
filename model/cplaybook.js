@@ -8,7 +8,52 @@ const CharacterSchema = {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'FPlaybook',
         default: null
+    },
+    looks: {
+        type: String,
+        default: null,
     }
+    quick: {
+        type: Boolean,
+        default: false
+    },
+    dead: {
+        type: Boolean,
+        default: false
+    },
+    harm: {
+        type: Boolean,
+        default: false
+    },
+    character_moves: {
+        type: [String],
+        default: undefined
+    },
+    role_moves: {
+        type: [String],
+        default: undefined
+    },
+    notes: {
+        type: String,
+        default: null
+    },
+    force: {
+        type: Number,
+        default: 0
+    },
+    lore: {
+        type: Number,
+        default: 0
+    },
+    steel: {
+        type: Number,
+        default: 0
+    },
+    sway: {
+        type: Number,
+        default: 0
+    },
+
 };
 
 const CPlaybookSchema = extendSchema(PlaybookSchema, CharacterSchema);
