@@ -1,5 +1,5 @@
 const {Command} = require('discord-akairo');
-const FamilyPlaybook = require('../family_playbook');
+const DbUtil = require('./dbutil');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
 
@@ -20,6 +20,7 @@ class SetFamilyCommand extends Command {
                 type: 'string',
                 optional: false,
                 argtype: "argument",
+                default: null,
                 helptext: `The name of the Family you are adopting. Run the families command to see what families are currently in play.`
             }
         ];
@@ -47,7 +48,7 @@ class SetFamilyCommand extends Command {
         ]
     }
 
-    exec(message, args) {
+    async aexec(message, args) {
         if ( args.help ) {
             return message.reply( new HelpEmbed(
                 this.id, //the name of the command
@@ -56,27 +57,37 @@ class SetFamilyCommand extends Command {
                 this.comments,
                 this.examples).embed);
         }
-        db.database.find({family_name: args.name, guild_id: message.guild.id}).then((docs) => {
-            if (docs.length === 0) { //no family found with that name
-                return message.reply(`No family found with name ${args.name}!`);
-            } else { //it already exists, just let the user know
-                let insertedRec = docs[0];
-                let vivifiedFamily = FamilyPlaybook.fromNedbDocument(insertedRec);
-                let user_id = message.member.user.id;
-                if (vivifiedFamily.user && vivifiedFamily.user !== user_id) {
-                    return message.reply(`That family is already set to a different user ('${message.member.user.username}') `);
-                }
-                else if ( vivifiedFamily.user && vivifiedFamily.user === user_id) {
-                    return message.reply(`You are already set to the family with name '${vivifiedFamily.name}'`);
-                }
-                db.update({family_name: vivifiedFamily.name}, {$set: {user_id: user_id, username: message.member.user.username }}, {}, (err, numReplaced) => {
-                });
-                //message.member.setNickname(vivifiedFamily.playbook);
-                return message.reply(`you have set your family to ${vivifiedFamily.playbook} with name '${vivifiedFamily.name}'`);
+
+        if (args.name == null ) {
+            return message.reply(`Please give this command a n="family name" option`);
+        }
+
+        let guild_id = message.guild.id;
+        let user_id = message.member.user.id;
+        let username = message.member.user.username;
+        //look for the family with that name
+        let family = await DbUtil.get_family( args.name, guild_id );
+
+        if ( family == null ) {
+            return message.reply(`No family found with name ${args.name}!`);
+        }
+        if ( family.managed_by_user_id && family.managed_by_user_id === user_id) {
+            return message.reply(`You are already set to the family with name '${vivifiedFamily.name}'`);
+        }
+        else {
+            if ( family.managed_by_user_id ) {
+                return message.reply(`That family is already set to a different user: ${family.managed_by_username}`);
             }
-        }).catch((err) => {
-            return message.reply(`Something terrible happened: ${err}`);
-        });
+        }
+
+        //ok, we're good to go
+        await DbUtil.update_family(family, {managed_by_username: username, managed_by_user_id: user_id});
+        return message.reply(`you have set your family to ${family.playbook} with name '${family.name}'`);
+
+    }
+
+    exec(message, args) {
+        return this.aexec(message, args);
     }
 }
 
