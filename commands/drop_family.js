@@ -53,8 +53,8 @@ class DropFamilyCommand extends Command {
             return message.reply(`You do not have a family to drop!`);
         }
         else {
-            await DbUtil.update_family_multiple_values(ownerFamily, { user_id : null, username: null } );
-            return message.reply(`dropped your family, please run the \`sf\` command to take a new family`);
+            await DbUtil.update_family(ownerFamily, { managed_by_username : null, managed_by_user_id: null } );
+            return message.reply(`dropped your family, please run the \`.sf\` command to take a new family`);
         }
 
     }

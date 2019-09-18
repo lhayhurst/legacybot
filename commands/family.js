@@ -73,7 +73,7 @@ class FamiliesCommand extends Command {
                 commentary: `Gets the family sheet for the named family. No quotes needed if a single word name.`
             },
             {
-                command: `${aliases[1]} note "War Boys are the paramilitary arm of The Citadel and serve as Immortan Joe's servants and soldiers. War Boys are hand picked at a young age by the guardians of the elevator platform of The Citadel and are indoctrinated as zealots in the cult of V8 with Immortan Joe as their immortal leader."`,
+                command: `${aliases[1]} notes "War Boys are the paramilitary arm of The Citadel and serve as Immortan Joe's servants and soldiers. War Boys are hand picked at a young age by the guardians of the elevator platform of The Citadel and are indoctrinated as zealots in the cult of V8 with Immortan Joe as their immortal leader."`,
                 commentary: `Let's you set the character notes for this Family.`
             },
             {
@@ -101,7 +101,7 @@ class FamiliesCommand extends Command {
             if (family == null ) {
                 return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);
             }
-            await DbUtil.update_family(family, "notes", args.action_value);
+            await DbUtil.update_family(family, { "notes" : args.action_value } );
             return message.reply( `You have set your Family notes`);
         }
 
@@ -114,8 +114,6 @@ class FamiliesCommand extends Command {
             return message.reply( `You have set your Family name to ${args.action_value}`);
         }
 
-
-
         if (args.all) {
             richEmbed.setTitle('Families Created So Far');
         }
@@ -125,8 +123,8 @@ class FamiliesCommand extends Command {
         }
         for( var i = 0; i < families.length; i++ ) {
             let family = families[i];
-            if ( args.all || family.user_id == message.member.user.id || family.name === args.name ) {
-                let fpv = new FamilyPlaybookView( family );
+            if ( args.all || family.managed_by_user_id == message.member.user.id || family.name === args.name ) {
+                let fpv = new FamilyPlaybookView( family  );
                 await fpv.visit(richEmbed, args.all );
             }
         }

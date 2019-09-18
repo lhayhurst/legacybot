@@ -12,7 +12,7 @@ const CharacterSchema = {
     looks: {
         type: String,
         default: null,
-    }
+    },
     quick: {
         type: Boolean,
         default: false

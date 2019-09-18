@@ -63,10 +63,21 @@ const FamilySchema = {
     treaties: {
         type: Map,
         of: String
-    },
+    }
 };
 
 const FPlaybookSchema = extendSchema(PlaybookSchema, FamilySchema);
+
+FPlaybookSchema.virtual('mood').get( function () {
+    let ret = 0;
+    if ( this.surpluses ) {
+        ret += this.surpluses.length;
+    }
+    if ( this.needs ) {
+        ret += this.needs.length;
+    }
+    return ret;
+})
 
 FPlaybookSchema.pre('save', function(next) {
 

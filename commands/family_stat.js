@@ -115,7 +115,7 @@ class FamilyStatCommand extends Command {
         }
 
 
-        await DbUtil.update_family_multiple_values(userFamily, statsToUpdate);
+        await DbUtil.update_family(userFamily, statsToUpdate);
         return message.reply(`updated ${JSON.stringify(statsToUpdate)} for family "${userFamily.name}"`);
     }
 

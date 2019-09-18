@@ -142,6 +142,10 @@ describe( `test family notes`, () => {
 
 describe('family playbook tests ', () => {
 
+    it( "can use virtual mood property", () => {
+        assert.equal( theCitadel.mood, 0 );
+    })
+
     it('can save and search a family playbook', async () => {
         theCitadel.name = "The Citadel";
         await theCitadel.save().then(() => {
