@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('./help_embed');
 const CommandsMetadata = require('./commands_metadata');
+const FamilyPlaybookView = require('../view/family_playbook_view');
 
 class FamiliesCommand extends Command {
     constructor() {
@@ -115,7 +116,8 @@ class FamiliesCommand extends Command {
         for( var i = 0; i < families.length; i++ ) {
             let family = families[i];
             if ( args.all || family.user_id == message.member.user.id || family.name === args.name ) {
-                await family.visit(richEmbed, args.all );
+                let fpv = new FamilyPlaybookView( family );
+                await fpv.visit(richEmbed, args.all );
             }
         }
         return message.reply(richEmbed);

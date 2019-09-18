@@ -5,12 +5,16 @@ const extendSchema = require('./extend_schema');
 
 const FPlaybookSchema = extendSchema(PlaybookSchema, {});
 
-FPlaybookSchema.post('init',  doc => {
-    //help the user out by looking up their playbook name
-    let newName = FamilyPlaybook.find_stock_playbook(doc.playbook);
+FPlaybookSchema.pre('save', function(next) {
+
+    let newName = FamilyPlaybook.find_stock_playbook(this.playbook);
     if ( newName ) {
-        doc.playbook = newName;
+        this.playbook = newName;
     }
+
+    // everything is done, so let's call the next callback.
+    next();
+
 });
 
 let collectionName = "FamilyPlaybooks";

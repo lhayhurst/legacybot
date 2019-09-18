@@ -16,6 +16,8 @@ const dbURL = config.get("MongoDbURI");
 mongoose.connect(dbURL,
     {useNewUrlParser: true, useUnifiedTopology: true});
 
+//TODO: consider adding  { autoIndex: false } when enough docs are in the database!
+
 mongoose.connection
     .once('open', () => {
         console.log("Opened connection to mongodb")
@@ -27,17 +29,6 @@ mongoose.connection
 mongoose.connection.on('error', (error) => {
     console.warn('Error : ', error);
 });
-
-
-mongoose.connection
-    .once('open', () => {
-        mongoose.connection.collections.FamilyPlaybooks.drop(() => {
-        });
-        mongoose.connection.collections.CharacterPlaybooks.drop(() => {
-        });
-
-    })
-
 
 
 module.exports = {
