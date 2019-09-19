@@ -8,6 +8,8 @@ class CharacterPlaybookView {
         this.richEmbed = richEmbed;
     }
 
+
+
     async getFamily(character) {
         let fname = `_none_`;
         if ( character.family ) {

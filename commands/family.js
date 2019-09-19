@@ -4,6 +4,7 @@ const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const FamilyPlaybookView = require('../view/family_playbook_view');
+const PropertyMagic = require('./property_magic');
 
 class FamiliesCommand extends Command {
     constructor() {
@@ -35,22 +36,29 @@ class FamiliesCommand extends Command {
                 optional: true
             },
             {
+                id: 'show_props',
+                match: 'flag',
+                prefix: '--p',
+                helptext: 'Show all properties that can be get, set, added, or del for a family',
+                default: false,
+                optional: true
+            },
+            {
                 id: 'property_action',
                 type: "string",
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `whatever action value you are setting`
+                helptext: `Valid actions are ${JSON.stringify(PropertyMagic.PropertyActions())};`
             },
             {
                 id: 'property_name', //from CPlaybook
                 type: "string",
-                helptext: `\`property\` is prop you are interested in, run \`.c --properties\``,
+                helptext: `\`property\` is prop you are interested in, run \`.f --p\` to see the full set`,
                 argtype: "command",
                 optional: true,
                 default: null
             },
-
             {
                 id: 'property_value',
                 type: "string",
@@ -82,8 +90,21 @@ class FamiliesCommand extends Command {
                 commentary: `Gets the family sheet for the named family. No quotes needed if a single word name.`
             },
             {
-                command: `${aliases[1]} notes "War Boys are the paramilitary arm of The Citadel and serve as Immortan Joe's servants and soldiers. War Boys are hand picked at a young age by the guardians of the elevator platform of The Citadel and are indoctrinated as zealots in the cult of V8 with Immortan Joe as their immortal leader."`,
+                command: `${aliases[1]} set notes "War Boys are the paramilitary arm of The Citadel and serve as Immortan Joe's servants and soldiers. War Boys are hand picked at a young age by the guardians of the elevator platform of The Citadel and are indoctrinated as zealots in the cult of V8 with Immortan Joe as their immortal leader."`,
                 commentary: `Let's you set the character notes for this Family.`
+            },
+            {
+                command: `${aliases[1]} get notes`,
+                commentary: `Let's you get the character notes for this Family.`
+
+            },
+            {
+                command: `${aliases[1]} add notes "..., and then they go, WITNESS MEEE!!"`,
+                commentary: `Let's you add to the character notes for this Family.`
+            },
+            {
+                command: `${aliases[1]} --p`,
+                commentary: `show all the properties that can be get or set.`
             },
             {
                 command: `${aliases[1]} --help`,
@@ -93,43 +114,12 @@ class FamiliesCommand extends Command {
     }
 
     async propertyCrud(args, family) {
-        let name = args.property_name;
-        let action = args.property_action;
-        let value = args.property_value;
-
-        let dirty = false;
-        let actionMap = {
-            'notes' : {
-                'set' : async function( family, notes ) {family.notes = notes; dirty=true; return `set!`; },
-                'get' : async function( family) { return `notes is: ${family.notes}` },
-                'add' : async function( family, notes) { family.notes += notes ; dirty=true; return `added!`; }
-            },
-            'doctrine' : {
-                'set' : async function( family, doctrine ) {family.doctrine = doctrine; dirty=true; return `set!`; },
-                'get' : async function( family ) { return `doctrine is ${family.doctrine}` }
-            },
-            'lifestyle' : {
-                'set' : async function( family, lifestyle ) {family.lifestyle = lifestyle; dirty=true; return `set!`; },
-                'get' : async function( family ) {  return `lifestyle is ${family.lifestyle}`; }
-            }
-        };
-        try {
-            let func = actionMap[name][action];
-            if ( func ) {
-                let ret = await func(family, value);
-                if (dirty) {
-                    await family.save();
-                }
-                if ( ret == null ) {
-                    ret = `Family property ${name} has no value yet`;
-                }
-                return ret;
-            }
-            return `Sorry, didn't know what to do with that!`;
+        let pm = new PropertyMagic( PropertyMagic.FamilyStringProperties(), PropertyMagic.FamilyArrayofStringProperties() );
+        let ret = await pm.process( args, family);
+        if( family.isModified()) {
+            await family.save();
         }
-        catch( e ) {
-            console.log(e);
-        }
+        return ret;
     }
 
 
@@ -148,7 +138,11 @@ class FamiliesCommand extends Command {
         let console_results = null;
         let fview = new FamilyPlaybookView( richEmbed );
 
-        if ( args.property_name && args.property_action  ) {
+        if( args.show_props) {
+            console_results = `Here are the string properties of a family. You can get, set, add, or remove them:  ${JSON.stringify(PropertyMagic.FamilyStringProperties())}\n`;
+            console_results += `Here are the string array properties of a family you can get, add, or remove: ${JSON.stringify(PropertyMagic.FamilyArrayofStringProperties())}`;
+        }
+        else if ( args.property_name && args.property_action  ) {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (family == null ) {
                 return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);
