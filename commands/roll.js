@@ -233,11 +233,11 @@ class RollCommand extends Command {
         if (args.advantage) {
             resultString += `with advantage `;
             let minRemoved = this.removeSmallest(rollResult.rolls);
-            resultString += `dropping lowest roll [${minRemoved}]. `;
+            resultString += `dropping lowest roll (a ||${minRemoved}||). `;
         } else if (args.disadvantage) {
             resultString += `with disadvantage `;
             let maxRemoved = this.removeLargest(rollResult.rolls);
-            resultString += `dropping highest roll [${maxRemoved}]. `;
+            resultString += `dropping highest roll ( a ||${maxRemoved}||). `;
         }
 
         const add = (a, b) => a + b
@@ -246,13 +246,13 @@ class RollCommand extends Command {
 
         let legacyResult = null;
         if (rollResult.total <= 6) {
-            legacyResult = "Setback";
+            legacyResult = `_Setback_`;
         } else if (rollResult.total < 10) {
-            legacyResult = "Mixed Success";
+            legacyResult = `_Mixed Success_`;
         } else {
-            legacyResult = "Full Success"
+            legacyResult = `_diff +Full success_`;
         }
-        return message.reply( `${resultString}: ${rollResult.toString()}. ${legacyResult}!`);
+        return message.reply( `${resultString}: **${rollResult.toString()}**. ${legacyResult}!`);
     }
 
     exec(message, args) {
