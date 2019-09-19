@@ -3,6 +3,7 @@ const DbUtil = require('./dbutil');
 const droll = require('droll');
 const CommandsMetadata = require('./commands_metadata');
 const HelpEmbed = require('../view/help_embed');
+const Boom = require('./self_destructing_reply');
 
 class RollCommand extends Command {
     constructor() {
