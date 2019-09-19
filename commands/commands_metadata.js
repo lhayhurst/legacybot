@@ -70,6 +70,10 @@ class CommandsMetadata {
                 id: 'drop-character',
                 note: 'Allows you to drop a Character (if you have set one)'
             },
+            'zoom': {
+                id: 'zoom',
+                note: 'Allows you to zoom in and out from your character and family.'
+            }
         }
     }
 }
