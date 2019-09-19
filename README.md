@@ -32,7 +32,7 @@ Third, make a note of the your `token` and `owner id`. These can be configured i
 Run `make install`
 
 ### Testing
-Run a `make test` to run the unit tests. Tests can be found in `bot_tests.js`.
+Run a `make test` to run the unit tests. Tests can be found in the `test` folder. Note, the db tests assume you have a locally running instance of Mongodb. 
 
 ### Running
 Run `make run`
