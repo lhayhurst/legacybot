@@ -1,14 +1,13 @@
 const Jimp = require('jimp');
 const DbUtil = require("../commands/dbutil");
 const CharacterPlaybook = require('../character_playbook');
+const PropertyMagic = require('../commands/property_magic');
 
 
 class CharacterPlaybookView {
     constructor(richEmbed) {
         this.richEmbed = richEmbed;
     }
-
-
 
     async getFamily(character) {
         let fname = `_none_`;
@@ -59,13 +58,24 @@ class CharacterPlaybookView {
     async outputAsText(character) {
         let fname = await this.getFamily(character);
 
-        this.richEmbed.setTitle( `\`${character.name}, ${character.playbook} of ${fname}\`` )
-            .setDescription(`Notes: ${character.notes}`)
-            .addField( 'Force', character.force, true)
-            .addField( 'Lore', character.lore, true)
-            .addField( 'Steel', character.steel, true)
-            .addField( 'Sway', character.sway, true)
-            .addBlankField();
+        this.richEmbed.setTitle( `\`${character.name}, ${character.playbook} of ${fname}\`` );
+        let characterProps = Object.values( PropertyMagic.CharacterProperties() );
+
+        for( var i =0; i < characterProps.length; i++ ) {
+            let prop = characterProps[i];
+            let propVal = character.get( prop.name );
+            if ( propVal != null ) {
+                if (prop.isa == 'Array') {
+                    this.richEmbed.addField(prop.name, JSON.stringify(propVal));
+                }
+                else {
+                    this.richEmbed.addField(prop.name, propVal, true);
+                }
+            }
+            else {
+                this.richEmbed.addField(prop.name, "null");
+            }
+        }
         this.richEmbed.setFooter( `Have a bug to file? Needs more help? Visit https://github.com/lhayhurst/legacybot/issues`,
             `https://cdn.discordapp.com/embed/avatars/0.png`);
 

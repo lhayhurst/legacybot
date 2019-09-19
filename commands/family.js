@@ -36,6 +36,14 @@ class FamiliesCommand extends Command {
                 optional: true
             },
             {
+                id: 'text_output_mode',
+                match: 'flag',
+                prefix: '--text',
+                helptext: 'Output family sheet as simple text',
+                default: false,
+                optional: true
+            },
+            {
                 id: 'show_props',
                 match: 'flag',
                 prefix: '--p',
@@ -49,7 +57,7 @@ class FamiliesCommand extends Command {
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `Valid actions are ${JSON.stringify(PropertyMagic.PropertyActions())};`
+                helptext: `Valid actions can be found by running \`.f --p\``
             },
             {
                 id: 'property_name', //from CPlaybook
@@ -107,6 +115,10 @@ class FamiliesCommand extends Command {
                 commentary: `show all the properties that can be get or set.`
             },
             {
+                command: `${aliases[1]} --text`,
+                commentary: `show the character sheet as text.`
+            },
+            {
                 command: `${aliases[1]} --help`,
                 commentary: `Gets help on this command.`
             }
@@ -114,7 +126,7 @@ class FamiliesCommand extends Command {
     }
 
     async propertyCrud(args, family) {
-        let pm = new PropertyMagic( PropertyMagic.FamilyStringProperties(), PropertyMagic.FamilyArrayofStringProperties() );
+        let pm = new PropertyMagic( PropertyMagic.FamilyProperties()  );
         let ret = await pm.process( args, family);
         if( family.isModified()) {
             await family.save();

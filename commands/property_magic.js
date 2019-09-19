@@ -1,47 +1,34 @@
-class FamilyPropertyMagic {
-    static StringProperties() {
-        //todo -- refactor this to reflect on the schema and get out the strings
-        return  ['name', 'notes', 'lifestyle', 'doctrine', 'role_move'];
-    }
+const FPlaybook = require('../model/fplaybook');
+const CPlaybook = require('../model/cplaybook');
 
-    static ArrayofStringProperties() {
-        return  ['traditions', 'assets', 'moves', 'needs', 'surpluses' ];
-
-    }
-};
-
-class CharacterPropertyMagic {
-    static StringProperties() {
-        //todo -- refactor this to reflect on the schema and get out the strings
-        return  ['looks', 'notes'];
-    }
-
-    static ArrayofStringProperties() {
-        return  ['character_moves', 'role_moves', 'roles', 'gear'];
-
-    }
-};
 
 class PropertyMagic {
 
-    static CharacterStringProperties() {
-        return CharacterPropertyMagic.StringProperties();
-    }
+    static getProperties(schemaName) {
+        let ret = {};
+        let paths = Object.values(schemaName.schema.paths);
+        for (var i = 0; i < paths.length; i++) {
+            let path = paths[i];
+            let pname = path.path;
+            if (pname && ! ( pname.startsWith("_") || pname.endsWith("$")) ) {
+                ret[path.path] = {
+                    'name': pname,
+                    'isa': path.instance, //'String', 'Number', or 'Array'
+                    'default': path.defaultValue
+                }
+            }
+        }
+        return ret;
 
-    static CharacterArrayofStringProperties() {
-        return CharacterPropertyMagic.ArrayofStringProperties();
-    }
-
-    static FamilyStringProperties() {
-        return FamilyPropertyMagic.StringProperties();
-    }
-
-    static FamilyArrayofStringProperties() {
-        return FamilyPropertyMagic.ArrayofStringProperties();
     }
 
     static FamilyProperties() {
-        return [...FamilyPropertyMagic.StringProperties(), ...FamilyPropertyMagic.ArrayofStringProperties()];
+        return PropertyMagic.getProperties(FPlaybook);
+
+    }
+
+    static CharacterProperties() {
+        return PropertyMagic.getProperties(CPlaybook);
     }
 
     static PropertyActions() {
@@ -51,81 +38,125 @@ class PropertyMagic {
             ADD: 'add',
             REMOVE: 'remove'
         };
-    };
-    constructor(simpleStringProperties, arrayOfStringProperties) {
-        this.fmap = PropertyMagic.actionMap(simpleStringProperties, arrayOfStringProperties);
     }
-    static actionMap(simpleStringProperties, arrayOfStringProperties) {
+    ;
+
+    constructor(properties) {
+        this.fmap = PropertyMagic.actionMap(properties);
+    }
+
+    static makeNumberFunction(prop) {
         let pa = PropertyMagic.PropertyActions();
         let SET = pa.SET;
         let GET = pa.GET;
         let ADD = pa.ADD;
         let REMOVE = pa.REMOVE;
 
-        let ret = {};
-        for( var i = 0; i < simpleStringProperties.length; i++ ) {
-            let prop = simpleStringProperties[i];
-            ret[prop] = {
-                [SET]: async function (object, value) {
-                    object.set(prop, value);
-                    return `set ${prop} to ${value}`;
-                },
-                [GET]: async function (object) {
-                    return `${prop} is ${object.get(prop)}`;
-                },
-                [ADD]: async function (object, value) {
-                    let curr = object.get( prop );
-                    object.set(  prop, curr + value );
-                    return `added, ${prop} is now ${object.get(prop)}`;
-                },
-                [REMOVE]: async function (object) {
-                    object.set(prop, null);
-                    return `deleted ${prop}`;
+        return {
+            [SET]: async function (object, value) {
+                object.set(prop.name, value);
+                return `set ${prop.name} to ${value}`;
+            },
+            [GET]: async function (object) {
+                return `${prop.name} is ${object.get(prop.name)}`;
+            },
+            [ADD]: async function (object, value) {
+                let curr =  object.get(prop.name);
+                object.set(prop.name, curr + parseInt(value, 10));
+                return `added, ${prop.name} is now ${object.get(prop.name)}`;
+            },
+            [REMOVE]: async function (object) {
+                object.set(prop.name, prop.default);
+                return `deleted ${prop.name}`;
+            }
+        }
+    }
+
+
+    static makeArrayFunction(prop) {
+        let pa = PropertyMagic.PropertyActions();
+        let GET = pa.GET;
+        let ADD = pa.ADD;
+        let REMOVE = pa.REMOVE;
+
+        return {
+            [GET]: async function (object) {
+                return `${prop.name} is ${JSON.stringify(object.get(prop.name))}`;
+            },
+            [ADD]: async function (object, value) {
+                let arr = object.get(prop.name);
+                arr.push(value);
+                return `added ${value} to ${prop.name}, is now ${JSON.stringify(arr)}`;
+            },
+            [REMOVE]: async function (object, value) {
+                let arr = object.get(prop.name);
+                let index = arr.indexOf(value);
+                if (index > -1) {
+                    arr.splice(index, 1);
+                    return `removed ${value} from ${prop.name}, is now ${JSON.stringify(arr)}`;
+                } else {
+                    return `${value} not found in ${prop.name}`;
                 }
             }
         }
-        for( var j = 0; j < arrayOfStringProperties.length; j++) {
-            let prop = arrayOfStringProperties[j];
-            ret[prop] = {
-                [GET]: async function (object) {
-                    return `${prop} is ${JSON.stringify( object.get(prop) ) }`;
-                },
-                [ADD]: async function (object, value) {
-                    let arr = object.get( prop );
-                    arr.push( value );
-                    return `added ${value} to ${prop}, is now ${JSON.stringify(arr)}`;
-                },
-                [REMOVE]: async function (object, value) {
-                    let arr = object.get(prop);
-                    let index = arr.indexOf(value);
-                    if (index > -1) {
-                        arr.splice(index, 1);
-                        return `removed ${value} from ${prop}, is now ${JSON.stringify(arr)}`;
-                    }
-                    else {
-                        return `${value} not found in ${prop}`;
-                    }
+    }
+
+    static makeStringFunction(prop) {
+        let pa = PropertyMagic.PropertyActions();
+        let SET = pa.SET;
+        let GET = pa.GET;
+        let ADD = pa.ADD;
+        let REMOVE = pa.REMOVE;
+
+        return {
+            [SET]: async function (object, value) {
+                object.set(prop.name, value);
+                return `set ${prop.name} to ${value}`;
+            },
+            [GET]: async function (object) {
+                return `${prop.name} is ${object.get(prop.name)}`;
+            },
+            [ADD]: async function (object, value) {
+                let curr = object.get(prop.name);
+                object.set(prop.name, curr + value);
+                return `added, ${prop.name} is now ${object.get(prop.name)}`;
+            },
+            [REMOVE]: async function (object) {
+                object.set(prop.name, prop.default);
+                return `deleted ${prop.name}`;
+            }
+        }
+    }
+
+    static actionMap(properties) {
+        let ret = {};
+        let props =  Object.values( properties );
+        for (var i = 0; i < props.length; i++) {
+            let prop = props[i];
+            if ( prop ) {
+                if (prop.isa === 'String') {
+                    ret[prop.name] = PropertyMagic.makeStringFunction(prop);
+                } else if (prop.isa === 'Array') {
+                    ret[prop.name] = PropertyMagic.makeArrayFunction(prop);
+                } else if (prop.isa === 'Number') {
+                    ret[prop.name] = PropertyMagic.makeNumberFunction(prop);
                 }
             }
         }
         return ret;
     }
 
-    async process(args, family) {
+    async process(args, thing) {
         let name = args.property_name;
         let action = args.property_action;
         let value = args.property_value;
 
-        let dirty = false;
         try {
             let func = this.fmap[name][action];
             if (func) {
-                let ret = await func(family, value);
-                if (dirty) {
-                    await family.save();
-                }
+                let ret = await func(thing, value);
                 if (ret == null) {
-                    ret = `Family property ${name} has no value yet`;
+                    ret = `Property ${name} has no value yet`;
                 }
                 return ret;
             }
@@ -136,4 +167,4 @@ class PropertyMagic {
     }
 }
 
-module.exports =  PropertyMagic;
+module.exports = PropertyMagic;

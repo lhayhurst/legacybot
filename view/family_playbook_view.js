@@ -1,6 +1,7 @@
 const Jimp = require('jimp');
 const FamilyPlaybook = require('../family_playbook');
 const DbUtil = require("../commands/dbutil");
+const PropertyMagic = require('../commands/property_magic');
 
 class FamilyPlaybookView {
     constructor( richEmbded ) {
@@ -23,6 +24,32 @@ class FamilyPlaybookView {
         }
     }
 
+    async outputAsText(family) {
+
+        this.richEmbed.setTitle( `\'${family.name} -  ${family.playbook}\'` );
+        let familyProps = Object.values( PropertyMagic.FamilyProperties() );
+
+        for( var i =0; i < familyProps.length; i++ ) {
+            let prop = familyProps[i];
+            let propVal = family.get( prop.name );
+            if ( propVal != null ) {
+                if (prop.isa == 'Array') {
+                    this.richEmbed.addField(prop.name, JSON.stringify(propVal));
+                }
+                else {
+                    this.richEmbed.addField(prop.name, propVal, true);
+                }
+            }
+            else {
+                this.richEmbed.addField(prop.name, "null");
+            }
+        }
+        this.richEmbed.setFooter( `Have a bug to file? Needs more help? Visit https://github.com/lhayhurst/legacybot/issues`,
+            `https://cdn.discordapp.com/embed/avatars/0.png`);
+
+    }
+
+
     async visitAll( families ) {
         for( var i = 0; i < families.length; i++ ) {
             let family = families[i];
@@ -35,6 +62,10 @@ class FamilyPlaybookView {
     }
 
     async visitFamily( family, text_output_mode=false ) {
+        if ( text_output_mode ) {
+            return this.outputAsText(family);
+        }
+
         let imagesToPublish = [];
         let playbooks = FamilyPlaybook.playbooks();
         let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);

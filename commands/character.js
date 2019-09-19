@@ -57,12 +57,12 @@ class CharacterCommand extends Command {
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `Valid actions are ${JSON.stringify(PropertyMagic.PropertyActions())};`
+                helptext: `Valid actions can by found by running the \`.c --p\``
             },
             {
                 id: 'property_name', //from CPlaybook
                 type: "string",
-                helptext: `\`property\` is prop you are interested in, run \`.c --properties\``,
+                helptext: `\`property\` is prop you are interested in, run \`.c --p\``,
                 argtype: "command",
                 optional: true,
                 default: null
@@ -107,6 +107,10 @@ class CharacterCommand extends Command {
                 commentary: `Let's you add to the character notes for this Family.`
             },
             {
+                command: `${aliases[1]} --text`,
+                commentary: `show the character sheet as text.`
+            },
+            {
                 command: `${aliases[1]} --p`,
                 commentary: `show all the properties that can be get or set.`
             },
@@ -134,8 +138,7 @@ class CharacterCommand extends Command {
         let console_results = null;
 
         if( args.show_props) {
-            console_results = `Here are the string properties of a character. You can get, set, add, or remove them:  ${JSON.stringify(PropertyMagic.CharacterStringProperties())}\n`;
-            console_results += `Here are the string array properties of a character you can get, add, or remove: ${JSON.stringify(PropertyMagic.CharacterArrayofStringProperties())}`;
+            console_results = `Here are the properties of a character. You can get, set, add, or remove them:  ${JSON.stringify(Object.keys(PropertyMagic.CharacterProperties()))}`;
         }
         else if ( args.property_name && args.property_action  ) {
             let character = await DbUtil.get_users_character(user_id, guild_id);
@@ -170,8 +173,7 @@ class CharacterCommand extends Command {
     }
 
     async propertyCrud(args, character) {
-        let pm = new PropertyMagic( PropertyMagic.CharacterStringProperties(),
-            PropertyMagic.CharacterArrayofStringProperties() );
+        let pm = new PropertyMagic( PropertyMagic.CharacterProperties() );
         let ret = await pm.process( args, character);
         if( character.isModified()) {
             await character.save();

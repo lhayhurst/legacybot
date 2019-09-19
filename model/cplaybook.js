@@ -22,8 +22,8 @@ const CharacterSchema = {
         default: false
     },
     harm: {
-        type: Boolean,
-        default: false
+        type: Number,
+        default: 0
     },
     character_moves: [String],
     role_moves: [String],
