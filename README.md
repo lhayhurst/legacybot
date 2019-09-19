@@ -7,8 +7,6 @@ Legacy Bot is currently in ALPHA TESTING and as such any data written to it can 
 ## Installation
 Paste https://discordapp.com/api/oauth2/authorize?client_id=619678791626915850&permissions=201837632&scope=bot into your browser and select the server you'd like the bot to join.
 
-If you'd like to run the test bot, paste https://discordapp.com/api/oauth2/authorize?client_id=621907047587512330&permissions=201837632&scope=bot 
-
 Legacybot has very limited permissions:
 
 ![permissions](assets/screenshots/bot-permissions.png)
