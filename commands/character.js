@@ -121,13 +121,8 @@ class CharacterCommand extends Command {
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
         let re = new Discord.RichEmbed();
-        let cview = new CharacterPlaybookView(  re );
+        let cview = new CharacterPlaybookView( re );
         let console_results = null
-
-        if( args.properties) {
-            return message.reply(`This command isn't supported yet`)
-        }
-
 
         if(args.property_name) {
             console_results = await this.handleAction(args, user_id, guild_id, cview);

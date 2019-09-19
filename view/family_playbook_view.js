@@ -3,131 +3,130 @@ const FamilyPlaybook = require('../family_playbook');
 const DbUtil = require("../commands/dbutil");
 
 class FamilyPlaybookView {
-    constructor( fpmodel ) {
-        this.fplaybook = fpmodel;
+    constructor( richEmbded ) {
+        this.richEmbed = richEmbded;
     }
 
     async visitTreaties( richEmbed ) {
-        richEmbed.setTitle(`${ this.fplaybook.name}\'s Treaties`);
-        if (this.fplaybook.treaties) {
-            for( const familyPlaybookName of this.fplaybook.treaties.keys() ) {
-                let family = await DbUtil.get_family_by_playbook(familyPlaybookName, this.fplaybook.guild_id );
+        richEmbed.setTitle(`${ family.name}\'s Treaties`);
+        if (family.treaties) {
+            for( const familyPlaybookName of family.treaties.keys() ) {
+                let family = await DbUtil.get_family_by_playbook(familyPlaybookName, family.guild_id );
                 if ( family ) {
                     richEmbed
                         .addField("Family Name", family.name, true)
-                        .addField("Me on Them",  this.fplaybook.findTreatyWith(family), true)
-                        .addField("Them on Me",  family.findTreatyWith(this.fplaybook), true)
+                        .addField("Me on Them",  family.findTreatyWith(family), true)
+                        .addField("Them on Me",  family.findTreatyWith(family), true)
                         .addBlankField();
                 }
             }
         }
     }
 
-    async visit( richEmbed, summary_only=true ) {
-        if (summary_only) {
-            richEmbed
-                .addField('Name', this.fplaybook.name, true)
-                .addField('Playbook', this.fplaybook.playbook, true)
-                .addField('Player', this.fplaybook.managed_by_username, true)
+    async visitAll( families ) {
+        for( var i = 0; i < families.length; i++ ) {
+            let family = families[i];
+            this.richEmbed
+                .addField('Name', family.name, true)
+                .addField('Playbook', family.playbook, true)
+                .addField('Player', family.managed_by_username, true)
                 .addBlankField()
         }
-        else {
-            let imagesToPublish = [];
-            let playbooks = FamilyPlaybook.playbooks();
-            let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
+    }
 
-            //check to see if a name page should be inserted (if playing one of the stock families)
-            if (playbooks[this.fplaybook.playbook]) {
-                let pb = playbooks[this.fplaybook.playbook];
-                let playbookSheetPath = pb.familySheetImage;
-                let playbookSheetImage = await Jimp.read(playbookSheetPath);
-                let name_coordinates = FamilyPlaybook.get_print_coordinates('family_name');
-                await playbookSheetImage.print(font, name_coordinates[0], name_coordinates[1], this.fplaybook.name);
+    async visitFamily( family, text_output_mode=false ) {
+        let imagesToPublish = [];
+        let playbooks = FamilyPlaybook.playbooks();
+        let font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK);
 
-                if ( this.fplaybook.notes ) {
-                    let notesFont = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
-                    let notesCoordinates = FamilyPlaybook.get_print_coordinates('notes');
-                    await playbookSheetImage.print( notesFont, notesCoordinates[0], notesCoordinates[1], this.fplaybook.notes, 600 );
-                }
+        //check to see if a name page should be inserted (if playing one of the stock families)
+        if (playbooks[family.playbook]) {
+            let pb = playbooks[family.playbook];
+            let playbookSheetPath = pb.familySheetImage;
+            let playbookSheetImage = await Jimp.read(playbookSheetPath);
+            let name_coordinates = FamilyPlaybook.get_print_coordinates('family_name');
+            await playbookSheetImage.print(font, name_coordinates[0], name_coordinates[1], family.name);
 
-                imagesToPublish.push(playbookSheetImage);
-
+            if ( family.notes ) {
+                let notesFont = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+                let notesCoordinates = FamilyPlaybook.get_print_coordinates('notes');
+                await playbookSheetImage.print( notesFont, notesCoordinates[0], notesCoordinates[1], family.notes, 600 );
             }
 
+            imagesToPublish.push(playbookSheetImage);
+
+        }
+
+        let statsSheetImage = await Jimp.read('assets/families/family-sheet-2.png');
 
 
-            let statsSheetImage = await Jimp.read('assets/families/family-sheet-2.png');
+        let stats = [
+            {key: 'reach', 'val': family.reach},
+            {key: 'grasp', 'val': family.grasp},
+            {key: 'sleight', 'val': family.sleight},
+            {key: 'mood', 'val': family.mood},
+            {key: 'family_data', 'val': family.data_resource},
+            {key: 'tech', 'val': family.tech},
 
-
-            let stats = [
-                {key: 'reach', 'val': this.fplaybook.reach},
-                {key: 'grasp', 'val': this.fplaybook.grasp},
-                {key: 'sleight', 'val': this.fplaybook.sleight},
-                {key: 'mood', 'val': this.fplaybook.mood},
-                {key: 'family_data', 'val': this.fplaybook.data_resource},
-                {key: 'tech', 'val': this.fplaybook.tech},
-
-            ];
-            for (var i = 0; i < stats.length; i++) {
-                let stat_item = stats[i];
-                if (stat_item.val !== null) {
-                    let coordinates = FamilyPlaybook.get_print_coordinates(stat_item.key);
-                    await statsSheetImage.print(font, coordinates[0], coordinates[1], stat_item.val);
-                }
+        ];
+        for (var i = 0; i < stats.length; i++) {
+            let stat_item = stats[i];
+            if (stat_item.val !== null) {
+                let coordinates = FamilyPlaybook.get_print_coordinates(stat_item.key);
+                await statsSheetImage.print(font, coordinates[0], coordinates[1], stat_item.val);
             }
+        }
 
-            let treaty_coordinates = FamilyPlaybook.get_treaty_coordinates_and_text(this.playbook);
-            if (treaty_coordinates) {
-                let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
-                await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 425);
+        let treaty_coordinates = FamilyPlaybook.get_treaty_coordinates_and_text(this.playbook);
+        if (treaty_coordinates) {
+            let treaty_font = await Jimp.loadFont(Jimp.FONT_SANS_16_BLACK);
+            await statsSheetImage.print(treaty_font, treaty_coordinates.coordinates[0], treaty_coordinates.coordinates[1], treaty_coordinates.treaty_text, 425);
+        }
+
+        let family_treaty_coordinates = FamilyPlaybook.get_print_coordinates('treaties');
+        let treatyStartCoord = family_treaty_coordinates.start;
+        let yoursOnThemCoord = family_treaty_coordinates.yoursOnThem;
+        let theirsOnYouCoord = family_treaty_coordinates.theirsOnYou;
+
+        let startYCoordinate = treatyStartCoord[1];
+        if ( family.treaties ) {
+            for (const familyName of family.treaties.keys() ) {
+                let sfamily = await DbUtil.get_family_by_playbook(familyName,  family.guild_id );
+                let yoursOnThem = family.findTreatyWith(family);
+                let themOnMe = sfamily.findTreatyWith(family);
+                await statsSheetImage.print(font, treatyStartCoord[0], startYCoordinate, sfamily.name);
+                await statsSheetImage.print(font, yoursOnThemCoord[0], startYCoordinate, yoursOnThem);
+                await statsSheetImage.print(font, theirsOnYouCoord[0], startYCoordinate, themOnMe);
+                startYCoordinate += 40;
             }
+        }
 
-            let family_treaty_coordinates = FamilyPlaybook.get_print_coordinates('treaties');
-            let treatyStartCoord = family_treaty_coordinates.start;
-            let yoursOnThemCoord = family_treaty_coordinates.yoursOnThem;
-            let theirsOnYouCoord = family_treaty_coordinates.theirsOnYou;
-
-            let startYCoordinate = treatyStartCoord[1];
-            if ( this.fplaybook.treaties ) {
-                for (const familyName of this.fplaybook.treaties.keys() ) {
-                    let family = await DbUtil.get_family_by_playbook(familyName, this.fplaybook.guild_id );
-                    let yoursOnThem = this.fplaybook.findTreatyWith(family);
-                    let themOnMe = family.findTreatyWith(this.fplaybook);
-                    await statsSheetImage.print(font, treatyStartCoord[0], startYCoordinate, family.name);
-                    await statsSheetImage.print(font, yoursOnThemCoord[0], startYCoordinate, yoursOnThem);
-                    await statsSheetImage.print(font, theirsOnYouCoord[0], startYCoordinate, themOnMe);
-                    startYCoordinate += 40;
-                }
+        //and finally the surpluses and needs
+        if ( family.surpluses) {
+            let surplusesCoordinates = FamilyPlaybook.get_print_coordinates('surpluses');
+            let surplusStartYCoord = surplusesCoordinates[1];
+            for (var l = 0; l < family.surpluses.length; l++) {
+                await statsSheetImage.print(font, surplusesCoordinates[0], surplusStartYCoord, family.surpluses[l]);
+                surplusStartYCoord += 40;
             }
+        }
 
-            //and finally the surpluses and needs
-            if ( this.fplaybook.surpluses) {
-                let surplusesCoordinates = FamilyPlaybook.get_print_coordinates('surpluses');
-                let surplusStartYCoord = surplusesCoordinates[1];
-                for (var l = 0; l < this.fplaybook.surpluses.length; l++) {
-                    await statsSheetImage.print(font, surplusesCoordinates[0], surplusStartYCoord, this.fplaybook.surpluses[l]);
-                    surplusStartYCoord += 40;
-                }
+        if( family.needs ) {
+            let needsCoordinates = FamilyPlaybook.get_print_coordinates('needs');
+            let needsStartYCoord = needsCoordinates[1];
+            for (var m = 0; m < family.needs.length; m++) {
+                await statsSheetImage.print(font, needsCoordinates[0], needsStartYCoord, family.needs[m]);
+                needsStartYCoord += 40;
             }
+        }
 
-            if( this.fplaybook.needs ) {
-                let needsCoordinates = FamilyPlaybook.get_print_coordinates('needs');
-                let needsStartYCoord = needsCoordinates[1];
-                for (var m = 0; m < this.fplaybook.needs.length; m++) {
-                    await statsSheetImage.print(font, needsCoordinates[0], needsStartYCoord, this.fplaybook.needs[m]);
-                    needsStartYCoord += 40;
-                }
-            }
+        imagesToPublish.push(statsSheetImage);
 
-            imagesToPublish.push(statsSheetImage);
-
-            for (var j = 0; j < imagesToPublish.length; j++) {
-                let image = imagesToPublish[j];
-                let imgBuf = await image.getBufferAsync(Jimp.AUTO);
-                let imageName = `image-${j}.png`
-                richEmbed.attachFiles([{name: imageName, attachment: imgBuf}]).setImage(`attachment://${imageName}`);
-
-            }
+        for (var j = 0; j < imagesToPublish.length; j++) {
+            let image = imagesToPublish[j];
+            let imgBuf = await image.getBufferAsync(Jimp.AUTO);
+            let imageName = `image-${j}.png`
+            this.richEmbed.attachFiles([{name: imageName, attachment: imgBuf}]).setImage(`attachment://${imageName}`);
 
         }
     }

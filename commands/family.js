@@ -35,14 +35,6 @@ class FamiliesCommand extends Command {
                 optional: true
             },
             {
-                id: 'property_name', //from CPlaybook
-                type: "string",
-                helptext: `\`property\` is prop you are interested in, run \`.c --properties\``,
-                argtype: "command",
-                optional: true,
-                default: null
-            },
-            {
                 id: 'property_action',
                 type: "string",
                 default: null,
@@ -50,6 +42,15 @@ class FamiliesCommand extends Command {
                 argtype: "argument",
                 helptext: `whatever action value you are setting`
             },
+            {
+                id: 'property_name', //from CPlaybook
+                type: "string",
+                helptext: `\`property\` is prop you are interested in, run \`.c --properties\``,
+                argtype: "command",
+                optional: true,
+                default: null
+            },
+
             {
                 id: 'property_value',
                 type: "string",
@@ -91,11 +92,44 @@ class FamiliesCommand extends Command {
         ]
     }
 
-    async propertyCrud(args) {
+    async propertyCrud(args, family) {
         let name = args.property_name;
         let action = args.property_action;
         let value = args.property_value;
-        return `Not implemented yet`;
+
+        let dirty = false;
+        let actionMap = {
+            'notes' : {
+                'set' : async function( family, notes ) {family.notes = notes; dirty=true; return `set!`; },
+                'get' : async function( family) { return `notes is: ${family.notes}` },
+                'add' : async function( family, notes) { family.notes += notes ; dirty=true; return `added!`; }
+            },
+            'doctrine' : {
+                'set' : async function( family, doctrine ) {family.doctrine = doctrine; dirty=true; return `set!`; },
+                'get' : async function( family ) { return `doctrine is ${family.doctrine}` }
+            },
+            'lifestyle' : {
+                'set' : async function( family, lifestyle ) {family.lifestyle = lifestyle; dirty=true; return `set!`; },
+                'get' : async function( family ) {  return `lifestyle is ${family.lifestyle}`; }
+            }
+        };
+        try {
+            let func = actionMap[name][action];
+            if ( func ) {
+                let ret = await func(family, value);
+                if (dirty) {
+                    await family.save();
+                }
+                if ( ret == null ) {
+                    ret = `Family property ${name} has no value yet`;
+                }
+                return ret;
+            }
+            return `Sorry, didn't know what to do with that!`;
+        }
+        catch( e ) {
+            console.log(e);
+        }
     }
 
 
@@ -111,41 +145,51 @@ class FamiliesCommand extends Command {
         let richEmbed = new Discord.RichEmbed();
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
+        let console_results = null;
+        let fview = new FamilyPlaybookView( richEmbed );
 
-        if ( args.property_name && args.property_action && args.proprety_value ) {
+        if ( args.property_name && args.property_action  ) {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (family == null ) {
                 return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);
             }
-            let changes = await this.propertyCrud( args );
-            return message.reply( changes);
+            console_results = await this.propertyCrud( args, family );
         }
-
-        if ( args.prop && args.action === 'name') {
-            let family = await DbUtil.get_users_family(user_id, guild_id);
-            if (family == null ) {
-                return message.reply(`Before setting your Family name, you need to run the \`set-family\` command`);
+        else if (args.all) {
+            console_results = await this.handleAll(guild_id, fview);
+        }
+        else {
+            let family = null;
+            if (args.name) {
+                family = await DbUtil.get_family(args.name, guild_id);
             }
-            await DbUtil.update_family(family, {name: args.action_value});
-            return message.reply( `You have set your Family name to ${args.action_value}`);
+            else {
+                family = await DbUtil.get_users_family(user_id, guild_id);
+            }
+            if (family == null) {
+                console_results =  `Before running an action command, you need to run the \`set-family\` command`;
+            }
+            else {
+                console_results = await fview.visitFamily(family, args.text_output_mode);
+            }
         }
 
-
-        if (args.all) {
-            richEmbed.setTitle('Families Created So Far');
+        if( console_results ) {
+            return message.reply(console_results);
         }
-        let families = await DbUtil.get_guilds_families(message.guild.id);
+        else {
+            return message.reply(fview.richEmbed);
+        }
+
+    }
+
+    async handleAll( guild_id, view ) {
+        let families = await DbUtil.get_guilds_families(guild_id);
         if ( families.length === 0 ) {
-            return message.reply( `It seems your guild hasn't created any new families yet! Please run /help and try out the /new-family command first.`);
+            `It seems your guild hasn't created any new families yet! Please run /help and try out the /new-family command first.`;
         }
-        for( var i = 0; i < families.length; i++ ) {
-            let family = families[i];
-            if ( args.all || family.managed_by_user_id == message.member.user.id || family.name === args.name ) {
-                let fpv = new FamilyPlaybookView( family  );
-                await fpv.visit(richEmbed, args.all );
-            }
-        }
-        return message.reply(richEmbed);
+        await view.visitAll(families);
+        return null;
     }
 
     exec(message, args) {
