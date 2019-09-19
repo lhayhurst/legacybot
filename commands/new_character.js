@@ -41,11 +41,11 @@ class NewCharacterCommand extends Command {
         this.command_args = command_args;
         this.examples = [
             {
-                command: `${aliases[1]} -p="Survivor" -n=Max` ,
+                command: `${aliases[1]} p="Survivor" n=Max` ,
                 commentary: `Creates a new Character from "The Survivor" playbook with the name "Max"`
             },
             {
-                command: `${aliases[1]} -p="Survivor" -n="Max Rockantansky` ,
+                command: `${aliases[1]} p="Survivor" n="Max Rockantansky` ,
                 commentary: `Creates a new Character from "The Survivor" playbook with the name "Max Rockantansky"`
             },
             {
