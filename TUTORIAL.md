@@ -38,9 +38,11 @@ Now that you've set your family, you can use the `.family` command to have a loo
 
 ## Family Notes and Stats
 
-Families have a bunch of things you can set on them. Let's start by setting their notes using this command: `.f note "The Citadel is the stronghold of Immortan Joe. Joe maintains his control through a loyal corps of War Boys, whom are picked from The Wretched as War Pups and indoctrinated from childhood to believe that Immortan Joe is a god and following his orders will grant them eternal afterlife. The War Boys defend the Citadel, escort trade caravans, and scavenge the countryside for useful scrap and slaves."` 
+Families have a bunch of things you can set on them. Let's start by setting their notes using this command: `.f notes "The Citadel is the stronghold of Immortan Joe. Joe maintains his control through a loyal corps of War Boys, whom are picked from The Wretched as War Pups and indoctrinated from childhood to believe that Immortan Joe is a god and following his orders will grant them eternal afterlife. The War Boys defend the Citadel, escort trade caravans, and scavenge the countryside for useful scrap and slaves."` 
 
 ![new-family-notes](assets/screenshots/family-notes.png)
+
+Note that you can manipulate all of your Family attributes using this style. Run the command `.f --p` and `.f --help` to learn more.
 
 You can also set your `Reach`, `Grasp`, and `Sleight` statistics using the `.family-stats` command. Here's an example, setting Reach to 1, Grasp to 0 and Sleight to -1. `.fs r=1 s=-1 g=0`
 

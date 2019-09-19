@@ -145,7 +145,7 @@ class FamiliesCommand extends Command {
         else if ( args.property_name && args.property_action  ) {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (family == null ) {
-                return message.reply(`Before setting your Family notes, you need to run the \`set-family\` command`);
+                return message.reply(`Before performing an action on your family, you need to run the \`set-family\` command`);
             }
             console_results = await this.propertyCrud( args, family );
         }

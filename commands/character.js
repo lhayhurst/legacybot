@@ -4,7 +4,7 @@ const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const CharacterPlaybookView = require('../view/character_playbook_view');
-const CPlaybook = require( '../model/cplaybook');
+const PropertyMagic = require('./property_magic');
 
 class CharacterCommand extends Command {
     constructor() {
@@ -44,12 +44,20 @@ class CharacterCommand extends Command {
                 optional: true
             },
             {
-                id: 'properties',
+                id: 'show_props',
                 match: 'flag',
                 prefix: '--p',
-                helptext: 'Show the get-able, set-able, and add-able properties of the character ',
-                default: null,
+                helptext: 'Show all properties that can be get, set, added, or del for a character',
+                default: false,
                 optional: true
+            },
+            {
+                id: 'property_action',
+                type: "string",
+                default: null,
+                optional: false,
+                argtype: "argument",
+                helptext: `Valid actions are ${JSON.stringify(PropertyMagic.PropertyActions())};`
             },
             {
                 id: 'property_name', //from CPlaybook
@@ -59,21 +67,14 @@ class CharacterCommand extends Command {
                 optional: true,
                 default: null
             },
-            {
-                id: 'action',
-                type: "string",
-                default: null,
-                optional: false,
-                argtype: "argument",
-                helptext: `get or set or add or clear`
-            },
+
             {
                 id: 'property_value',
                 type: "string",
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `your value for the property. see examples`
+                helptext: `whatever action value you are setting`
             }
         ];
         let aliases = ['character', '.char', 'c']
@@ -102,6 +103,14 @@ class CharacterCommand extends Command {
                 commentary: `Let's you set the character notes for this character.`
             },
             {
+                command: `${aliases[1]} add notes "..., and then they go, WITNESS MEEE!!"`,
+                commentary: `Let's you add to the character notes for this Family.`
+            },
+            {
+                command: `${aliases[1]} --p`,
+                commentary: `show all the properties that can be get or set.`
+            },
+            {
                 command: `${aliases[1]} --help`,
                 commentary: `Gets help on this command.`
             }
@@ -122,10 +131,18 @@ class CharacterCommand extends Command {
         let user_id = message.member.user.id;
         let re = new Discord.RichEmbed();
         let cview = new CharacterPlaybookView( re );
-        let console_results = null
+        let console_results = null;
 
-        if(args.property_name) {
-            console_results = await this.handleAction(args, user_id, guild_id, cview);
+        if( args.show_props) {
+            console_results = `Here are the string properties of a character. You can get, set, add, or remove them:  ${JSON.stringify(PropertyMagic.CharacterStringProperties())}\n`;
+            console_results += `Here are the string array properties of a character you can get, add, or remove: ${JSON.stringify(PropertyMagic.CharacterArrayofStringProperties())}`;
+        }
+        else if ( args.property_name && args.property_action  ) {
+            let character = await DbUtil.get_users_character(user_id, guild_id);
+            if (character == null ) {
+                return message.reply(`Before setting your character notes, you need to run the \`set-family\` command`);
+            }
+            console_results = await this.propertyCrud( args, character );
         }
         else if(args.all) {
             console_results = await this.handleAll(guild_id, cview);
@@ -152,16 +169,14 @@ class CharacterCommand extends Command {
         }
     }
 
-
-    async handleAction(args, user_id, guild_id, view ) {
-
-        let character = await DbUtil.get_users_character(user_id, guild_id);
-        if (character == null) {
-            return `Before running an action command, you need to run the \`set-character\` command`;
+    async propertyCrud(args, character) {
+        let pm = new PropertyMagic( PropertyMagic.CharacterStringProperties(),
+            PropertyMagic.CharacterArrayofStringProperties() );
+        let ret = await pm.process( args, character);
+        if( character.isModified()) {
+            await character.save();
         }
-
-        return `Do something interesting here`;
-
+        return ret;
     }
 
     async handleAll( guild_id, view ) {
