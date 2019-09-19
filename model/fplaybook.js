@@ -55,7 +55,8 @@ const FamilySchema = {
     },
     treaties: {
         type: Map,
-        of: Number
+        of: Number,
+        default: {}
     }
 };
 
@@ -94,6 +95,8 @@ FPlaybookSchema.method( 'hasTreatyWith', function(targetFamily) {
 
 
 FPlaybookSchema.method( 'findTreatyWith', function(targetFamily) {
+    this.initTreatyFor(targetFamily);
+    targetFamily.initTreatyFor(this);
     if( ! this.treaties.get(targetFamily.playbook) ) {
         return 0;
     }
