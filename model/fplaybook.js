@@ -122,12 +122,24 @@ FPlaybookSchema.method( 'receiveTreatyFrom', function(targetFamily, bonus=1) {
     this.initTreatyFor(targetFamily);
     let eb = this.treaties.get(targetFamily.playbook);
     this.treaties.set(targetFamily.playbook, eb + bonus);
+
+    //if I they don't already have treaty with me, set to 0, for convenience
+    if( targetFamily.get(this.playbook) == null ) {
+        targetFamily.set(this.playbook, 0 );
+    }
+
 });
 
 FPlaybookSchema.method( 'giveTreatyTo', function(targetFamily, bonus=1) {
     targetFamily.initTreatyFor(this);
     let eb = targetFamily.treaties.get(this.playbook);
     targetFamily.treaties.set(this.playbook, eb + bonus);
+
+    //if I don't already have treaty from them, set to 0, for convenience
+    if( this.treaties.get(targetFamily.playbook) == null ) {
+        this.treaties.set(targetFamily.playbook, 0 );
+    }
+
 });
 
 FPlaybookSchema.method( 'hasEnoughTreaty', function(targetFamily, bonus) {
