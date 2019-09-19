@@ -8,16 +8,16 @@ class FamilyPlaybookView {
         this.richEmbed = richEmbded;
     }
 
-    async visitTreaties( richEmbed ) {
+    async visitTreaties( family,richEmbed ) {
         richEmbed.setTitle(`${ family.name}\'s Treaties`);
         if (family.treaties) {
             for( const familyPlaybookName of family.treaties.keys() ) {
-                let family = await DbUtil.get_family_by_playbook(familyPlaybookName, family.guild_id );
-                if ( family ) {
+                let tf = await DbUtil.get_family_by_playbook(familyPlaybookName, family.guild_id );
+                if ( tf ) {
                     richEmbed
-                        .addField("Family Name", family.name, true)
-                        .addField("Me on Them",  family.findTreatyWith(family), true)
-                        .addField("Them on Me",  family.findTreatyWith(family), true)
+                        .addField("Family Name", tf.name, true)
+                        .addField("Me on Them",  family.findTreatyWith(tf), true)
+                        .addField("Them on Me",  tf.findTreatyWith(family), true)
                         .addBlankField();
                 }
             }

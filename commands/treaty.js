@@ -99,7 +99,7 @@ class TreatyCommand extends Command {
         if (family_name == null && action == null) {
             let richEmbed = new Discord.RichEmbed();
             let view = new FamilyPlaybookView(ownerFamily);
-            await view.visitTreaties(richEmbed)
+            await view.visitTreaties(ownerFamily, richEmbed)
             return message.reply(richEmbed);
         }
         if (!(action === 'give' || action === 'get' || action === 'spend')) {
