@@ -2,7 +2,7 @@ const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
-
+const Boom = require('./self_destructing_reply');
 class SurplusCommand extends Command {
     constructor() {
         let command_args = [
@@ -62,7 +62,7 @@ class SurplusCommand extends Command {
         let resource = args.resource;
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -72,17 +72,17 @@ class SurplusCommand extends Command {
 
         //sanity checks
         if (resource === null || action === null) {
-            return message.reply(`You need to provide an action and a resource; please run this command with --help`);
+            return Boom.self_destruct( message, `You need to provide an action and a resource; please run this command with --help`);
         }
 
         if (!(action === "add" || action === "remove")) {
-            return message.reply(`Unknown action ${action}, valid actions are "add" or "remove". Please run --help`);
+            return Boom.self_destruct( message, `Unknown action ${action}, valid actions are "add" or "remove". Please run --help`);
 
         }
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);
         if (ownerFamily == null) {
-            return message.reply(`You have not set your family set -- please run the set-family command before running the treaty command!`);
+            return Boom.self_destruct( message, `You have not set your family set -- please run the set-family command before running the treaty command!`);
         }
 
         //ready to rock
@@ -97,7 +97,7 @@ class SurplusCommand extends Command {
             }
         }
         await DbUtil.update_family(ownerFamily,  {'surpluses' : ownerFamily.surpluses });
-        return message.reply(`Family ${ownerFamily.name} now has Surpluses: ${JSON.stringify(ownerFamily.surpluses)}`)
+        return Boom.self_destruct( message, `Family ${ownerFamily.name} now has Surpluses: ${JSON.stringify(ownerFamily.surpluses)}`)
     }
 
     exec(message, args) {

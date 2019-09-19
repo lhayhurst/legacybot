@@ -2,6 +2,7 @@ const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
+const Boom = require('./self_destructing_reply');
 
 class NeedCommand extends Command {
     constructor() {
@@ -61,7 +62,7 @@ class NeedCommand extends Command {
         let resource = args.resource;
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -71,16 +72,16 @@ class NeedCommand extends Command {
 
         //sanity checks
         if (resource === null || action === null) {
-            return message.reply(`You need to provide an action and a resource; please run this command with --help to learn about it.`);
+            return Boom.self_destruct( message, `You need to provide an action and a resource; please run this command with --help to learn about it.`);
         }
 
         if (!(action === "add" || action === "remove")) {
-            return message.reply(`Unknown action ${action}, valid actions are "add" or "remove. Please run this command with --help to learn about it.`);
+            return Boom.self_destruct( message, `Unknown action ${action}, valid actions are "add" or "remove. Please run this command with --help to learn about it.`);
         }
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);
         if (ownerFamily == null) {
-            return message.reply(`You have not set your family set; please run the set-family command before running this command!`);
+            return Boom.self_destruct( message, `You have not set your family set; please run the set-family command before running this command!`);
         }
 
         //ready to rock
@@ -95,7 +96,7 @@ class NeedCommand extends Command {
             }
         }
         await DbUtil.update_family(ownerFamily, { 'needs': ownerFamily.needs } );
-        return message.reply(`Family ${ownerFamily.name} now has Needs: ${JSON.stringify(ownerFamily.needs)}`)
+        return Boom.self_destruct( message, `Family ${ownerFamily.name} now has Needs: ${JSON.stringify(ownerFamily.needs)}`)
     }
 
     exec(message, args) {

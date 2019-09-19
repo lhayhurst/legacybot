@@ -4,7 +4,7 @@ const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const FamilyPlaybookView = require('../view/family_playbook_view');
-
+const Boom = require('./self_destructing_reply');
 class TreatyCommand extends Command {
     constructor() {
         let command_args =  [
@@ -79,7 +79,7 @@ class TreatyCommand extends Command {
     async doexec(message, args) {
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -93,26 +93,26 @@ class TreatyCommand extends Command {
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);
         if (ownerFamily == null) {
-            return message.reply(`You have not set your family set -- please run "/set-family 'family name'" before running the treaty command!`);
+            return Boom.self_destruct( message, `You have not set your family set -- please run "/set-family 'family name'" before running the treaty command!`);
         }
 
         if (family_name == null && action == null) {
             let richEmbed = new Discord.RichEmbed();
             let view = new FamilyPlaybookView(ownerFamily);
             await view.visitTreaties(ownerFamily, richEmbed)
-            return message.reply(richEmbed);
+            return Boom.self_destruct( message, richEmbed);
         }
         if (!(action === 'give' || action === 'get' || action === 'spend')) {
-            return message.reply(`Action ${action} is not a valid treaty action! Valid actions are "give", "get", and "spend".`);
+            return Boom.self_destruct( message, `Action ${action} is not a valid treaty action! Valid actions are "give", "get", and "spend".`);
         }
 
         if (ownerFamily.name == family_name) {
-            return message.reply(`You can't give treaty to yourself!`)
+            return Boom.self_destruct( message, `You can't give treaty to yourself!`)
         }
 
         let targetFamily = await DbUtil.get_family(family_name, guild_id);
         if (targetFamily == null) {
-            return message.reply(`I was unable to find a family with name ${family_name}, please run the command /family --all to see all the families currently in play for your guild, and then run the command /set-family to set your family.`);
+            return Boom.self_destruct( message, `I was unable to find a family with name ${family_name}, please run the command /family --all to see all the families currently in play for your guild, and then run the command /set-family to set your family.`);
         }
         let reply = "";
         let do_update = false;
@@ -147,7 +147,7 @@ class TreatyCommand extends Command {
             await DbUtil.update_family(targetFamily, {'treaties' : targetFamily.treaties } );
             await DbUtil.update_family(ownerFamily,  { 'treaties' : ownerFamily.treaties } );
         }
-        return message.reply(reply);
+        return Boom.self_destruct( message, reply);
 
     }
 

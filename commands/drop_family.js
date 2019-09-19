@@ -2,6 +2,7 @@ const {Command} = require('discord-akairo');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const DbUtil = require('./dbutil');
+const Boom = require('./self_destructing_reply');
 
 class DropFamilyCommand extends Command {
 
@@ -38,7 +39,7 @@ class DropFamilyCommand extends Command {
     async aexec(message, args) {
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -50,11 +51,11 @@ class DropFamilyCommand extends Command {
         let ownerFamily = await DbUtil.get_users_family(user_id, guild_id);
 
         if (!ownerFamily) {
-            return message.reply(`You do not have a family to drop!`);
+            return Boom.self_destruct( message, `You do not have a family to drop!`);
         }
         else {
             await DbUtil.update_family(ownerFamily, { managed_by_username : null, managed_by_user_id: null } );
-            return message.reply(`dropped your family, please run the \`.sf\` command to take a new family`);
+            return Boom.self_destruct( message, `dropped your family, please run the \`.sf\` command to take a new family`);
         }
 
     }

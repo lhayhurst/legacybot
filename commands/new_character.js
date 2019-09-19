@@ -4,6 +4,7 @@ const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const CharacterPlaybook = require('../character_playbook');
 const CPlaybook = require( '../model/cplaybook');
+const Boom = require('./self_destructing_reply');
 
 class NewCharacterCommand extends Command {
     constructor() {
@@ -70,28 +71,28 @@ class NewCharacterCommand extends Command {
         let username = message.member.username;
 
         if (args.help) {
-            return message.reply(this.helpEmbed);
+            return Boom.self_destruct( message, this.helpEmbed);
         }
         if (args.name == null || args.playbook == null) {
-            return message.reply(`You need to provide both a playbook and name to create a new character. Please run this command with a --help for the details!`);
+            return Boom.self_destruct( message, `You need to provide both a playbook and name to create a new character. Please run this command with a --help for the details!`);
         }
 
         //check to see if this user already has a family
         let ownerFamily = await DbUtil.get_users_family(user_id, guild_id);
         if (ownerFamily === null) {
-            return message.reply(`In order to create a character, you must first set your family using the \`set-family\` command.`);
+            return Boom.self_destruct( message, `In order to create a character, you must first set your family using the \`set-family\` command.`);
         }
 
         //check to see if this user already has a character
         let ownerCharacter = await DbUtil.get_users_character(user_id, guild_id);
         if (ownerCharacter !== null) {
-            return message.reply(`You have already set your character to the character with the name "${ownerCharacter.name}". Please drop that character before creating a new one!`);
+            return Boom.self_destruct( message, `You have already set your character to the character with the name "${ownerCharacter.name}". Please drop that character before creating a new one!`);
         }
 
         //check to see if this character name is already in use
         let existingCharacter = await DbUtil.get_character_by_name(args.name, guild_id);
         if (existingCharacter) {
-            return message.reply(`A character with the name "${existingCharacter.name}" is already in play for this guild, please pick another name!"`);
+            return Boom.self_destruct( message, `A character with the name "${existingCharacter.name}" is already in play for this guild, please pick another name!"`);
         }
 
         //check to see if this playbook matches a stock playbook
@@ -103,7 +104,7 @@ class NewCharacterCommand extends Command {
         //check to see if this playbook name is already in use
         let existingPlaybook = await DbUtil.get_character_by_playbook(args.playbook, guild_id);
         if (existingPlaybook) {
-            return message.reply(`A character with the playbook "${args.playbook}" is already in play for this guild, please pick another playbook!`);
+            return Boom.self_destruct( message, `A character with the playbook "${args.playbook}" is already in play for this guild, please pick another playbook!`);
         }
 
         let newCharacter = new CPlaybook({
@@ -118,10 +119,10 @@ class NewCharacterCommand extends Command {
 
         await newCharacter.save().catch((err) => {
             if( err ) {
-                return message.reply(`Was unable to save the character! ${err}`);
+                return Boom.self_destruct( message, `Was unable to save the character! ${err}`);
             }
         });
-        return message.reply(`New character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ --help\` or \`.sc --help \` to learn more`);
+        return Boom.self_destruct( message, `New character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ --help\` or \`.sc --help \` to learn more`);
     }
     exec(message, args) {
         return this.doexec(message, args);

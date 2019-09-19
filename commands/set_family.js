@@ -2,7 +2,7 @@ const {Command} = require('discord-akairo');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
-
+const Boom = require('./self_destructing_reply');
 class SetFamilyCommand extends Command {
     constructor() {
         let command_args = [
@@ -50,7 +50,7 @@ class SetFamilyCommand extends Command {
 
     async aexec(message, args) {
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -59,7 +59,7 @@ class SetFamilyCommand extends Command {
         }
 
         if (args.name == null ) {
-            return message.reply(`Please give this command a n="family name" option`);
+            return Boom.self_destruct( message, `Please give this command a n="family name" option`);
         }
 
         let guild_id = message.guild.id;
@@ -69,20 +69,20 @@ class SetFamilyCommand extends Command {
         let family = await DbUtil.get_family( args.name, guild_id );
 
         if ( family == null ) {
-            return message.reply(`No family found with name ${args.name}!`);
+            return Boom.self_destruct( message, `No family found with name ${args.name}!`);
         }
         if ( family.managed_by_user_id && family.managed_by_user_id === user_id) {
-            return message.reply(`You are already set to the family with name '${vivifiedFamily.name}'`);
+            return Boom.self_destruct( message, `You are already set to the family with name '${vivifiedFamily.name}'`);
         }
         else {
             if ( family.managed_by_user_id ) {
-                return message.reply(`That family is already set to a different user: ${family.managed_by_username}`);
+                return Boom.self_destruct( message, `That family is already set to a different user: ${family.managed_by_username}`);
             }
         }
 
         //ok, we're good to go
         await DbUtil.update_family(family, {managed_by_username: username, managed_by_user_id: user_id});
-        return message.reply(`you have set your family to ${family.playbook} with name '${family.name}'`);
+        return Boom.self_destruct( message, `you have set your family to ${family.playbook} with name '${family.name}'`);
 
     }
 

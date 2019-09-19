@@ -3,7 +3,7 @@ const DbUtil = require('./dbutil');
 const FPlaybook = require('../model/fplaybook');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
-
+const Boom = require('./self_destructing_reply');
 
 class NewFamilyCommand extends Command {
     constructor() {
@@ -65,28 +65,28 @@ class NewFamilyCommand extends Command {
         let user_id = message.member.user.id;
 
         if ( args.help ) {
-            return message.reply( this.helpEmbed );
+            return Boom.self_destruct( message,  this.helpEmbed );
         }
         if (args.name == null || args.playbook == null ) {
-            return message.reply(`You need to provide both a playbook and name to create a new family. Please run this command with a --help for the details!`);
+            return Boom.self_destruct( message, `You need to provide both a playbook and name to create a new family. Please run this command with a --help for the details!`);
         }
 
         //check to see if this family name is already in use
         let existingFamily = await DbUtil.get_family(args.name, guild_id);
         if ( existingFamily ) {
-            return message.reply(`A family with the name "${existingFamily.name}" is already in play for this guild, please pick another name!"`);
+            return Boom.self_destruct( message, `A family with the name "${existingFamily.name}" is already in play for this guild, please pick another name!"`);
         }
 
         //check to see if this playbook name is already in use
         let existingPlaybook = await DbUtil.get_family_by_playbook(args.playbook, guild_id);
         if ( existingPlaybook ) {
-            return message.reply(`A family with the playbook "${args.playbook}" is already in play for this guild, please pick another playbook!"`);
+            return Boom.self_destruct( message, `A family with the playbook "${args.playbook}" is already in play for this guild, please pick another playbook!"`);
         }
 
         //check to see if this user already has a family
         let ownerFamily = await DbUtil.get_users_family(user_id, guild_id);
         if (ownerFamily !== null) {
-            return message.reply(`You have already set your family to the family with the name "${ownerFamily.name}". Please drop that family before taking on a new one!`);
+            return Boom.self_destruct( message, `You have already set your family to the family with the name "${ownerFamily.name}". Please drop that family before taking on a new one!`);
         }
 
         //we're good to go. insert the new family
@@ -96,7 +96,7 @@ class NewFamilyCommand extends Command {
             created_by_user_id : user_id
         });
         await newFamily.save();
-        return message.reply("Created your family!");
+        return Boom.self_destruct( message, "Created your family!");
     }
     exec(message, args) {
         return this.doexec(message, args);

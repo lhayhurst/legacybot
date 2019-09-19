@@ -3,6 +3,7 @@ const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
+const Boom = require('./self_destructing_reply');
 
 class FamilyStatCommand extends Command {
     constructor() {
@@ -82,7 +83,7 @@ class FamilyStatCommand extends Command {
 
     async aexec(message, args) {
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -97,10 +98,10 @@ class FamilyStatCommand extends Command {
         let userFamily = await DbUtil.get_users_family(user_id, guild_id);
 
         if ( userFamily == null ) {
-            return message.reply(`You have not set your family set -- please run \'set-family\` first!`);
+            return Boom.self_destruct( message, `You have not set your family set -- please run \'set-family\` first!`);
         }
         if (!(args.reach || args.grasp || args.sleight ) ) { //no arg case
-            return message.reply( this.statsAsRichEmbed(userFamily));
+            return Boom.self_destruct( message,  this.statsAsRichEmbed(userFamily));
         }
 
         let statsToUpdate = {};
@@ -116,7 +117,7 @@ class FamilyStatCommand extends Command {
 
 
         await DbUtil.update_family(userFamily, statsToUpdate);
-        return message.reply(`updated ${JSON.stringify(statsToUpdate)} for family "${userFamily.name}"`);
+        return Boom.self_destruct( message, `updated ${JSON.stringify(statsToUpdate)} for family "${userFamily.name}"`);
     }
 
 

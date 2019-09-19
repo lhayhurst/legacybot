@@ -3,6 +3,7 @@ const Discord = require('discord.js');
 const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
+const Boom = require('./self_destructing_reply');
 
 class FamilyResourceCommand extends Command {
     constructor() {
@@ -74,7 +75,7 @@ class FamilyResourceCommand extends Command {
     async doexec(message, args) {
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -88,21 +89,21 @@ class FamilyResourceCommand extends Command {
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);
         if (ownerFamily == null) {
-            return message.reply(`You have not set your family set -- please run "/set-family 'family name'" before running the ${this.aliases[0]} command!`);
+            return Boom.self_destruct( message, `You have not set your family set -- please run "/set-family 'family name'" before running the ${this.aliases[0]} command!`);
         }
 
         if (family_name == null && action == null) {
             let richEmbed = new Discord.RichEmbed();
             ownerFamily.visitResources(richEmbed)
-            return message.reply(richEmbed);
+            return Boom.self_destruct( message, richEmbed);
         }
         if (!(action === 'get' || action === 'spend')) {
-            return message.reply(`Action ${action} is not a valid ${this.aliases[0]} action! Valid actions are "get", and "spend".`);
+            return Boom.self_destruct( message, `Action ${action} is not a valid ${this.aliases[0]} action! Valid actions are "get", and "spend".`);
         }
 
         let resource = args.resource.toLowerCase();
         if (!( resource === 'tech' || resource=== 'data') ) {
-            return message.reply(`Only Tech and Data resources are valid resource types.`)
+            return Boom.self_destruct( message, `Only Tech and Data resources are valid resource types.`)
         }
 
         let bonus = 1;
@@ -133,11 +134,11 @@ class FamilyResourceCommand extends Command {
         }
         let update_int_val = Object.values(update_val)[0];
         if( update_int_val < 0 ) {
-            return message.reply(`You can't spend more resources than you have!`);
+            return Boom.self_destruct( message, `You can't spend more resources than you have!`);
         }
         await DbUtil.update_family(ownerFamily, update_val);
 
-        return message.reply(`Updated ${resource} to ${Object.values(update_val)[0]}`);
+        return Boom.self_destruct( message, `Updated ${resource} to ${Object.values(update_val)[0]}`);
 
     }
 

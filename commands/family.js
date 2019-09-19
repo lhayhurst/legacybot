@@ -5,6 +5,7 @@ const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const FamilyPlaybookView = require('../view/family_playbook_view');
 const PropertyMagic = require('./property_magic');
+const Boom = require('./self_destructing_reply');
 
 class FamiliesCommand extends Command {
     constructor() {
@@ -12,7 +13,7 @@ class FamiliesCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
                 optional: true
@@ -36,9 +37,9 @@ class FamiliesCommand extends Command {
                 optional: true
             },
             {
-                id: 'text_output_mode',
+                id: 'image',
                 match: 'flag',
-                prefix: '--text',
+                prefix: '-i',
                 helptext: 'Output family sheet as simple text',
                 default: false,
                 optional: true
@@ -137,7 +138,7 @@ class FamiliesCommand extends Command {
 
     async aexec(message, args) {
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -157,7 +158,7 @@ class FamiliesCommand extends Command {
         else if ( args.property_name && args.property_action  ) {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (family == null ) {
-                return message.reply(`Before performing an action on your family, you need to run the \`set-family\` command`);
+                return Boom.self_destruct( message, `Before performing an action on your family, you need to run the \`set-family\` command`);
             }
             console_results = await this.propertyCrud( args, family );
         }
@@ -176,15 +177,15 @@ class FamiliesCommand extends Command {
                 console_results =  `Before running an action command, you need to run the \`set-family\` command`;
             }
             else {
-                console_results = await fview.visitFamily(family, args.text_output_mode);
+                console_results = await fview.visitFamily(family, args.image);
             }
         }
 
         if( console_results ) {
-            return message.reply(console_results);
+            return Boom.self_destruct( message, console_results);
         }
         else {
-            return message.reply(fview.richEmbed);
+            return Boom.self_destruct( message, fview.richEmbed);
         }
 
     }

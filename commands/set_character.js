@@ -2,7 +2,7 @@ const {Command} = require('discord-akairo');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const DbUtil = require('./dbutil');
-
+const Boom = require('./self_destructing_reply');
 class SetCharacterCommand extends Command {
     constructor() {
         let command_args = [
@@ -50,7 +50,7 @@ class SetCharacterCommand extends Command {
 
     async aexec(message, args) {
         if (args.help) {
-            return message.reply(new HelpEmbed(
+            return Boom.self_destruct( message, new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -62,25 +62,25 @@ class SetCharacterCommand extends Command {
         let user_id = message.member.user.id;
 
         if ( args.name === null ) {
-            return message.reply("Please provide a character name to this command (--help to see some examples");
+            return Boom.self_destruct( message, "Please provide a character name to this command (--help to see some examples");
         }
 
         let character = await DbUtil.get_character_by_name( args.name, guild_id );
         if ( character == null ) {
-            return message.reply(`A character with name ${args.name} could not be found`);
+            return Boom.self_destruct( message, `A character with name ${args.name} could not be found`);
         }
 
         if( character.user_id == user_id ) {
-            return message.reply("You are already playing this character!");
+            return Boom.self_destruct( message, "You are already playing this character!");
         }
         if ( character.user_id) {
             //someone else already has this one
-            return message.reply(`${character.managed_by_username} is already playing this character! Ask them to `.dc` for you.`);
+            return Boom.self_destruct( message, `${character.managed_by_username} is already playing this character! Ask them to `.dc` for you.`);
         }
 
         let family = await DbUtil.get_users_family(user_id, guild_id);
         if (family == null ) {
-            return message.reply(`You need to \`.sf\` before you can add a character`);
+            return Boom.self_destruct( message, `You need to \`.sf\` before you can add a character`);
         }
 
         //ok, we're good to go
@@ -93,7 +93,7 @@ class SetCharacterCommand extends Command {
                  },
             );
 
-        return message.reply( `You are now managing ${character.name}, ${character.playbook} of ${family.name}`);
+        return Boom.self_destruct( message,  `You are now managing ${character.name}, ${character.playbook} of ${family.name}`);
     }
 
     exec(message, args) {

@@ -1,6 +1,8 @@
 # LegacyBot Tutorial 
 
-This document teaches you how to use Legacybot! 
+This document teaches you how to use Legacybot! This is a bot that will help you play the Legacy Game from UFO Press. 
+
+NEW USER NOTE! Legacybot currently doesn't support running commands through anything but the web interface due to lack of support for Apple's UNICODE versions of the quote character `"` and the `-` character. Legacy bot, as a flavor of [UNIX command line](https://en.wikipedia.org/wiki/In_the_Beginning..._Was_the_Command_Line)  makes extensive use of both characters. 
 
 ## Getting Started 
 
@@ -33,6 +35,10 @@ Anyone can create a family, but it takes a reach warrior to take ownership of it
 ![new-family](assets/screenshots/set-family.png)
 
 Now that you've set your family, you can use the `.family` command to have a look at it. Run the command `.f`:
+
+## Being a Family
+
+
 
 ![new-family](assets/screenshots/family-1.png)
 

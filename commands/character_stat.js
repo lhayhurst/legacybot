@@ -4,6 +4,7 @@ const CommandsMetadata = require('./commands_metadata');
 const Discord = require('discord.js');
 const CharacterPlaybook = require('../family_playbook');
 const DbUtil = require('./dbutil');
+const Boom = require('./self_destructing_reply');
 
 class CharacterStatCommand extends Command {
     constructor() {
@@ -102,7 +103,7 @@ class CharacterStatCommand extends Command {
 
     async aexec(message, args) {
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message, message, new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -117,10 +118,10 @@ class CharacterStatCommand extends Command {
         let character = await DbUtil.get_users_character(user_id, guild_id);
 
         if ( character == null ) {
-            return message.reply(`You have not set your character set -- please run \'set-character\` first!`);
+            Boom.self_destruct( message, message, `You have not set your character set -- please run \'set-character\` first!`);
         }
         if (!(args.force || args.lore || args.steel || args.sway ) ) { //no arg case
-            return message.reply( this.statsAsRichEmbed(character));
+            Boom.self_destruct( message,  message,  this.statsAsRichEmbed(character) );
         }
 
         let statsToUpdate = {};
@@ -138,7 +139,7 @@ class CharacterStatCommand extends Command {
         }
 
         await DbUtil.update_character(character, statsToUpdate);
-        return message.reply(`updated ${JSON.stringify(statsToUpdate)} for character "${character.name}"`);
+        return Boom.self_destruct( message, message, `updated ${JSON.stringify(statsToUpdate)} for character "${character.name}"`);
     }
 
 

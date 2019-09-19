@@ -61,8 +61,8 @@ class FamilyPlaybookView {
         }
     }
 
-    async visitFamily( family, text_output_mode=false ) {
-        if ( text_output_mode ) {
+    async visitFamily( family, image_mode=false ) {
+        if ( !image_mode ) {
             return this.outputAsText(family);
         }
 

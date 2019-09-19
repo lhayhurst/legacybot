@@ -23,7 +23,7 @@ class PingCommand extends Command {
     }
 
     exec(message, args) {
-        return message.reply(PingCommand.reply(message.content));
+        return Boom.self_destruct( message, PingCommand.reply(message.content));
     }
 }
 

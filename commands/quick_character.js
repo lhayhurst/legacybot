@@ -3,7 +3,7 @@ const DbUtil = require('./dbutil');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const CPlaybook = require('../model/cplaybook')
-
+const Boom = require('./self_destructing_reply');
 
 class QuickCharacterCommand extends Command {
     constructor() {
@@ -106,36 +106,36 @@ class QuickCharacterCommand extends Command {
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
         if (args.help) {
-            return message.reply(this.helpEmbed);
+            return Boom.self_destruct( message, this.helpEmbed);
         }
         if (args.name == null || args.family == null) {
-            return message.reply(`You need to provide both a Family and name to create a quick character. Please run this command with a --help for the details!`);
+            return Boom.self_destruct( message, `You need to provide both a Family and name to create a quick character. Please run this command with a --help for the details!`);
         }
 
         if ( args.force === null  ) {
-            return message.reply( `You need a force value with -force, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a force value with -force, please run this command with a --help for the details`);
         }
         if ( args.steel == null  ) {
-            return message.reply( `You need a steel value with -steel, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a steel value with -steel, please run this command with a --help for the details`);
         }
         if ( args.lore == null  ) {
-            return message.reply( `You need a lore value with -lore, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a lore value with -lore, please run this command with a --help for the details`);
         }
         if ( args.sway == null  ) {
-            return message.reply( `You need a sway value with -sway, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a sway value with -sway, please run this command with a --help for the details`);
         }
 
 
         //get the family
         let ownerFamily = await DbUtil.get_family( args.family, guild_id);
         if ( ownerFamily == null ) {
-            return message.reply(`The Family ${args.family} does not exist for this guild, please pick a family that does! You can find existing families by running the \`family --all\` command`);
+            return Boom.self_destruct( message, `The Family ${args.family} does not exist for this guild, please pick a family that does! You can find existing families by running the \`family --all\` command`);
         }
 
         //check to see if this character name is already in use
         let existingCharacter = await DbUtil.get_character_by_name(args.name, guild_id);
         if (existingCharacter) {
-            return message.reply(`A character with the name "${existingCharacter.name}" is already in play for this guild, please pick another name!"`);
+            return Boom.self_destruct( message, `A character with the name "${existingCharacter.name}" is already in play for this guild, please pick another name!"`);
         }
 
         //we're good to go. insert the new character
@@ -157,11 +157,11 @@ class QuickCharacterCommand extends Command {
 
         await newCharacter.save().catch((err) => {
             if( err ) {
-                return message.reply(`Was unable to save the character! ${err}`);
+                return Boom.self_destruct( message, `Was unable to save the character! ${err}`);
             }
         });
 
-        return message.reply(`New quick character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ --help\` or \`.sc --help \` to learn more`);
+        return Boom.self_destruct( message, `New quick character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ --help\` or \`.sc --help \` to learn more`);
 
     }
 

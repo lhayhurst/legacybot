@@ -129,7 +129,7 @@ class RollCommand extends Command {
         let validCharacterStats = [...forceStatAliases, ...loreStatAliases, ...steelStatAliases, ...swayStatAliases];
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -141,7 +141,7 @@ class RollCommand extends Command {
             let isFamilyStat = validFamilyStats.includes(stat);
             let isCharacterStat = validCharacterStats.includes(stat);
             if (!isFamilyStat && !isCharacterStat) {
-                return message.reply(`You gave me a stat that I didn't recognize. Valid stats for Families are ${JSON.stringify(validFamilyStats)}, and valid stats for Characters are  ${JSON.stringify(validCharacterStats)} `);
+                return Boom.self_destruct( message, `You gave me a stat that I didn't recognize. Valid stats for Families are ${JSON.stringify(validFamilyStats)}, and valid stats for Characters are  ${JSON.stringify(validCharacterStats)} `);
             }
 
             //so far so good.
@@ -156,7 +156,7 @@ class RollCommand extends Command {
             }
 
             if (userPlaybook == null ) {
-                return message.reply(`You gave me a valid stat but you haven't taken on a playbook yet. Please \`.sf\` or \`.sc\` first.`);
+                return Boom.self_destruct( message, `You gave me a valid stat but you haven't taken on a playbook yet. Please \`.sf\` or \`.sc\` first.`);
             }
             if (reachStatAliases.includes(stat) ) {
                 if (userPlaybook.reach) {
@@ -217,7 +217,7 @@ class RollCommand extends Command {
         }
 
 
-        let resultString = `rolled ${formula} `;
+        let resultString = `rolled \`${formula}\` `;
         let rollResult = droll.roll(formula);
 
         if (args.advantage) {
@@ -242,7 +242,7 @@ class RollCommand extends Command {
         } else {
             legacyResult = "Full Success"
         }
-        return message.reply(`${resultString}: ${rollResult.toString()}. ${legacyResult}!`);
+        return message.reply( `${resultString}: ${rollResult.toString()}. ${legacyResult}!`);
     }
 
     exec(message, args) {

@@ -2,7 +2,7 @@ const {Command} = require('discord-akairo');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const DbUtil = require('./dbutil');
-
+const Boom = require('./self_destructing_reply');
 class DropFamilyCommand extends Command {
 
     constructor() {
@@ -54,7 +54,7 @@ class DropFamilyCommand extends Command {
     async aexec(message, args) {
 
         if ( args.help ) {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -65,13 +65,13 @@ class DropFamilyCommand extends Command {
         let user_id = message.member.user.id;
 
         if( ! (args.action === 'in' || args.action === 'out' || args.action === 'away' ) ) {
-            return message.reply( `Invalid zoom action ${args.action}, please use either  \`in\` or \`out\``)
+            return Boom.self_destruct( message,  `Invalid zoom action ${args.action}, please use either  \`in\` or \`out\``)
         }
 
         if ( args.action === 'away' ) {
             await message.member.setNickname(message.member.user.username)
                 .catch(console.error);
-            return message.reply(`zoomed away`);
+            return Boom.self_destruct( message, `zoomed away`);
         }
 
         if ( args.action === "in") {
@@ -81,21 +81,21 @@ class DropFamilyCommand extends Command {
 
             let character = await DbUtil.get_users_character(user_id, guild_id);
             if (!character) {
-                return message.reply(`You must have a character in order to zoom, please run the \`.sf\` command!`);
+                return Boom.self_destruct( message, `You must have a character in order to zoom, please run the \`.sf\` command!`);
             }
 
             await message.member.setNickname(character.name, "User set their character")
                 .catch(console.error);
-            return message.reply(`zoomed in`);
+            return Boom.self_destruct( message, `zoomed in`);
         }
         else {
             let family = await DbUtil.get_users_family(user_id, guild_id);
             if (!family) {
-                return message.reply(`You must have a family in order to zoom, please run the \`.sf\` command!`);
+                return Boom.self_destruct( message, `You must have a family in order to zoom, please run the \`.sf\` command!`);
             }
             await message.member.setNickname(family.name, "User set their character")
                 .catch(console.error);
-            return message.reply(`zoomed out`);
+            return Boom.self_destruct( message, `zoomed out`);
         }
 
     }

@@ -4,6 +4,7 @@ const FamilyPlaybook = require('../family_playbook');
 const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const config = require('config');
+const Boom = require('./self_destructing_reply');
 
 class HelpCommand extends Command {
     constructor() {
@@ -55,7 +56,7 @@ class HelpCommand extends Command {
 
     async aexec(message, args) {
         if( args.playbooks ) {
-            return message.reply(`Here are some playbooks you can use. You can also make up your own! ${JSON.stringify(Object.keys(FamilyPlaybook.playbooks()))}.`)
+            return Boom.self_destruct( message, `Here are some playbooks you can use. You can also make up your own! ${JSON.stringify(Object.keys(FamilyPlaybook.playbooks()))}.`)
         }
         if( args.commands ) {
             let registeredCommands = CommandsMetadata.getCommands();
@@ -67,10 +68,10 @@ class HelpCommand extends Command {
                 let rc = registeredCommands[rcKeys[i]];
                 embed.addField( `\`${this.prefix}${rc.id}\``, rc.note, false );
             }
-            return message.reply(embed);
+            return Boom.self_destruct( message, embed);
         }
         else {
-            return message.reply( new HelpEmbed(
+            return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases

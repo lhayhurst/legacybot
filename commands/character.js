@@ -5,6 +5,7 @@ const HelpEmbed = require('../view/help_embed');
 const CommandsMetadata = require('./commands_metadata');
 const CharacterPlaybookView = require('../view/character_playbook_view');
 const PropertyMagic = require('./property_magic');
+const Boom = require('./self_destructing_reply');
 
 class CharacterCommand extends Command {
     constructor() {
@@ -122,41 +123,36 @@ class CharacterCommand extends Command {
     }
 
     async aexec(message, args) {
-        if ( args.help ) {
-            return message.reply( new HelpEmbed(
+        if (args.help) {
+            return Boom.self_destruct( message, message, new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
                 this.comments,
-                this.examples).embed);
+                this.examples).embed );
         }
 
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
         let re = new Discord.RichEmbed();
-        let cview = new CharacterPlaybookView( re );
+        let cview = new CharacterPlaybookView(re);
         let console_results = null;
 
-        if( args.show_props) {
+        if (args.show_props) {
             console_results = `Here are the properties of a character. You can get, set, add, or remove them:  ${JSON.stringify(Object.keys(PropertyMagic.CharacterProperties()))}`;
-        }
-        else if ( args.property_name && args.property_action  ) {
+        } else if (args.property_name && args.property_action) {
             let character = await DbUtil.get_users_character(user_id, guild_id);
-            if (character == null ) {
-                return message.reply(`Before setting your character notes, you need to run the \`set-family\` command`);
+            if (character == null) {
+                return Boom.self_destruct( message, message,`Before setting your character notes, you need to run the \`set-family\` command`);
             }
-            console_results = await this.propertyCrud( args, character );
-        }
-        else if(args.all) {
+            console_results = await this.propertyCrud(args, character);
+        } else if (args.all) {
             console_results = await this.handleAll(guild_id, cview);
-        }
-
-        else {
+        } else {
             let character = null;
             if (args.name) {
                 character = await DbUtil.get_character_by_name(args.name, guild_id);
-            }
-            else {
+            } else {
                 character = await DbUtil.get_users_character(user_id, guild_id);
             }
             if (character == null) {
@@ -164,26 +160,25 @@ class CharacterCommand extends Command {
             }
             console_results = await cview.visitCharacter(character, args.text_output_mode);
         }
-        if( console_results ) {
-            return message.reply(console_results);
-        }
-        else {
-            return message.reply(cview.richEmbed);
+        if (console_results) {
+             return Boom.self_destruct( message, message, console_results);
+        } else {
+            return Boom.self_destruct( message, message, cview.richEmbed);
         }
     }
 
     async propertyCrud(args, character) {
-        let pm = new PropertyMagic( PropertyMagic.CharacterProperties() );
-        let ret = await pm.process( args, character);
-        if( character.isModified()) {
+        let pm = new PropertyMagic(PropertyMagic.CharacterProperties());
+        let ret = await pm.process(args, character);
+        if (character.isModified()) {
             await character.save();
         }
         return ret;
     }
 
-    async handleAll( guild_id, view ) {
+    async handleAll(guild_id, view) {
         let characters = await DbUtil.get_guilds_characters(guild_id);
-        if ( characters.length === 0 ) {
+        if (characters.length === 0) {
             return `It seems your guild hasn't created any new characters yet! Please run .help and try out the .new-characters command first.`;
         }
         await view.visitAll(characters);
@@ -191,7 +186,7 @@ class CharacterCommand extends Command {
     }
 
     exec(message, args) {
-        return this.aexec( message, args);
+        return this.aexec(message, args);
     }
 }
 
