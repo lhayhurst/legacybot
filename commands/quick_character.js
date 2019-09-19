@@ -16,6 +16,14 @@ class QuickCharacterCommand extends Command {
                 helptext: 'The name of the character. Must be unique!'
             },
             {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
+                optional: true
+            },
+            {
                 id: 'family',
                 match: 'prefix',
                 prefix: 'f=',
@@ -63,7 +71,7 @@ class QuickCharacterCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
                 optional: true
@@ -75,7 +83,7 @@ class QuickCharacterCommand extends Command {
             split: 'sticky',
             args: command_args
         });
-        this.comments = `This will create a quick character (Legacy CRB pg 68-69). If a quick character already exists with this name, nothing will happen--all character names must be unique! By creating a quick character, that character is not assigned to the Discord user unless the user adds the character using the set-character command. Also unlike the new-character command, the user must specify which Family the character is for; this allows anyone to create quick characters for a Family.  Unlike new-character creation, the user will have to give all the stats on creation (split +1, 0, 0, and -1). Note that \`__Inheritance__\` is not implemented, so you will to remember to add the Family Inheritance bonus yourself!`;
+        this.comments = `This will create a quick character (Legacy CRB pg 68-69). If a quick character already exists with this name, nothing will happen-all character names must be unique! By creating a quick character, that character is not assigned to the Discord user unless the user adds the character using the set-character command. Also unlike the new-character command, the user must specify which Family the character is for; this allows anyone to create quick characters for a Family.  Unlike new-character creation, the user will have to give all the stats on creation (split +1, 0, 0, and -1). Note that \`__Inheritance__\` is not implemented, so you will to remember to add the Family Inheritance bonus yourself!`;
         this.command_args = command_args;
         this.examples = [
             {
@@ -87,7 +95,7 @@ class QuickCharacterCommand extends Command {
                 commentary: `Creates a Quick Character in the "The Hive" Family with the name Neo`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
@@ -102,34 +110,35 @@ class QuickCharacterCommand extends Command {
             this.examples).embed;
     }
 
-    async doexec(message, args) {
+    async aexec(message, args) {
+        Boom.keep(args.keep);
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
         if (args.help) {
             return Boom.self_destruct( message, this.helpEmbed);
         }
         if (args.name == null || args.family == null) {
-            return Boom.self_destruct( message, `You need to provide both a Family and name to create a quick character. Please run this command with a --help for the details!`);
+            return Boom.self_destruct( message, `You need to provide both a Family and name to create a quick character. Please run this command with a -help for the details!`);
         }
 
         if ( args.force === null  ) {
-            return Boom.self_destruct( message,  `You need a force value with -force, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a force value with -force, please run this command with a -help for the details`);
         }
         if ( args.steel == null  ) {
-            return Boom.self_destruct( message,  `You need a steel value with -steel, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a steel value with -steel, please run this command with a -help for the details`);
         }
         if ( args.lore == null  ) {
-            return Boom.self_destruct( message,  `You need a lore value with -lore, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a lore value with -lore, please run this command with a -help for the details`);
         }
         if ( args.sway == null  ) {
-            return Boom.self_destruct( message,  `You need a sway value with -sway, please run this command with a --help for the details`);
+            return Boom.self_destruct( message,  `You need a sway value with -sway, please run this command with a -help for the details`);
         }
 
 
         //get the family
         let ownerFamily = await DbUtil.get_family( args.family, guild_id);
         if ( ownerFamily == null ) {
-            return Boom.self_destruct( message, `The Family ${args.family} does not exist for this guild, please pick a family that does! You can find existing families by running the \`family --all\` command`);
+            return Boom.self_destruct( message, `The Family ${args.family} does not exist for this guild, please pick a family that does! You can find existing families by running the \`family -all\` command`);
         }
 
         //check to see if this character name is already in use
@@ -161,7 +170,7 @@ class QuickCharacterCommand extends Command {
             }
         });
 
-        return Boom.self_destruct( message, `New quick character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ --help\` or \`.sc --help \` to learn more`);
+        return Boom.self_destruct( message, `New quick character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ -help\` or \`.sc -help \` to learn more`);
 
     }
 

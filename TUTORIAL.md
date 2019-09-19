@@ -18,13 +18,13 @@ That's a lot of commands! Fortunately, each command comes with its own built-in 
 
 ## Starting a Family 
 
-The `.family` is how you check your and other player's families, but before you do that you have to create a family first. Run the `.new-family --help` command first.
+The `.family` is how you check your and other player's families, but before you do that you have to create a family first. Run the `.new-family -help` command first.
 
 ![new-family-help](assets/screenshots/new-family-help.png)
 
 Let's  create a family using the suggested example by running the command `.nf p=tyrant n="The Citadel"`
 
-And you should see something like this -- ah, LegacyBot, babbling in the native tongue of long-dead programmers!
+And you should see something like this - ah, LegacyBot, babbling in the native tongue of long-dead programmers!
 
 ![new-family](assets/screenshots/new-family.png)
 
@@ -42,7 +42,7 @@ Now that you've set your family, you can use the `.family` command to have a loo
 
 ![new-family](assets/screenshots/family-1.png)
 
-Note that both the family and character commands have a simple "text" mode output. Run `.f --text` to see it!
+Note that both the family and character commands have a simple "text" mode output. Run `.f -text` to see it!
 
 ## Family Attributes and Stats
 
@@ -50,7 +50,7 @@ Families have a bunch of things you can set on them. Let's start by setting thei
 
 ![new-family-notes](assets/screenshots/family-notes.png)
 
-Note that you can manipulate all of your Family attributes using this style. Run the command `.f --p` and `.f --help` to learn more. For example, here's how you add a move: `.f add move "Lords of the Deep"`.
+Note that you can manipulate all of your Family attributes using this style. Run the command `.f -p` and `.f -help` to learn more. For example, here's how you add a move: `.f add move "Lords of the Deep"`.
 
 
 You can also set your `Reach`, `Grasp`, and `Sleight` stats using the `.family-stats` command. Here's an example, setting Reach to 1, Grasp to 0 and Sleight to -1. `.fs r=1 s=-1 g=0`
@@ -68,7 +68,7 @@ Treaty can be given or taken using the `.treaty` command. To give treaty to anot
 
 ![treaty](assets/screenshots/treaty1.png)
 
-Treaty can be spent using `.treaty spend "Bullet Farm"`, for example. Remember you can always do a `--help` with any command, or example `.treaty --help`.
+Treaty can be spent using `.treaty spend "Bullet Farm"`, for example. Remember you can always do a `-help` with any command, or example `.treaty -help`.
 
 ## Surplus and Need
 Surplus and need can be managed using the `.surplus` and `.need` commands. They are easy to use. To create a surplus, do something like `.surplus add "Barter Goods"`. 
@@ -81,7 +81,7 @@ After you've added some needs and surpluses, they will show up on your Family sh
 
 ## Rolling Dice
 
-Legacybot has a complete dice rolling solution. Run `.roll --help` to have a look:
+Legacybot has a complete dice rolling solution. Run `.roll -help` to have a look:
 
 ![dice](assets/screenshots/dice1.png)
 

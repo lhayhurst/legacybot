@@ -18,6 +18,14 @@ class HelpCommand extends Command {
                 optional: true
             },
             {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
+                optional: true
+            },
+            {
                 id: 'playbooks',
                 match: 'flag',
                 prefix: '-p',
@@ -55,6 +63,7 @@ class HelpCommand extends Command {
     }
 
     async aexec(message, args) {
+        Boom.keep(args.keep);
         if( args.playbooks ) {
             return Boom.self_destruct( message, `Here are some playbooks you can use. You can also make up your own! ${JSON.stringify(Object.keys(FamilyPlaybook.playbooks()))}.`)
         }
@@ -63,7 +72,7 @@ class HelpCommand extends Command {
             let rcKeys = Object.keys( registeredCommands);
             let embed = new Discord.RichEmbed();
             embed.setTitle("Legacybot Commands");
-            embed.setDescription(`Here are the commands that Legacybot supports. Type in the command name followed by --help to learn more about it.`);
+            embed.setDescription(`Here are the commands that Legacybot supports. Type in the command name followed by -help to learn more about it.`);
             for( var i =0; i < rcKeys.length; i++ ) {
                 let rc = registeredCommands[rcKeys[i]];
                 embed.addField( `\`${this.prefix}${rc.id}\``, rc.note, false );

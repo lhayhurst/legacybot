@@ -121,7 +121,7 @@ class FamilyPlaybookGameData {
             'The Uplifted Children of Mankind': {
                 playbookName: 'The Uplifted Children of Mankind',
                 familySheetImage: 'assets/families/uplifted-children-of-mankind.png',
-                treatyRules: `When someone adopts your customs --wther on the primal or sapient side -- gain 1-Treaty on them.`,
+                treatyRules: `When someone adopts your customs -wther on the primal or sapient side - gain 1-Treaty on them.`,
                 statsChoices: [],
                 doctrineChoices: [],
             }

@@ -13,9 +13,17 @@ class CharacterCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -31,7 +39,7 @@ class CharacterCommand extends Command {
             {
                 id: 'all',
                 match: 'flag',
-                prefix: '--all',
+                prefix: '-all',
                 helptext: 'Show all Characters ',
                 default: null,
                 optional: true
@@ -39,7 +47,7 @@ class CharacterCommand extends Command {
             {
                 id: 'text_output_mode',
                 match: 'flag',
-                prefix: '--text',
+                prefix: '-text',
                 helptext: 'Output character sheet as simple text',
                 default: false,
                 optional: true
@@ -47,7 +55,7 @@ class CharacterCommand extends Command {
             {
                 id: 'show_props',
                 match: 'flag',
-                prefix: '--p',
+                prefix: '-p',
                 helptext: 'Show all properties that can be get, set, added, or del for a character',
                 default: false,
                 optional: true
@@ -58,12 +66,12 @@ class CharacterCommand extends Command {
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `Valid actions can by found by running the \`.c --p\``
+                helptext: `Valid actions can by found by running the \`.c -p\``
             },
             {
                 id: 'property_name', //from CPlaybook
                 type: "string",
-                helptext: `\`property\` is prop you are interested in, run \`.c --p\``,
+                helptext: `\`property\` is prop you are interested in, run \`.c -p\``,
                 argtype: "command",
                 optional: true,
                 default: null
@@ -92,7 +100,7 @@ class CharacterCommand extends Command {
                 commentary: `Generates just your character handout sheets, if you have set one.`
             },
             {
-                command: `${aliases[1]} --all`,
+                command: `${aliases[1]} -all`,
                 commentary: `Shows all characters associated with this guild.`
             },
             {
@@ -108,21 +116,22 @@ class CharacterCommand extends Command {
                 commentary: `Let's you add to the character notes for this Family.`
             },
             {
-                command: `${aliases[1]} --text`,
+                command: `${aliases[1]} -text`,
                 commentary: `show the character sheet as text.`
             },
             {
-                command: `${aliases[1]} --p`,
+                command: `${aliases[1]} -p`,
                 commentary: `show all the properties that can be get or set.`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
     }
 
     async aexec(message, args) {
+        Boom.keep(args.keep);
         if (args.help) {
             return Boom.self_destruct( message, message, new HelpEmbed(
                 this.id, //the name of the command

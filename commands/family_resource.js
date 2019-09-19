@@ -11,9 +11,17 @@ class FamilyResourceCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -24,6 +32,7 @@ class FamilyResourceCommand extends Command {
                 helptext: 'Valid actions are \`get\`, and \`spend\`.',
                 optional: false
             },
+
             {
                 id: 'resource',
                 type: "string",
@@ -49,7 +58,7 @@ class FamilyResourceCommand extends Command {
             split: 'quoted',
             args: command_args
         });
-        this.comments = `The ${aliases[0]} command lets you get or spend Tech and Data resources (Core Rulebook, Second Edition page 24). Mood is set automatically as per page 36 on the CRB-- total number of Surpluses - total number of Needs. Note, you can get or spend multiple resources by using the \`+\` options, for example \`+2\`.`;
+        this.comments = `The ${aliases[0]} command lets you get or spend Tech and Data resources (Core Rulebook, Second Edition page 24). Mood is set automatically as per page 36 on the CRB- total number of Surpluses - total number of Needs. Note, you can get or spend multiple resources by using the \`+\` options, for example \`+2\`.`;
         this.command_args = command_args;
         this.examples = [
             {
@@ -65,14 +74,15 @@ class FamilyResourceCommand extends Command {
                 commentary: `Spend two tech`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
     }
 
 
-    async doexec(message, args) {
+    async aexec(message, args) {
+        Boom.keep(args.keep);
 
         if ( args.help ) {
             return Boom.self_destruct( message,  new HelpEmbed(
@@ -89,7 +99,7 @@ class FamilyResourceCommand extends Command {
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);
         if (ownerFamily == null) {
-            return Boom.self_destruct( message, `You have not set your family set -- please run "/set-family 'family name'" before running the ${this.aliases[0]} command!`);
+            return Boom.self_destruct( message, `You have not set your family set - please run "/set-family 'family name'" before running the ${this.aliases[0]} command!`);
         }
 
         if (family_name == null && action == null) {

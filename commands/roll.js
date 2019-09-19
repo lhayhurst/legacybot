@@ -10,11 +10,19 @@ class RollCommand extends Command {
                 {
                     id: 'help',
                     match: 'flag',
-                    prefix: '--h',
+                    prefix: '-h',
                     default: null,
                     helptext: 'Show this message',
                     optional: true
                 },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
+                optional: true
+            },
                 {
                     id: 'bonus',
                     match: 'prefix',
@@ -86,7 +94,7 @@ class RollCommand extends Command {
                 commentary: `Rolls with advantage and Reach stat with a bonus of 2`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ];
@@ -110,6 +118,7 @@ class RollCommand extends Command {
 
 
     async aexec(message, args) {
+        Boom.keep(args.keep);
 
         let modifier = 0;
         let usingModifier = false;

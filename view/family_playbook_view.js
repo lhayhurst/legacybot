@@ -34,7 +34,7 @@ class FamilyPlaybookView {
             let propVal = family.get( prop.name );
             if ( propVal != null ) {
                 if (prop.isa == 'Array') {
-                    this.richEmbed.addField(prop.name, JSON.stringify(propVal));
+                    this.richEmbed.addField(prop.name, `\`\`\`${JSON.stringify(propVal)}\`\`\``);
                 }
                 else {
                     this.richEmbed.addField(prop.name, propVal, true);

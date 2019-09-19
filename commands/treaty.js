@@ -11,9 +11,17 @@ class TreatyCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -67,7 +75,7 @@ class TreatyCommand extends Command {
                 commentary: `Spend 2-Treaty with the Bullet Farm`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
@@ -76,7 +84,8 @@ class TreatyCommand extends Command {
 
 
 
-    async doexec(message, args) {
+    async aexec(message, args) {
+        Boom.keep(args.keep);
 
         if ( args.help ) {
             return Boom.self_destruct( message,  new HelpEmbed(
@@ -93,7 +102,7 @@ class TreatyCommand extends Command {
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);
         if (ownerFamily == null) {
-            return Boom.self_destruct( message, `You have not set your family set -- please run "/set-family 'family name'" before running the treaty command!`);
+            return Boom.self_destruct( message, `You have not set your family set - please run "/set-family 'family name'" before running the treaty command!`);
         }
 
         if (family_name == null && action == null) {
@@ -112,7 +121,7 @@ class TreatyCommand extends Command {
 
         let targetFamily = await DbUtil.get_family(family_name, guild_id);
         if (targetFamily == null) {
-            return Boom.self_destruct( message, `I was unable to find a family with name ${family_name}, please run the command /family --all to see all the families currently in play for your guild, and then run the command /set-family to set your family.`);
+            return Boom.self_destruct( message, `I was unable to find a family with name ${family_name}, please run the command /family -all to see all the families currently in play for your guild, and then run the command /set-family to set your family.`);
         }
         let reply = "";
         let do_update = false;

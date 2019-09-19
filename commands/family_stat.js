@@ -11,9 +11,17 @@ class FamilyStatCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -66,7 +74,7 @@ class FamilyStatCommand extends Command {
                 commentary: `Set your Grasp to 1 and your Sleight to -1 and your Grasp to 0.`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
@@ -82,6 +90,7 @@ class FamilyStatCommand extends Command {
     }
 
     async aexec(message, args) {
+        Boom.keep(args.keep);
         if ( args.help ) {
             return Boom.self_destruct( message,  new HelpEmbed(
                 this.id, //the name of the command
@@ -98,7 +107,7 @@ class FamilyStatCommand extends Command {
         let userFamily = await DbUtil.get_users_family(user_id, guild_id);
 
         if ( userFamily == null ) {
-            return Boom.self_destruct( message, `You have not set your family set -- please run \'set-family\` first!`);
+            return Boom.self_destruct( message, `You have not set your family set - please run \'set-family\` first!`);
         }
         if (!(args.reach || args.grasp || args.sleight ) ) { //no arg case
             return Boom.self_destruct( message,  this.statsAsRichEmbed(userFamily));

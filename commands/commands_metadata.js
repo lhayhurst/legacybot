@@ -24,7 +24,7 @@ class CommandsMetadata {
             },
             'family_resource': {
                 id: 'family-resource',
-                note: `Get or spend your Family's resources -- Tech and Data.`
+                note: `Get or spend your Family's resources - Tech and Data.`
             },
             'drop_family': {
                 id: 'drop-family',

@@ -10,9 +10,17 @@ class DropFamilyCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -42,16 +50,17 @@ class DropFamilyCommand extends Command {
             },
             {
                 command: `${aliases[1]} away`,
-                commentary: `Zooms away from your character or family -- your nickname is reset to your username.`
+                commentary: `Zooms away from your character or family - your nickname is reset to your username.`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ];
     }
 
     async aexec(message, args) {
+        Boom.keep(args.keep);
 
         if ( args.help ) {
             return Boom.self_destruct( message,  new HelpEmbed(

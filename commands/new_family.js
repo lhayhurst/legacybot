@@ -11,9 +11,17 @@ class NewFamilyCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -37,7 +45,7 @@ class NewFamilyCommand extends Command {
             split: 'sticky',
             args: command_args
         });
-        this.comments = `This will create a new family. If a family already exists with this name, nothing will happen--all family names must be unique! By creating a new family, that family is not assigned to the Discord user unless the user adds the family using the set-family command. The playbook may be one of the core Legacy family classes. Note, Legacybot will match your playbook string against existing playbooks; for example, setting your playbook to "hive" or "Hive" will result you creating a family from "The Synthetic Hive" playbook`;
+        this.comments = `This will create a new family. If a family already exists with this name, nothing will happen-all family names must be unique! By creating a new family, that family is not assigned to the Discord user unless the user adds the family using the set-family command. The playbook may be one of the core Legacy family classes. Note, Legacybot will match your playbook string against existing playbooks; for example, setting your playbook to "hive" or "Hive" will result you creating a family from "The Synthetic Hive" playbook`;
         this.command_args = command_args;
         this.examples = [
             {
@@ -45,7 +53,7 @@ class NewFamilyCommand extends Command {
                 commentary: `Creates a new Family from the "Enclave of Bygone Lore" playbook with the name "The Brotherhood"`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
@@ -60,7 +68,8 @@ class NewFamilyCommand extends Command {
             this.examples).embed;
     }
 
-    async doexec(message, args) {
+    async aexec(message, args) {
+        Boom.keep(args.keep);
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
 
@@ -68,7 +77,7 @@ class NewFamilyCommand extends Command {
             return Boom.self_destruct( message,  this.helpEmbed );
         }
         if (args.name == null || args.playbook == null ) {
-            return Boom.self_destruct( message, `You need to provide both a playbook and name to create a new family. Please run this command with a --help for the details!`);
+            return Boom.self_destruct( message, `You need to provide both a playbook and name to create a new family. Please run this command with a -help for the details!`);
         }
 
         //check to see if this family name is already in use

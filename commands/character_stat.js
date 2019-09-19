@@ -12,9 +12,17 @@ class CharacterStatCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -84,7 +92,7 @@ class CharacterStatCommand extends Command {
                 commentary: `Set your Force to 1 and your Sway to -1 and your Steel to 0 and your Lore to 2.`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
@@ -102,6 +110,7 @@ class CharacterStatCommand extends Command {
     }
 
     async aexec(message, args) {
+        Boom.keep(args.keep);
         if ( args.help ) {
             return Boom.self_destruct( message, message, new HelpEmbed(
                 this.id, //the name of the command
@@ -118,7 +127,7 @@ class CharacterStatCommand extends Command {
         let character = await DbUtil.get_users_character(user_id, guild_id);
 
         if ( character == null ) {
-            Boom.self_destruct( message, message, `You have not set your character set -- please run \'set-character\` first!`);
+            Boom.self_destruct( message, message, `You have not set your character set - please run \'set-character\` first!`);
         }
         if (!(args.force || args.lore || args.steel || args.sway ) ) { //no arg case
             Boom.self_destruct( message,  message,  this.statsAsRichEmbed(character) );

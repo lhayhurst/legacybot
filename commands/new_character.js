@@ -12,9 +12,17 @@ class NewCharacterCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -38,7 +46,7 @@ class NewCharacterCommand extends Command {
             split: 'sticky',
             args: command_args
         });
-        this.comments = `This will create a new character. If a character already exists with this name, nothing will happen--all character names must be unique! By creating a new character, that character is not assigned to the Discord user unless the user adds the character using the set-character command. The character is, however, will be associated with the Family that the user has chosen. The playbook may be one of the core Legacy character classes (CRB page 164). Note, Legacybot will match your playbook string against existing playbooks; for example, setting your playbook to "elder" or "Elder" will result you creating a character from "The Elder" playbook`;
+        this.comments = `This will create a new character. If a character already exists with this name, nothing will happen-all character names must be unique! By creating a new character, that character is not assigned to the Discord user unless the user adds the character using the set-character command. The character is, however, will be associated with the Family that the user has chosen. The playbook may be one of the core Legacy character classes (CRB page 164). Note, Legacybot will match your playbook string against existing playbooks; for example, setting your playbook to "elder" or "Elder" will result you creating a character from "The Elder" playbook`;
         this.command_args = command_args;
         this.examples = [
             {
@@ -50,7 +58,7 @@ class NewCharacterCommand extends Command {
                 commentary: `Creates a new Character from "The Survivor" playbook with the name "Max Rockantansky"`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
@@ -65,7 +73,8 @@ class NewCharacterCommand extends Command {
             this.examples).embed;
     }
 
-    async doexec(message, args) {
+    async aexec(message, args) {
+        Boom.keep(args.keep);
         let guild_id = message.guild.id;
         let user_id = message.member.user.id;
         let username = message.member.username;
@@ -74,7 +83,7 @@ class NewCharacterCommand extends Command {
             return Boom.self_destruct( message, this.helpEmbed);
         }
         if (args.name == null || args.playbook == null) {
-            return Boom.self_destruct( message, `You need to provide both a playbook and name to create a new character. Please run this command with a --help for the details!`);
+            return Boom.self_destruct( message, `You need to provide both a playbook and name to create a new character. Please run this command with a -help for the details!`);
         }
 
         //check to see if this user already has a family
@@ -122,7 +131,7 @@ class NewCharacterCommand extends Command {
                 return Boom.self_destruct( message, `Was unable to save the character! ${err}`);
             }
         });
-        return Boom.self_destruct( message, `New character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ --help\` or \`.sc --help \` to learn more`);
+        return Boom.self_destruct( message, `New character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ -help\` or \`.sc -help \` to learn more`);
     }
     exec(message, args) {
         return this.doexec(message, args);

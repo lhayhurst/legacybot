@@ -10,9 +10,17 @@ class NeedCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -29,7 +37,7 @@ class NeedCommand extends Command {
                 default: null,
                 optional: false,
                 argtype: "argument",
-                helptext: `The name of the resource you are adding. If more than one word, quote it -- for ex, "Barter Goods".`
+                helptext: `The name of the resource you are adding. If more than one word, quote it - for ex, "Barter Goods".`
             }
         ];
         let aliases = ['need', 'n'];
@@ -50,13 +58,14 @@ class NeedCommand extends Command {
                 commentary: `Removes the resource "Barter Goods" to your Family Needs.`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
     }
 
-    async doexec(message, args) {
+    async aexec(message, args) {
+        Boom.keep(args.keep);
         let guild_id = message.guild.id;
         let action = args.action;
         let resource = args.resource;
@@ -72,11 +81,11 @@ class NeedCommand extends Command {
 
         //sanity checks
         if (resource === null || action === null) {
-            return Boom.self_destruct( message, `You need to provide an action and a resource; please run this command with --help to learn about it.`);
+            return Boom.self_destruct( message, `You need to provide an action and a resource; please run this command with -help to learn about it.`);
         }
 
         if (!(action === "add" || action === "remove")) {
-            return Boom.self_destruct( message, `Unknown action ${action}, valid actions are "add" or "remove. Please run this command with --help to learn about it.`);
+            return Boom.self_destruct( message, `Unknown action ${action}, valid actions are "add" or "remove. Please run this command with -help to learn about it.`);
         }
 
         let ownerFamily = await DbUtil.get_users_family(message.member.user.id, guild_id);

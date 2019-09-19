@@ -9,9 +9,17 @@ class SetCharacterCommand extends Command {
             {
                 id: 'help',
                 match: 'flag',
-                prefix: '--h',
+                prefix: '-h',
                 default: null,
                 helptext: 'Show this message',
+                optional: true
+            },
+            {
+                id: 'keep',
+                match: 'prefix',
+                prefix: '-k=',
+                default: 7,
+                helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
             {
@@ -42,13 +50,14 @@ class SetCharacterCommand extends Command {
                 commentary: `Sets "Mad Max"" as your character.`
             },
             {
-                command: `${aliases[1]} --help`,
+                command: `${aliases[1]} -help`,
                 commentary: `Gets help on this command.`
             }
         ]
     }
 
     async aexec(message, args) {
+        Boom.keep(args.keep);
         if (args.help) {
             return Boom.self_destruct( message, new HelpEmbed(
                 this.id, //the name of the command
@@ -62,7 +71,7 @@ class SetCharacterCommand extends Command {
         let user_id = message.member.user.id;
 
         if ( args.name === null ) {
-            return Boom.self_destruct( message, "Please provide a character name to this command (--help to see some examples");
+            return Boom.self_destruct( message, "Please provide a character name to this command (-help to see some examples");
         }
 
         let character = await DbUtil.get_character_by_name( args.name, guild_id );
