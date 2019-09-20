@@ -231,13 +231,13 @@ class RollCommand extends Command {
         let rollResult = droll.roll(formula);
 
         if (args.advantage) {
-            resultString += `with advantage `;
+            resultString += `_with advantage_ `;
             let minRemoved = this.removeSmallest(rollResult.rolls);
-            resultString += `dropping lowest roll (a ||${minRemoved}||). `;
+            resultString += `dropping lowest roll (a ||   ${minRemoved}   ||). `;
         } else if (args.disadvantage) {
-            resultString += `with disadvantage `;
+            resultString += `_with disadvantage_ `;
             let maxRemoved = this.removeLargest(rollResult.rolls);
-            resultString += `dropping highest roll ( a ||${maxRemoved}||). `;
+            resultString += `dropping highest roll ( a ||   ${maxRemoved}   ||). `;
         }
 
         const add = (a, b) => a + b
