@@ -18,7 +18,7 @@ class SetCharacterCommand extends Command {
                 id: 'keep',
                 match: 'prefix',
                 prefix: '-k=',
-                default: 7,
+                default: 30,
                 helptext: `Keep parameter for how many seconds you would like to keep this message before it self destructs. \`-k=10\` to keep for 10 seconds, for example. If value is \`-k=forever\`, it will keep forever!`,
                 optional: true
             },
