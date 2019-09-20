@@ -108,7 +108,7 @@ class NewFamilyCommand extends Command {
         return Boom.self_destruct( message, "Created your family!");
     }
     exec(message, args) {
-        return this.doexec(message, args);
+        return this.aexec(message, args);
     }
 }
 
