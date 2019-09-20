@@ -165,7 +165,7 @@ class CharacterCommand extends Command {
                 character = await DbUtil.get_users_character(user_id, guild_id);
             }
             if (character == null) {
-                return `Before running an action command, you need to run the \`set-character\` command`;
+                return Boom.self_destruct( message,`Before running an action command, you need to run the \`set-character\` command`);
             }
             console_results = await cview.visitCharacter(character, args.text_output_mode);
         }
