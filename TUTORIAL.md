@@ -4,65 +4,73 @@ This document teaches you how to use Legacybot! This is a bot that will help you
 
 NEW USER NOTE! Legacybot currently doesn't support running commands through anything but the web interface due to lack of support for Apple's UNICODE versions of the quote character `"` and the `-` character. Legacy bot, as a flavor of [UNIX command line](https://en.wikipedia.org/wiki/In_the_Beginning..._Was_the_Command_Line)  makes extensive use of both characters. 
 
-## Getting Started 
+## Table of Contents
+1. [The Basics](#the-basics): getting started with legacy bot with the `.h` command
+2. [Family Playbooks](#family-playbooks)
+    - [Starting a Family](#starting-a-family): creating new families with the `.nf` command
+    - [Setting your Family](#setting-your-family): taking on a family with the `.sf` command
+    - [The Family Command](#the-basic-family-command): look at your family with the `.f` command
+    - [All Families](#all-families): look at all families with the `.f -all` command
+    - [Family Properties](#family-properties): getting, setting, adding to, and deleting your family's properties (stats, moves, etc)
+    - [Treaty](#treaty): Giving and getting treaty from other families with the `.t` command
+3. [Character Playbooks](#character-playbooks): manage your character playbook with the `.c` and `.sc` commands.
+4. [Rolling Dice](#rolling-dice): roll them bones with the `.roll` command.
 
-LegacyBot's help system is built into the tool. All LegacyBot commands start with a `.` (period). The first command to remember is the help command. Run it by typing in `.help` or `.h` (all LegacyBots come with a shorthand "alias" or faster typing).
+## The Basics
+A few import things to understand first:
+1)  All LegacyBot commands start with a `.` That means if you want to send a command to Legacybot, you would type in something like `.help`. 
+2) All Legacybot commands have long forms and short forms. That means you can type in both `.help` and `.h` and both will do the same thing.
+3) All Legacy bot commands will __self destruct__ after a default of 30 seconds. That means they will get deleted from the Discord channel! If you want a message to stick around longer than that, all commands take an optional `-k` argument where you set how long you want the command to stick around. For example, `-k=60` will keep the message for 60 seconds, and `-k=forever` will keep the message around forever.
 
 ![help](assets/screenshots/help.png)
 
-You can learn about what commands are available by typing in `.help -c`, or `.h -c`. 
+## Commands 
+You can learn about what commands ar
+e available by typing in `.help -c`, or `.h -c`. All commands can be run with a `-h` flag to learn about that command.
 
-![commands](assets/screenshots/commands.png)
+## Family Playbooks
+Families are at the heart of the Legacy game, and Legacybot has a variety of commands to let you interact with your Family playbook sheet.
 
-That's a lot of commands! Fortunately, each command comes with its own built-in help with examples. 
+### Starting a Family 
 
-## Starting a Family 
-
-The `.family` is how you check your and other player's families, but before you do that you have to create a family first. Run the `.new-family -help` command first.
-
-![new-family-help](assets/screenshots/new-family-help.png)
-
-Let's  create a family using the suggested example by running the command `.nf p=tyrant n="The Citadel"`
+The `.family` is how you check your and other player's families, but before you do that you have to create a family first. Run the `.new-family -h` ( or `.nf -h`) command to have a look at its syntax and exmaples, or, if you want to jump right in, here's an exmaple of how to create a new family: `.nf p=tyrant n="The Citadel"`
 
 And you should see something like this - ah, LegacyBot, babbling in the native tongue of long-dead programmers!
 
 ![new-family](assets/screenshots/new-family.png)
 
-Note that, even though I typed in `p=tyrant`, it matched the playbook against `The Tyrant Kings`. Legacybot will do that for any playbooks you type in that match, as a subset, against the Legacy Family Playbooks.
+Note that, even though I typed in `p=tyrant`, it matched the playbook against the game's stock plabyook __The Tyrant Kings__. Legacybot will do that for any playbooks you type in that match, as a subset, against the Legacy Family Playbooks.
 
-Anyone can create a family, but it takes a reach warrior to take ownership of it! To do that you run the `.set-family`, or `.sf`, command. In this case, `.sf "The Citadel"`.
+### Setting your family
+Anyone can create a family, but it takes a real wanderer of the ruins to take ownership of it! To do that you run the `.set-family`, or `.sf`, command. In this case, `.sf "The Citadel"`.
 
 ![new-family](assets/screenshots/set-family.png)
 
-Now that you've set your family, you can use the `.family` command to have a look at it. Run the command `.f`:
+Now that you've set your family, you can use the `.family` command to have a look at it. This is one of the beefier commands that Legacybot provides.
 
-## Being a Family
+### The Basic Family Command
 
+If you run simply `.family` or `.f` then Legacybot will show you a __text__ version of your Family. If you run `.f -i` then you will get an __image__ version of your Family. I find the text version more useful, because it shows you all the properties of a Family that you can change.
 
+### All Families
+You can list all the families currently in play with the `.f -all` version of the family command.
 
-![new-family](assets/screenshots/family-1.png)
+### Family Properties
+At the heart of the `.family` command tools are the __property commands__. All properties of your family playbook can be retrieved or edited using these commands. You can see the list of all properties available to you with the `.f -p` 
 
-Note that both the family and character commands have a simple "text" mode output. Run `.f -text` to see it!
+Here are some examples to get an idea of how this works:
+* `.f set name "New Family Name"` sets your name
+* `.f get name` gets your name
+* `.f remove name` deletes your name
+* `.f add moves Sacrifice` adds the sacrifice move to your moves list
+* `.f set reach 1` sets your reach to 1
 
-## Family Attributes and Stats
+Note: For bulk changing of your stats, you can also can also set your `Reach`, `Grasp`, and `Sleight` stats using the `.family-stats` command. Here's an example, setting Reach to 1, Grasp to 0 and Sleight to -1. `.fs r=1 s=-1 g=0`
 
-Families have a bunch of things you can set on them. Let's start by setting their notes using this command: `.f notes "The Citadel is the stronghold of Immortan Joe. Joe maintains his control through a loyal corps of War Boys, whom are picked from The Wretched as War Pups and indoctrinated from childhood to believe that Immortan Joe is a god and following his orders will grant them eternal afterlife. The War Boys defend the Citadel, escort trade caravans, and scavenge the countryside for useful scrap and slaves."` 
-
-![new-family-notes](assets/screenshots/family-notes.png)
-
-Note that you can manipulate all of your Family attributes using this style. Run the command `.f -p` and `.f -help` to learn more. For example, here's how you add a move: `.f add move "Lords of the Deep"`.
-
-
-You can also set your `Reach`, `Grasp`, and `Sleight` stats using the `.family-stats` command. Here's an example, setting Reach to 1, Grasp to 0 and Sleight to -1. `.fs r=1 s=-1 g=0`
-
-![stats](assets/screenshots/stats.png)
-
-## Family Resource Tracks
+### Family Resource Tracks
 Mood is automatically calculated from Surplus and Need, but Data and Tech are set using the `family-resouce` command. To get a resource, do something like this: `.fr get data`. To spend a resource, do `.fr spend data`. You can get or spend more than one by using a `+` modifier, for example `.fr get data +2`. 
 
-![resources](assets/screenshots/resources.png)
-
-## Treaty
+### Treaty
 
 Treaty can be given or taken using the `.treaty` command. To give treaty to another Family, use the `.t give` command. For example:
 
@@ -70,8 +78,8 @@ Treaty can be given or taken using the `.treaty` command. To give treaty to anot
 
 Treaty can be spent using `.treaty spend "Bullet Farm"`, for example. Remember you can always do a `-help` with any command, or example `.treaty -help`.
 
-## Surplus and Need
-Surplus and need can be managed using the `.surplus` and `.need` commands. They are easy to use. To create a surplus, do something like `.surplus add "Barter Goods"`. 
+### Surplus and Need
+Surplus and need can also managed using the `.surplus` and `.need` commands. They are easy to use. To create a surplus, do something like `.surplus add "Barter Goods"`. 
 
 ![surplus-needs](assets/screenshots/surplus-needs.png)
 
@@ -79,15 +87,6 @@ After you've added some needs and surpluses, they will show up on your Family sh
 
 ![surplus-needs](assets/screenshots/surplus-needs-2.png)
 
-## Rolling Dice
-
-Legacybot has a complete dice rolling solution. Run `.roll -help` to have a look:
-
-![dice](assets/screenshots/dice1.png)
-
-Let's roll some bones!
-
-![dice](assets/screenshots/dice2.png)
 
 ## Character Playbooks
 
@@ -99,15 +98,24 @@ You can also create Quick Characters using the `.quick-character` command.
 
 ![quick](assets/screenshots/quick.png)
 
-## Character Attributes
+### Character Attributes
 
-Character notes can be set the same way as family notes, using the `.c note` command. For example, if I type in `.c note "Nux was originally a follower of Immortan Joe and was willing to die for his cause, attempting to impress him on several occasions. ... Nux was found on the war-rig by one of Immortan Joe's wives and was taken in, eventually becoming a vital member of Furiosa's team."` and then run the `.c` command I get:
+Character attributes are edit-able the same way that Family attributes are set -- see the [Family Properties](#family-properties) section above for a refresher, and run `.c -p` to have a look at all the character properties available for editing.
 
-![charnotes](assets/screenshots/charnotes.png)
-
-Finally, character stats can be set using the `cs` command. 
+Note, you can also use the `.cs` command to bulk edit your stats. 
 
 ![cstats](assets/screenshots/cstats.png)
+
+
+## Rolling Dice
+
+Legacybot has a complete dice rolling solution. Run `.roll -h` to have a look:
+
+![dice](assets/screenshots/dice1.png)
+
+Let's roll some bones!
+
+![dice](assets/screenshots/dice2.png)
 
 
 

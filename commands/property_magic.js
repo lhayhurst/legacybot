@@ -10,7 +10,7 @@ class PropertyMagic {
         for (var i = 0; i < paths.length; i++) {
             let path = paths[i];
             let pname = path.path;
-            if (pname && ! ( pname.startsWith("_") || pname.endsWith("$")) ) {
+            if (pname && ! ( pname.startsWith("_") ||  pname.startsWith(`treat`)) ) { //a little hack here with treaty :shrug:
                 ret[path.path] = {
                     'name': pname,
                     'isa': path.instance, //'String', 'Number', or 'Array'

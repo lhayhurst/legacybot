@@ -170,9 +170,9 @@ class CharacterCommand extends Command {
             console_results = await cview.visitCharacter(character, args.text_output_mode);
         }
         if (console_results) {
-             return Boom.self_destruct( message, message, console_results);
+             return Boom.self_destruct( message,  console_results);
         } else {
-            return Boom.self_destruct( message, message, cview.richEmbed);
+            return Boom.self_destruct( message,  cview.richEmbed);
         }
     }
 

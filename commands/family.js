@@ -162,8 +162,7 @@ class FamiliesCommand extends Command {
         let fview = new FamilyPlaybookView( richEmbed );
 
         if( args.show_props) {
-            console_results = `Here are the string properties of a family. You can get, set, add, or remove them:  ${JSON.stringify(PropertyMagic.FamilyStringProperties())}\n`;
-            console_results += `Here are the string array properties of a family you can get, add, or remove: ${JSON.stringify(PropertyMagic.FamilyArrayofStringProperties())}`;
+            console_results = `Here are the string properties of a family. You can get, set, add, or remove them:  ${JSON.stringify(Object.keys(PropertyMagic.FamilyProperties()))}\n`;
         }
         else if ( args.property_name && args.property_action  ) {
             let family = await DbUtil.get_users_family(user_id, guild_id);
