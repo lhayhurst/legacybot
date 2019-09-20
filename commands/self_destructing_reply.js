@@ -3,7 +3,7 @@ class Boom {
 
     static async self_destruct(message, reply) {
         if ( Boom.keepDuration == null ) {
-            Boom.keepDuration = 7000; //7 second default
+            Boom.keepDuration = 30000; //7 second default
         }
         if ( Boom.keepDuration < 0 ) { //keep forever
             return await message.reply(reply);
