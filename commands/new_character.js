@@ -134,7 +134,7 @@ class NewCharacterCommand extends Command {
         return Boom.self_destruct( message, `New character ${newCharacter.name} with playbook ${newCharacter.playbook} and family ${ownerFamily.name}. Type in \`.c.\ -help\` or \`.sc -help \` to learn more`);
     }
     exec(message, args) {
-        return this.doexec(message, args);
+        return this.aexec(message, args);
     }
 }
 

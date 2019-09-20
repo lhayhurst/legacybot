@@ -161,7 +161,7 @@ class TreatyCommand extends Command {
     }
 
     exec(message, args) {
-        return this.doexec(message, args);
+        return this.aexec(message, args);
     }
 }
 
