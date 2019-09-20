@@ -64,7 +64,7 @@ class FamiliesCommand extends Command {
                 id: 'property_action',
                 type: "string",
                 default: null,
-                optional: false,
+                optional: true,
                 argtype: "argument",
                 helptext: `Valid actions can be found by running \`.f -p\``
             },
@@ -80,15 +80,16 @@ class FamiliesCommand extends Command {
                 id: 'property_value',
                 type: "string",
                 default: null,
-                optional: false,
+                optional: true,
                 argtype: "argument",
+                split: "quoted",
                 helptext: `whatever action value you are setting`
             }
             ];
         let aliases = ['family', 'f']
         super(CommandsMetadata.getCommands().family.id, {
             aliases: aliases,
-            split: 'quoted',
+            split: 'sticky',
             args: command_args,
         });
         this.comments = `The family command gives the player information about whatever Family they've chosen, or the families currently associated with their guild`;
