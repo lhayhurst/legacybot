@@ -48,7 +48,7 @@ class FamiliesCommand extends Command {
                 id: 'image',
                 match: 'flag',
                 prefix: '-i',
-                helptext: 'Output family sheet as simple text',
+                helptext: 'Output family sheet as an image',
                 default: false,
                 optional: true
             },

@@ -112,7 +112,7 @@ class CharacterStatCommand extends Command {
     async aexec(message, args) {
         Boom.keep(args.keep);
         if ( args.help ) {
-            return Boom.self_destruct( message, message, new HelpEmbed(
+            return Boom.self_destruct( message,, new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -127,7 +127,7 @@ class CharacterStatCommand extends Command {
         let character = await DbUtil.get_users_character(user_id, guild_id);
 
         if ( character == null ) {
-            Boom.self_destruct( message, message, `You have not set your character set - please run \'set-character\` first!`);
+            Boom.self_destruct( message,, `You have not set your character set - please run \'set-character\` first!`);
         }
         if (!(args.force || args.lore || args.steel || args.sway ) ) { //no arg case
             Boom.self_destruct( message,  message,  this.statsAsRichEmbed(character) );
@@ -148,7 +148,7 @@ class CharacterStatCommand extends Command {
         }
 
         await DbUtil.update_character(character, statsToUpdate);
-        return Boom.self_destruct( message, message, `updated ${JSON.stringify(statsToUpdate)} for character "${character.name}"`);
+        return Boom.self_destruct( message,, `updated ${JSON.stringify(statsToUpdate)} for character "${character.name}"`);
     }
 
 

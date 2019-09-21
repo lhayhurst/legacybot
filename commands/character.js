@@ -45,10 +45,10 @@ class CharacterCommand extends Command {
                 optional: true
             },
             {
-                id: 'text_output_mode',
+                id: 'image',
                 match: 'flag',
-                prefix: '-text',
-                helptext: 'Output character sheet as simple text',
+                prefix: '-i',
+                helptext: 'Output character sheet as an image',
                 default: false,
                 optional: true
             },
@@ -133,7 +133,7 @@ class CharacterCommand extends Command {
     async aexec(message, args) {
         Boom.keep(args.keep);
         if (args.help) {
-            return Boom.self_destruct( message, message, new HelpEmbed(
+            return Boom.self_destruct( message, new HelpEmbed(
                 this.id, //the name of the command
                 this.command_args,
                 this.aliases,  //its aliases
@@ -152,7 +152,7 @@ class CharacterCommand extends Command {
         } else if (args.property_name && args.property_action) {
             let character = await DbUtil.get_users_character(user_id, guild_id);
             if (character == null) {
-                return Boom.self_destruct( message, message,`Before setting your character notes, you need to run the \`set-family\` command`);
+                return Boom.self_destruct( message,,`Before setting your character notes, you need to run the \`set-family\` command`);
             }
             console_results = await this.propertyCrud(args, character);
         } else if (args.all) {
@@ -167,7 +167,7 @@ class CharacterCommand extends Command {
             if (character == null) {
                 return Boom.self_destruct( message,`Before running an action command, you need to run the \`set-character\` command`);
             }
-            console_results = await cview.visitCharacter(character, args.text_output_mode);
+            console_results = await cview.visitCharacter(character, !args.image);
         }
         if (console_results) {
              return Boom.self_destruct( message,  console_results);
