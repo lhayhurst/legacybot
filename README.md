@@ -1,7 +1,7 @@
 # Legacybot
-This is a Discordbot for helping out with "play by post" games of [Legacy: Life Among the Ruins](https://ufopress.co.uk/our-games/legacy-life-among-ruins/). If you want to jump right in, the commands used by the bot are listed below, and the [TUTORIAL.md](TUTORIAL.md) has a bunch of examples. 
+This is a Discordbot for helping out with "play by post" games of [Legacy: Life Among the Ruins](https://ufopress.co.uk/our-games/legacy-life-among-ruins/). If you want to jump right in, head over to the [TUTORIAL.md](TUTORIAL.md). 
 
-Legacy Bot is currently in ALPHA TESTING and as such any data written to it can be blown away at any moment! Once it proceeds to BETA it will have permanent storage.
+Legacy Bot is currently beta testing. It is hosted in [Heroku](https://www.heroku.com/home). All of its data is stored in a [Mongodb](https://www.mongodb.com/) database using [mLab](https://elements.heroku.com/addons/mongolab). 
 
 
 ## Installation
