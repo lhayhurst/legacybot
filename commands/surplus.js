@@ -106,6 +106,9 @@ class SurplusCommand extends Command {
             }
         }
         await DbUtil.update_family(ownerFamily,  {'surpluses' : ownerFamily.surpluses });
+        if (ownerFamily.mood >= 4 ) {
+            return message.reply( `You are \`Flushed With Resources\`! Erase a Surplus and trigger the move.`);
+        }
         return Boom.self_destruct( message, `Family ${ownerFamily.name} now has Surpluses: ${JSON.stringify(ownerFamily.surpluses)}`)
     }
 

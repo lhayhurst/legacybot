@@ -105,10 +105,7 @@ class NeedCommand extends Command {
             }
         }
         await DbUtil.update_family(ownerFamily, { 'needs': ownerFamily.needs } );
-        if (ownerFamily.mood >= 4 ) {
-            return message.reply( `You are \`Flushed With Resources\`! Erase a Surplus and trigger the move.`);
-        }
-        else if ( ownerFamily.mood <= -4 ) {
+        if ( ownerFamily.mood <= -4 ) {
             return message.reply( `You have \`Fallen into Crisis\`, erase a Need and trigger the move.`);
         }
         return Boom.self_destruct( message, `Family ${ownerFamily.name} now has Needs: ${JSON.stringify(ownerFamily.needs)}`)
