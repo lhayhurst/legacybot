@@ -152,7 +152,7 @@ class CharacterCommand extends Command {
         } else if (args.property_name && args.property_action) {
             let character = await DbUtil.get_users_character(user_id, guild_id);
             if (character == null) {
-                return Boom.self_destruct( message,,`Before setting your character notes, you need to run the \`set-family\` command`);
+                return Boom.self_destruct( message,`Before setting your character notes, you need to run the \`set-family\` command`);
             }
             console_results = await this.propertyCrud(args, character);
         } else if (args.all) {
