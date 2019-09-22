@@ -5,9 +5,12 @@ Legacy Bot is currently beta testing. It is hosted in [Heroku](https://www.herok
 
 
 ## Installation
-Paste https://discordapp.com/api/oauth2/authorize?client_id=619678791626915850&permissions=201837632&scope=bot into your browser and select the server you'd like the bot to join.
 
-Legacybot has very limited permissions:
+To get the "production" Heroku bot, paste https://discordapp.com/api/oauth2/authorize?client_id=619678791626915850&permissions=201845824&scope=bot into your browser and select the server you'd like the bot to join.
+
+If you'd like to help test features in development, there's sometime a bot up with the client id `621907047587512330`. https://discordapp.com/api/oauth2/authorize?client_id=621907047587512330&permissions=201845824&scope=bot
+
+Legacybot has limited permissions.
 
 ![permissions](assets/screenshots/bot-permissions.png)
 
@@ -32,7 +35,7 @@ Run `make install`
 ### Testing
 Run a `make test` to run the unit tests. Tests can be found in the `test` folder. Note, the db tests assume you have a locally running instance of Mongodb. 
 
-### Running
+### Running  
 Run `make run`
 
 ## Supported Family Playbooks

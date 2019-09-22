@@ -10,7 +10,8 @@ class Boom {
         }
         else {
             return await message.reply(reply).then(msg => {
-                msg.delete(Boom.keepDuration)
+                msg.delete(Boom.keepDuration);
+                message.delete(Boom.keepDuration);
             }).catch(err => {
                 console.error(`unable to self destruct message due to ${err}`);
             });
@@ -18,7 +19,7 @@ class Boom {
     }
 
     static keep( keepArg ) {
-        if( keepArg == 'forever') { //special case
+        if( keepArg === 'forever') { //special case
             Boom.keepDuration = -1;
         }
         else {
